@@ -1,6 +1,10 @@
 <?
 include "../include/include_function.php"; 
 
+// SSO JWT Token Generation
+include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_config.php";
+include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_jwt_generator.php";
+
 $ID = Replace_Check_XSS2($ID); //아이디
 $Login_token_value = Replace_Check2($Login_token_value); //검증용 토큰
 
@@ -42,6 +46,9 @@ if($Row) {
 	$_SESSION["LoginEduManager"] = $Row['EduManager'];
 	$_SESSION["LoginMemberType"] = $Row['MemberType'];
 	$_SESSION["LoginTestID"] = $Row['TestID'];
+
+	// SSO JWT Token Generation - ALWAYS create JWT token on every login
+	SSOJWTGenerator::setJWTCookie($connect, $_SESSION, $DB_Enc_Key);
 
 ?>
 <SCRIPT LANGUAGE="JavaScript">

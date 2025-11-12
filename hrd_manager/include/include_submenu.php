@@ -178,6 +178,7 @@ switch ($MenuType) {
 		<li><a href="course.php?ctype=Y">숏폼 컨텐츠 관리</a></li>
 		<!-- <li><a href="course.php?ctype=W">비환급 컨텐츠 관리</a></li>  -->
 		<?}?>
+		<li><a href="course.php?ctype=R">실시간 강의실 관리</a></li>
 		<?if(in_array('E4',$LoginAdminSubMenuGrant_array)){?>
 		<li><a href="contents_keyword.php">컨텐츠 키워드 관리</a></li>
 		<?}?>

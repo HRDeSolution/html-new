@@ -1,6 +1,10 @@
 <?
 include "../include/include_function.php"; 
 
+// SSO JWT Token Generation
+include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_config.php";
+include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_jwt_generator.php";
+
 $ID = Replace_Check_XSS2($ID); //아이디
 $Login_token_value = Replace_Check2($Login_token_value); //검증용 토큰
 
@@ -46,6 +50,9 @@ if($Row) {
 	}else{
 		setCookie("AdminSavedID","",0);
 	}
+
+	// SSO JWT Token Generation - ALWAYS create JWT token on every login
+	SSOJWTGenerator::setJWTCookie($connect, $_SESSION, $DB_Enc_Key);
 
 	//로그인 내역 저장
 	$Sql_log = "INSERT INTO StaffLoginHistory(ID,Device,IP,RegDate, SiteCode) VALUES('$ID','PC','$UserIP',NOW(), '$SiteCode')";
