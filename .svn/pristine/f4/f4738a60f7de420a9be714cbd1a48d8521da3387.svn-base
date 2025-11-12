@@ -1,0 +1,790 @@
+<? include "../include/header.html"; ?>
+<? include "../include/login_check.php"; ?>
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . "/include/include_function.php"; //DB연결 및 각종 함수 정의
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="<?=$SiteName?>" />
+    <title><?=$SiteName2?></title>
+    <link rel="stylesheet" href="../css/common.css?ver=240716">
+    <link rel="stylesheet" href="../css/main.css?ver=240924">
+    <link rel="stylesheet" href="../css/content.css?ver=240517">
+    <link rel="stylesheet" href="../css/prev.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="/include/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="/include/function.js?t=<?=date('YmdHis')?>"></script>
+    <script type="text/javascript" src="/include/jquery-ui.js"></script>
+    <script src="https://kit.fontawesome.com/ebace215db.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../../lib/swiper-4.5.0/swiper.css">
+    <script src="../../lib/swiper-4.5.0/swiper.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
+<style>
+    body{background: #EAEAEA;}
+</style>
+
+<body>
+    <div id="wrap">
+        <header>
+            <div class="logo">
+             
+            </div>
+            <div class="logout">
+                <button onclick="location.href='../../public/member/logout.php?sitemode=flex'">로그아웃</button>
+            </div>
+        </header>
+        <div class="prev_wrap">
+            <div class="top">
+                <div class="logo">
+                    <img src="../img/common/logo.png" alt="HRDeFLEX">
+                </div>
+                <div class="txt">
+                    <strong>사전역량진단</strong>
+                    <p>학습 시작 전, 회원님의 분야별 역량진단을 진행하겠습니다.</p>
+                </div>
+            </div>
+             <!--직업기초능력-->
+            <div class="test">
+                <div class="test_title">
+                    <h2>직업기초능력</h2>
+                </div>
+                <div class="test_table">
+                    <table>
+                        <caption>직업기초능력 사전역량진단</caption>
+                        <colgroup>
+                            <col width="150px">
+                            <col width="auto">
+                            <col width="60px">
+                            <col width="60px">
+                            <col width="60px">
+                            <col width="60px">
+                            <col width="60px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>영역</th>
+                                <th>문항</th>
+                                <th>매우<br>미흡</th>
+                                <th>미흡</th>
+                                <th>보통</th>
+                                <th>우수</th>
+                                <th>매우<br>우수
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <!--의사소통능력-->
+                            <tr>
+                                <th rowspan="5">의사소통능력</td>
+                                <td class="ta_l">직장생활에서 필요한 문서를 확인하고, 읽고, 내용을 이해하여 업무 수행에 필요한 요점을 파악하는 능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 목적과 상황에 적합한 아이디어와 정보를 전달할 수 있는 문서를 작성할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">다른 사람의 말을 주의 깊게 듣고 적절하게 반응할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">목적과 상황에 맞는 말과 비언어적 행동을 통해 아이디어와 정보를 찾고, 이를 효과적으로 전달할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">외국어로 된 간단한 자료를 이해하거나, 간단한 외국인의 의사표현을 이해하고, 자신의 업무와 관련하여 필요한 기초외국어능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--문제해결능력-->
+                            <tr>
+                                <th rowspan="2">문제해결능력</td>
+                                <td class="ta_l">직장생활에서 발생한 문제를 해결하기 위해서 창의적, 논리적, 비판적으로 생각할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 발생한 문제를 올바르게 인식하고 적절한 해결책을 적용하여 해결할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--자원관리능력-->
+                            <tr>
+                                <th rowspan="4">자원관리능력</td>
+                                <td class="ta_l">직장생활에서 필요한 시간을 확인하고, 확보하여 업무 수행에 이를 할당할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 필요한 예산을 확인하고, 확보하여 업무 수행에 이를 할당하는 능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 필요한 물적자원을 확인하고, 확보하여 업무 수행에 이를 할당할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 필요한 인적자원을 확인하고, 확보하여 업무 수행에 이를 할당하는 능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--대인관계능력-->
+                            <tr>
+                                <th rowspan="5">대인관계능력</td>
+                                <td class="ta_l">직장생활에서 다른 구성원들과 목표를 공유하고 원만한 관계를 유지하며, 자신의 역할을 이해하고 책임감있게 업무를 수행할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활 중 조직구성원들의 업무향상에 도움을 주며 동기화시킬 수 있고, 조직의 목표 및 비전을 제시할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 조직구성원 사이에 갈등이 발생하였을 경우 이를 원만히 조절할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 협상 가능한 목표를 세우고 상황에 맞는 협상전략을 선택하여 다른 사람과 협상하는 능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">고객서비스에 대한 이해를 바탕으로 실제 현장에서 다양한 고객에 대처할 수 있으며, 고객만족을 이끌어 낼 수 있는 능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--정보능력-->
+                            <tr>
+                                <th rowspan="2">정보능력</td>
+                                <td class="ta_l">직장생활에서 컴퓨터 관련이론을 이해하여 업무수행을 위해 인터넷과 소프트웨어를 활용할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 필요한 정보를 찾아내고, 업무수행에 적합하게 조직 ㆍ 관리하여 활용할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--조직이해능력-->
+                            <tr>
+                                <th rowspan="4">조직이해능력</td>
+                                <td class="ta_l">직장생활에서 직업인으로서 다른 나라의 문화를 이해하고 국제적인 동향을 파악하는 능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 직업인으로서 자신이 속한 조직의 구조와 목적, 문화, 규칙 등과 같은 조직체제를 파악하는 능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 직업인으로서 자신이 속한 조직의 경영목표와 경영방법을 이해하고, 경영의 한 주체로서 조직경영에 참여하는 능력을 기를 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직장생활에서 직업인으로서 자신에게 주어진 업무의 성격과 내용을 알고 업무처리절차에 따라 효과적으로 업무를 수행할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--직업윤리-->
+                            <tr>
+                                <th rowspan="2">직업윤리</td>
+                                <td class="ta_l">직업윤리를 실천하기 위하여 근면하고 정직하며 성실하게 업무에 임하는 자세를 배양할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">직업윤리를 실천하기 위하여 봉사하며, 책임있고, 규칙을 준수하고, 예의바른 태도로 업무에 임하는 자세를 배양할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <!--직무수행능력-->
+            <div class="test">
+                <div class="test_title">
+                    <h2>직무수행능력</h2>
+                </div>
+                <div class="test_table">
+                    <table>
+                        <caption>직업기초능력 사전역량진단</caption>
+                        <colgroup>
+                            <col width="150px">
+                            <col width="150px">
+                            <col width="auto">
+                            <col width="60px">
+                            <col width="60px">
+                            <col width="60px">
+                            <col width="60px">
+                            <col width="60px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th colspan="2">영역</th>
+                                <th>문항</th>
+                                <th>매우<br>미흡</th>
+                                <th>미흡</th>
+                                <th>보통</th>
+                                <th>우수</th>
+                                <th>매우<br>우수
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <!--문서관리-->
+                            <tr>
+                                <th rowspan="9">문서 관리</td>
+                                <th rowspan="3">문서<br>수ㆍ발신하기</th>
+                                <td class="ta_l">지정된 수신인별로 등록된 문서를 전달할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">문서 관리 규정에 따라 지정된 장소에서 문서의 수ㆍ발신자를 확인할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">문서 관리 규정에 따라 문서 대장에 수ㆍ발신 문서를 등록할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="3">문서 정리하기</th>
+                                <td class="ta_l">보안 및 기간 등에 따라 활용이 완료된 문서를 재편철할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">문서 관리 규정에 따라 구성원들이 손쉽게 문서를 활용하도록 문서를 정리할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                
+                                <td class="ta_l">문서 관리 규정에 따라 문서를 편철할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="3">문서 보관하기</th>
+                                <td class="ta_l">문서 관리 규정에 따라 이관된 문서를 관리 대장에 등록할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">문서 관리 규정에 따라 관리 대장에 등록된 문서를 보관할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">보존 중인 문서 중 보존 사유가 소멸된 문서를 폐기할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--회의운영-->
+                            <tr>
+                                <th rowspan="17">회의 운영</th>
+                                <th rowspan="5">회의 준비하기</th>
+                                <td class="ta_l">회의 시작 전에 회의 참석 대상자에게 참석여부를 확인할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 목적에 따라 회의 운영을 계획할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 목적에 따라 필요한 물품과 장비를 준비할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 목적에 적합한 장소를 예약할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 참석 대상자에게 회의 관련 내용을 안내할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="4">회의 운영<br>보조하기</th>
+                                <td class="ta_l">회의 주최자에게 파악한 불참 사유를 보고할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 시작 시 참석 예정자의 불참 사유를 파악할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 진행에 있어서 추가적인 요청사항에 대처할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 운영 규정에 따라 회의 운영 근거 자료를 생성할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="4">회의 후 정리하기</th>
+                                <td class="ta_l">회의 운영 규정에 따라 회의 후 결과보고서를 작성할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 운영 규정에 따라 회의 결과를 관련자에게 공지할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">문서 관리 규정에 따라 회의 결과에 따른 각종 자료를 보존할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">회의 후 회의 장소를 원래 상태로 정리할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="4">원격통신회의<br>지원하기</th>
+                                <td class="ta_l">원격통신회의 운영 규정에 따라 회의 운영 근거 자료를 생성할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">원격통신 시설을 통해 다른 장소에 있는 기관이나 부서 간의 회의 진행을 지원할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">원격통신 프로그램을 각 단말기에 설치하여 회의 참석자를 지원할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">원격통신회의 종료 후 회의 내용을 보존할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--사무환경 조성-->
+                            <tr>
+                                <th rowspan="18">사무환경 조성</th>
+                                <th rowspan="3">사무기기<br>운용하기</th>
+                                <td class="ta_l">사무기기 운용 중에 발생한 문제를 해결할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">사무기기 운용 중에 발생한 문제의 원인을 파악할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">매뉴얼에 따라 사무기기를 원활하게 조작할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="5">사무물품<br>관리하기</th>
+                                <td class="ta_l">사무물품의 내구연한 경과 및 파손 물품은 관련 규정에 의거하여, 불용 처분할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">사무물품 관리 대장과 비교하여 수량과 위치, 상태를 점검할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">사무소모품의 품목별로 재고량을 확인하여 필요 수량을 확보할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">사무물품 관리대장을 규정에 맞추어 작성할 수 있다.</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">사무물품의 구매가 필요한 경우 담당부서에 구매를 요청할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="3">사무환경<br>관리하기</th>
+                                <td class="ta_l">사무실의 조명과 냉ㆍ난방 상태에 따라 문제 발생 시 조치할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">사무실의 청결ㆍ노후상태에 따라 필요시 환경미화ㆍ보수 관리를 실시할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">업무 조정, 근무방식 변경 및 부서원의 의견에 따라 사무실 기기 및 물품을 재배치할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="3">네트워크<br>관리지원하기</th>
+                                <td class="ta_l">네트워크 오류 발생 시 대응 매뉴얼에 따라 조치할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">부서의 네트워크 장비의 정상작동 여부를 확인할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">컴퓨터와 사무기기의 유·무선 네트워크에 대한 관리를 지원할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="4">스마트워크시스템<br>관리지원하기</th>
+                                <td class="ta_l">스마트워크시스템 사용 시 오류 발생에 대해 조치할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">스마트워크시스템 사용 시 필요한 장비를 지원할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">스마트워크시스템 사용을 위한 네트워크 환경설정을 지원할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">스마트워크시스템 사용 매뉴얼을 제공할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        <!--그룹웨어 활용-->
+                            <tr>
+                                <th rowspan="10">그룹웨어 활용</th>
+                                <th rowspan="4">전자결재<br>활용하기</th>
+                                <td class="ta_l">위임 전결 규정에 따른 기안 및 승인 처리를 할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">전자결재를 통하여 접수·발송 및 공람 업무를 진행할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">전자결재 기안문 편집기를 이용하여 규정에 맞게 작성할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">전자결재 활용에 필요한 구성요소의 기능을 파악할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <th rowspan="3">협업기능<br>활용하기</th>
+                                <td class="ta_l">업무에 적합한 협업기능 요소를 선택할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">의사소통에 필요한 협업기능의 구성요소를 파악할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">게시판, 메일, 일정관리, 쪽지 등의 기능을 활용할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            
+                            <tr>
+                                <th rowspan="3">부가기능<br>활용하기</th>
+                                <td class="ta_l">부가기능 활용에 필요한 구성요소의 기능을 파악할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">조직 내 시설물, 물품 등 자원관리 기능을 활용할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                            <tr>
+                                <td class="ta_l">출퇴근, 휴가, 출장 등 근태관리 기능을 활용할 수 있다.	</td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                                <td><input type="radio"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="bottom mb40">
+                <button onclick="Next()" >제출</button>
+            </div>
+        </div>
+    </div>
+</body>

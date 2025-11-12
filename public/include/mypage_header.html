@@ -1,0 +1,249 @@
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . "/include/include_function.php"; //DB연결 및 각종 함수 정의
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?=$SiteName2?></title>
+    <script type="text/javascript" src="../../common/js/jquery-2.1.4.js"></script>
+    <link rel="stylesheet" href="../../common/css/base.css?ver=240517">
+    <link rel="stylesheet" href="../../common/css/common.css?ver=250221">
+    <link rel="stylesheet" href="css/mypage.css?ver=250515 ">
+    <link rel="stylesheet" href="css/player.css?ver=2410222">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script type="text/javascript" src="/include/function.js?t=<?=date('YmdHis')?>"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+  />
+  <script type="text/javascript" src="/include/sso_localstorage.js?t=<?=date('YmdHis')?>"></script>
+  <? if(!empty($_SESSION['LoginMemberID']) || !empty($_SESSION['LoginAdminID'])) { ?>
+  <div data-user-id="<?=!empty($_SESSION['LoginMemberID']) ? $_SESSION['LoginMemberID'] : $_SESSION['LoginAdminID']?>" style="display:none;"></div>
+  <script type="text/javascript">
+      window.__HRDE_SSO_USER_ID = "<?=!empty($_SESSION['LoginMemberID']) ? $_SESSION['LoginMemberID'] : $_SESSION['LoginAdminID']?>";
+  </script>
+  <? } ?>
+</head>
+<header>
+    <div class="top_header">
+        <!--wrap-->
+        <div id="wrap">
+            <div class="home_btn">
+                <a href="/archive/main/main.html"><i class="ph ph-house"></i></a>
+            </div>
+            <div class="logo" >
+                <a href="/archive/contents/main.html">
+	           		<img src="/archive/img/common/archive_logo.png" alt="HRDe아카이브">
+	           	</a>
+            </div>
+            <div class="btn">
+            	<? if(empty($_SESSION['LoginMemberID'])) { ?>
+                <a href="/public/member/login.html">로그인</a>
+                <a href="/public/member/join.html">회원가입</a>
+                <?}else{?>
+                <p style="display: inline-block; margin-left: 15px; padding: 10px 0; font-weight: 500;"><strong style="color:#2c5db4;"><?=$_SESSION['LoginName']?></strong> 훈련생님 반갑습니다.</p>
+                <a href="/public/member/logout.php">로그아웃</a>
+                <?}?>
+                <a href="/public/support/ask.html">1:1상담</a>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <div class="middle_header">
+        <!--wrap-->
+        <div id="wrap">
+            <div class="left">
+                <h1>나의 학습실</h1>
+            </div>
+            <div class="right">
+				<!--
+                <div class="search_box">
+                    <input name="" id="" type="text" title="검색어 입력" placeholder="CSS 실무자에게 필요한 CX스킬"><span class="search_btn"><i class="ph ph-magnifying-glass"></i></span>
+                </div>
+                -->
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+</header>
+<script>
+document.addEventListener('keydown', function(e) {
+    // F12
+    if (e.key === 'F12') {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+U
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+U
+    if (e.ctrlKey && e.key === 'u') {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+});
+</script>
+<body oncontextmenu="return false;">
+    <div id="wrap">
+        <div class="mypage_menu">
+            <div class="top_point">
+                <div>
+                    <span class="icon">
+                        <img src="img/graduationcap.png" alt="학사모아이콘">
+                    </span>
+                    <span class="name">
+                        <b><?=$_SESSION["LoginName"]?></b>님
+                    </span>
+                </div>
+                <p>새로운 도전을 <br> 응원합니다.</p>
+            </div>
+            <?
+            //수강기간 조회
+			$SqlC = "SELECT LectureStart , LectureEnd FROM Study WHERE ID = '$LoginMemberID'";
+			//echo $SqlC;
+			$ResultC = mysqli_query($connect, $SqlC);
+			$RowC = mysqli_fetch_array($ResultC);
+			$LectureStart = $RowC['LectureStart'];
+			$LectureEnd = $RowC['LectureEnd'];
+
+			//오늘 학습시간 조회
+			$StudyTimeSum = 0;
+			$today = date("Y-m-d");
+			//[1]오늘수강한 LectureCode와 Chapter_Seq값 구하기
+			$SqlD1 = "SELECT LectureCode , Chapter_Seq , ID , RegDate FROM Progress WHERE ID = '$LoginMemberID' AND RegDate LIKE '%$today%'";
+			$QueryD1 = mysqli_query($connect, $SqlD1);
+			if($QueryD1 && mysqli_num_rows($QueryD1)){
+				while($RowD1 = mysqli_fetch_array($QueryD1)){
+					$LectureCodeD = $RowD1['LectureCode'];
+					$ChapterSeqD = $RowD1['Chapter_Seq'];
+
+					//[2]각 차시의 수강시간구하기
+					$SqlD2 = "SELECT MAX(StudyTime) - MIN(StudyTime) FROM ProgressLog
+							  WHERE ID = '$LoginMemberID' AND RegDate LIKE '%$today%' AND LectureCode = '$LectureCodeD' AND Chapter_Seq  = $ChapterSeqD";
+					$ResultD2 = mysqli_query($connect, $SqlD2);
+					$RowD2 = mysqli_fetch_array($ResultD2);
+					$StudyTime = $RowD2[0];
+					$StudyTimeSum = $StudyTimeSum + $StudyTime;
+				}
+			}
+			$TodayStudyTime = gmdate('H시간 i분', $StudyTimeSum);
+			?>
+            <div class="top_point2">   
+                <p><b><?=$LectureStart?> ~ <?=$LectureEnd?></b> 개강</p>
+                <p>오늘 학습시간  <b><?=$TodayStudyTime?></b></p>
+            </div>
+         
+            <a class="menuicon">
+                <i class="ph ph-list"></i>
+            </a>
+            <ul>
+                <li class="lecture_status depth1"><a href="lecture_status.html">학습현황<span><i class="ph-bold ph-caret-down"></i></span></a>
+                    <ul style="display: none;">
+                        <li class="status01"><a href="lecture_status.html"><i>·</i>학습중인 과정</a></li>
+                        <li class="status02"><a href="lecture_status02.html"><i>·</i>학습완료 과정</a></li>
+                        <li class="status03"><a href="lecture_status03.html"><i>·</i>관심 과정</a></li>
+                       <!--  <li class="event"><a href="lecture_event.html"><i>·</i>출석 체크</a></li> -->
+                    </ul>
+                </li>
+                <li class="survey depth1"><a href="survey.html">수강후기</a></li>
+                <li class="test_result depth1"><a href="test_result.html">역량진단</a></li>
+                <?if($LoginEduManager=="Y") {?>
+	                <li class="manager depth1"><a href="manager_trainee.html">교육담당자<span><i class="ph-bold ph-caret-down"></i></span></a>
+	                    <ul style="display: none;">
+	                        <li class="trainee"><a href="manager_trainee.html"><i>·</i>자사수강생 리스트</a></li>
+	                        <li class="payment"><a href="manager_payment.html"><i>·</i>자부담금 관리</a></li>
+	                        <li class="complete"><a href="manager_complete.html"><i>·</i>수료 관리</a></li>
+	                    </ul>
+	                </li>
+                <?}?>
+                <li class="memberinfo depth1"><a href="memberinfo.html">회원관리</a></li>
+                <li class="depth1"><a href="javascript:void(0);" onClick="javascript:goSSO();">기업자체교육 바로가기</a></li>
+            </ul>
+        </div>
+
+<script>
+	function goSSO(){
+        if (!window.SSOTokenManager) {
+            alert('SSO 모듈이 초기화되지 않았습니다. 잠시 후 다시 시도해주세요.');
+            return;
+        }
+        if (confirm("기업자체교육 강의실로 이동하시겠습니까?")) {
+            SSOTokenManager.goToLiveSite(function(url) {
+                var win = window.open("about:blank","hrdeLive");
+                if (win) {
+                    win.location.href = url;
+                } else {
+                    window.location.href = url;
+                }
+            });
+        }
+	}
+</script>
+
+
+<script>
+    $(document).ready(function() {
+        var op = false;  //네비가 열려있으면(true) , 닫혀있으면(false)
+
+        $(".menuicon").click(function(e) { //메뉴버튼 클릭시
+            e.preventDefault();
+            var documentHeight =  $(document).height(); //전체페이지의 높이
+            $(".mypage_menu > ul").css('height',documentHeight);
+
+            if(op==false){ //메뉴가 닫혀있는 상태에서 클릭하면
+                $(".mypage_menu > ul").animate({right:0,opacity:1}, 'fast');
+                $("body").css('overflow','hidden')
+                op=true;
+            }else{ //메뉴가 열려있는 상태에서 클릭하면
+                $(".mypage_menu > ul").animate({right:'-100%',opacity:0}, 'fast');
+                $("body").css('overflow','auto')
+                op=false;
+            }
+
+        });
+           //2depth 메뉴 교대로 열기 처리
+        var onoff=[false,false,false,false,false,false]; //가정법 false(2depth서브가 닫혀있는 상태) true(2depth서브가 열려있는 상태)
+        var arrcount=onoff.length; //배열의 개수 6개
+
+        $('.mypage_menu > ul > li > a').click(function(e){ //1depth메뉴를 클릭하면
+            var ind=$(this).parents('.depth1').index(); //0~5
+            //var ind=$(this).index('.navArea_m .depth1 h3 a')
+            // console.log(ind);
+
+            if(onoff[ind]==false){ //1depth 메뉴의 서브가 닫혀있으면
+            //$('.navArea_m .depth1 ul').hide();
+            $(this).parents('.depth1').find('ul').slideDown('slow'); //자신의 서브를 열어라
+            $(this).parents('.depth1').siblings('li').find('ul').slideUp('fast'); //자신을 제외한 모든 서브를 닫아라
+                for(var i=0; i<arrcount; i++) onoff[i]=false; // 모든 배열값을 fALSE (닫힘) 상태로 만들고
+                onoff[ind]=true; //자신에 대한 (열린)배열만 TRUE로 변경
+
+                $(this).css('color','#005793')
+                $('.depth1 span').html('<i class="fa-solid fa-chevron-down"></i>');
+                $(this).find('span').html('<i class="fa-solid fa-chevron-up"></i>');
+
+            }else{//1depth 메뉴의 서브가 열려있으면
+                $(this).css('color','#333')
+                $(this).parents('.depth1').find('ul').slideUp('fast'); //서브 닫기
+                onoff[ind]=false;
+
+                $(this).find('span').html('<i class="fa-solid fa-chevron-down"></i>');
+
+      }
+   });
+    });
+</script>

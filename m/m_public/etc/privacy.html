@@ -1,0 +1,31 @@
+<? include "../../include/include_function.php"; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?=$SiteName?></title>
+    <script type="text/javascript" src="../../common/js/jquery-2.1.4.js"></script>
+    <link rel="stylesheet" href="../../common/css/base.css?ver=2">
+    <link rel="stylesheet" href="../../common/css/common.css?ver=4">
+    <link rel="stylesheet" href="../css/common.css?ver=2">
+    <link rel="stylesheet" href="css/etc.css?ver=3">
+    <script src="https://kit.fontawesome.com/ebace215db.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<div class="etc_wrap">
+    <div class="top">
+        <div class="logo">
+            <img src="/archive/img/common/archive_logo.png" alt="" class="logo">
+        </div>
+        <h1>약관 및 정책</h1>
+        <div class="tab_btn">
+            <button onclick="location.href='agreement.html'">이용약관</button>
+            <button class="on">개인정보처리방침</button>
+        </div>
+    </div>
+    <div class="content">
+        <? include "include/privacy_include.html"; ?>
+    </div>
+</div>

@@ -1,0 +1,598 @@
+<? 
+include "../include/mypage_header.html";
+include "../include/login_check.php"; 
+?>
+
+<? include "../../m_archive/include/top_header.html";?>
+<? include "../../m_archive/include/mypage_header.html";?>
+
+
+
+<!-- 페이징에 영향을 주는 form 태그 -->
+<form name="listScriptForm1" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="pg1" value="<?=$pg1?>">
+</form>
+<form name="listScriptForm2" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="pg2" value="<?=$pg2?>">
+</form>
+<form name="listScriptForm3" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="pg3" value="<?=$pg3?>">
+</form>
+<?
+$where[] = "b.ID = '$LoginMemberID'";
+$where[] = "a.Del='N'";
+$where[] = "a.UseYN='Y'";
+
+$where = implode(" AND ",$where);
+if($where) $where = "WHERE $where";
+
+$pg1 = Replace_Check_XSS2($pg1);
+$pg2 = Replace_Check_XSS2($pg2);
+$pg3 = Replace_Check_XSS2($pg3);
+
+//get study column lecturecode, seq 
+$SqlM    = "SELECT LectureCode AS StudyLectureCode, Seq AS Study_Seq FROM Study WHERE ID = '$LoginMemberID'";
+$ResultM = mysqli_query($connect, $SqlM);
+$RowM    = mysqli_fetch_assoc($ResultM);
+
+##-- 페이지 조건
+$page_size = 5;
+$block_size = 10;
+//이러닝
+if(!$pg1) $pg1 = 1;
+//마이크로닝
+if(!$pg2) $pg2 = 1;
+//숏폼
+if(!$pg3) $pg3 = 1;
+
+##-- 검색 등록수
+//이러닝
+$SQLA = "SELECT COUNT(*) FROM Course a LEFT JOIN CourseLike b on a.LectureCode = b.LectureCode $where AND a.ServiceType = 'X'";
+$ResultA = mysqli_query($connect, $SQLA);
+$RowA = mysqli_fetch_array($ResultA);
+$TOT_NO1 = $RowA[0];
+mysqli_free_result($ResultA);
+//마이크로닝
+$SQLA = "SELECT COUNT(*) FROM Course a LEFT JOIN CourseLike b on a.LectureCode = b.LectureCode $where AND a.ServiceType = 'Y'";
+$ResultA = mysqli_query($connect, $SQLA);
+$RowA = mysqli_fetch_array($ResultA);
+$TOT_NO2 = $RowA[0];
+mysqli_free_result($ResultA);
+//숏폼
+$SQLA = "SELECT COUNT(*) FROM Course a LEFT JOIN CourseLike b on a.LectureCode = b.LectureCode $where AND a.ServiceType = 'Z'";
+$ResultA = mysqli_query($connect, $SQLA);
+$RowA = mysqli_fetch_array($ResultA);
+$TOT_NO3 = $RowA[0];
+mysqli_free_result($ResultA);
+
+##-- 페이지 클래스 생성
+include_once("../../m_include/include_page2.php");
+
+//이러닝
+$PAGE_CLASS1 = new Page($pg1,$TOT_NO1,$page_size,$block_size); ##-- 페이지 클래스
+$BLOCK_LIST1 = $PAGE_CLASS1->blockList('X'); ##-- 페이지 이동관련
+//마이크로닝
+$PAGE_CLASS2 = new Page($pg2,$TOT_NO2,$page_size,$block_size); ##-- 페이지 클래스
+$BLOCK_LIST2 = $PAGE_CLASS2->blockList('Y'); ##-- 페이지 이동관련
+//숏폼
+$PAGE_CLASS3 = new Page($pg3,$TOT_NO3,$page_size,$block_size); ##-- 페이지 클래스
+$BLOCK_LIST3 = $PAGE_CLASS3->blockList('Z'); ##-- 페이지 이동관련
+?>
+        <div class="mypage_content">
+            <div class="sb_box">
+                <ul>
+                    <li><a href="lecture_status.html">학습 중인 과정</a></li>
+                    <li><a href="lecture_status02.html">학습완료 과정</a></li>
+                    <li class="on"><a href="lecture_status03.html">관심 과정</a></li>
+                </ul>
+            </div>
+            <div class="content">
+                 <!--이러닝-->
+                 <div class="table_wrap">
+                    <h2>이러닝</h2>
+                    <div class="top_button">
+                        <div class="left">
+                            <input type="checkbox" id="cbx_chkAll_elearning" name="chkAll_elearning">
+                            <label for="cbx_chkAll_elearning">전체선택</label>
+                        </div>
+                        <div class="right">
+                            <button class="delete" onclick="Javascript:CourseCheckDel1();">삭제</button>
+                        </div>
+                    </div>
+                    <table>
+                        <colgroup>
+                            <col width="5%">
+                            <!--<col class="mh" width="20%">-->
+                            <col width="*%">
+                            <col width="90px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <!--<th class="mh">구분</th>-->
+                                <th>과정명</th>
+                                <th>학습하기</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+						<?
+						$i = 0;
+						$SQL = "SELECT b.idx , b.LectureCode  , a.ContentsName  , a.Chapter , a.ServiceType
+								FROM Course a
+								LEFT JOIN CourseLike b on a.LectureCode = b.LectureCode
+								$where AND a.ServiceType = 'X'
+								ORDER BY b.RegDate DESC, b.idx DESC LIMIT $PAGE_CLASS1->page_start, $page_size";
+						//echo $SQL;
+						$QUERY = mysqli_query($connect, $SQL);
+						if($QUERY && mysqli_num_rows($QUERY)){
+							while($ROW = mysqli_fetch_array($QUERY)){
+								extract($ROW);
+								
+								if($ServiceType == "X") $typeName = "이러닝";
+								else if($ServiceType == "Y") $typeName = "숏폼";
+								else if($ServiceType == "Z") $typeName = "마이크로닝";
+						?>
+			            	<tr>
+			                	<td><input type="checkbox" name="chk_elearning" class="chk_elearning" id="chk_elearning" value="<?=$idx?>"></td>
+			                	<!--<td class="mh"><?=$typeName?></td>-->
+			                    <td style="text-align: center;"><?=$ContentsName?></td>
+			                    <td>
+									<?if($Chapter == "0"){?>
+									<button class="white" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">학습하기</button>
+									<?}else{?>
+		                            <button class="white" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>', '1', '<?=$RowM['Study_Seq']?>', '<?=$RowM['StudyLectureCode']?>');">학습하기</button>
+		                            <?}?>
+								</td>
+			                </tr>
+						<?
+								$i++;
+							}
+						}else{?>
+			              	<tr><td colspan="4">이러닝 관심과정이 없습니다.</td></tr>
+						<?}?>
+                        </tbody>
+                    </table>
+                    <!-- page -->
+                    <?=$BLOCK_LIST1?>
+                    <!-- //page -->
+                </div>
+                <!--//이러닝-->
+                
+                <!--마이크로러닝-->
+                <div class="table_wrap">
+                <h2>마이크로러닝</h2>
+                <div class="top_button">
+                    <div class="left">
+                        <input type="checkbox" id="cbx_chkAll_microlearning" name="chkAll_microlearning">
+                        <label for="cbx_chkAll_microlearning">전체선택</label>
+                    </div>
+                    <div class="right">
+                        <button class="delete" onclick="Javascript:CourseCheckDel2();">삭제</button>
+                    </div>
+                </div>
+                <table>
+                    <colgroup>
+                        <col width="5%">
+						<!--<col class="mh" width="20%">-->
+						<col width="*%">
+						<col width="90px">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>NO</th>
+                            <!--<th class="mh">구분</th>-->
+                            <th>과정명</th>
+                            <th>학습하기</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+					<?
+					$i = 0;
+					$SQL = "SELECT b.idx , b.LectureCode  , a.ContentsName  , a.Chapter , a.ServiceType
+							FROM Course a
+							LEFT JOIN CourseLike b on a.LectureCode = b.LectureCode
+							$where AND a.ServiceType = 'Z'
+							ORDER BY b.RegDate DESC, b.idx DESC LIMIT $PAGE_CLASS2->page_start, $page_size";
+					//echo $SQL;
+					$QUERY = mysqli_query($connect, $SQL);
+					if($QUERY && mysqli_num_rows($QUERY)){
+						while($ROW = mysqli_fetch_array($QUERY)){
+							extract($ROW);
+							
+							if($ServiceType == "X") $typeName = "이러닝";
+							else if($ServiceType == "Y") $typeName = "숏폼";
+							else if($ServiceType == "Z") $typeName = "마이크로닝";
+					?>
+		            	<tr>
+		                	<td><input type="checkbox" name="chk_microlearning" class="chk_microlearning" id="chk_microlearning" value="<?=$idx?>"></td>
+		                	<!--<td class="mh"><?=$typeName?></td>-->
+		                    <td style="text-align: center;"><?=$ContentsName?></td>
+		                    <td>
+								<?if($Chapter == "0"){?>
+								<button class="white" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">학습하기</button>
+								<?}else{?>
+	                            <button class="white" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>', '1', '<?=$RowM['Study_Seq']?>', '<?=$RowM['StudyLectureCode']?>');">학습하기</button>
+	                            <?}?>
+							</td>
+		                </tr>
+					<?
+							$i++;
+						}
+					}else{?>
+		              	<tr><td colspan="4">마이크로닝 관심과정이 없습니다.</td></tr>
+					<?}?>
+                    </tbody>
+                </table>
+                <!-- page -->
+                <?=$BLOCK_LIST2?>
+                <!-- //page -->
+            </div>
+            <!--//마이크로러닝-->
+            
+            <!--숏폼-->
+            <div class="table_wrap">
+	            <h2>숏폼</h2>
+	            <div class="top_button">
+	                <div class="left">
+	                    <input type="checkbox"  id="cbx_chkAll_shortform" name="chkAll_shortform">
+	                    <label for="cbx_chkAll_shortform">전체선택</label>
+	                </div>
+	                <div class="right">
+	                    <button class="delete" onclick="Javascript:CourseCheckDel3();">삭제</button>
+	                </div>
+	            </div>
+	            <table>
+	                <colgroup>
+                        <col width="5%">
+						<!--<col class="mh" width="20%">-->
+						<col width="*%">
+						<col width="90px">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>NO</th>
+                            <!--<th class="mh">구분</th>-->
+                            <th>과정명</th>
+                            <th>학습하기</th>
+                        </tr>
+                    </thead>
+	                <tbody>
+					<?
+					$i = 0;
+					$SQL = "SELECT b.idx , b.LectureCode  , a.ContentsName  , a.Chapter , a.ServiceType
+							FROM Course a
+							LEFT JOIN CourseLike b on a.LectureCode = b.LectureCode
+							$where AND a.ServiceType = 'Y'
+							ORDER BY b.RegDate DESC, b.idx DESC LIMIT $PAGE_CLASS3->page_start, $page_size";
+					//echo $SQL;
+					$QUERY = mysqli_query($connect, $SQL);
+					if($QUERY && mysqli_num_rows($QUERY)){
+						while($ROW = mysqli_fetch_array($QUERY)){
+							extract($ROW);
+							
+							if($ServiceType == "X") $typeName = "이러닝";
+							else if($ServiceType == "Y") $typeName = "숏폼";
+							else if($ServiceType == "Z") $typeName = "마이크로닝";
+					?>
+		            	<tr>
+		                	<td><input type="checkbox" name="chk_shortform" class="chk_shortform" id="chk_shortform" value="<?=$idx?>"></td>
+		                	<!--<td class="mh"><?=$typeName?></td>-->
+		                    <td style="text-align: center;"><?=$ContentsName?></td>
+		                    <td>
+								<?if($Chapter == "0"){?>
+								<button class="white" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">학습하기</button>
+								<?}else{?>
+	                            <button class="white" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>', '1', '<?=$RowM['Study_Seq']?>', '<?=$RowM['StudyLectureCode']?>');">학습하기</button>
+	                            <?}?>
+							</td>
+		                </tr>
+					<?
+							$i++;
+						}
+					}else{?>
+		              	<tr><td colspan="4">숏폼 관심과정이 없습니다.</td></tr>
+					<?}?>
+	                </tbody>
+	            </table>
+	            <!-- page -->
+	            <?=$BLOCK_LIST3?>
+	            <!-- //page -->
+            </div>
+            <!--//숏폼-->
+            
+            </div>
+        </div>
+    </div>
+</body>
+
+<? include "../../m_archive/include/footer.html"; ?>
+
+
+<script>
+
+    
+$(document).ready(function(){
+        $('.top-menu .lecture').addClass("on");
+    });
+    
+
+//체크박스 기능
+$(document).ready(function () {
+    // 이러닝 체크박스 동작
+    $("#cbx_chkAll_elearning").click(function () {
+        $(".chk_elearning").prop("checked", $(this).is(":checked"));
+    });
+
+    $(".chk_elearning").click(function () {
+        var total = $(".chk_elearning").length;
+        var checked = $(".chk_elearning:checked").length;
+
+        $("#cbx_chkAll_elearning").prop("checked", total === checked);
+    });
+
+    // 마이크로러닝 체크박스 동작
+    $("#cbx_chkAll_microlearning").click(function () {
+        $(".chk_microlearning").prop("checked", $(this).is(":checked"));
+    });
+
+    $(".chk_microlearning").click(function () {
+        var total = $(".chk_microlearning").length;
+        var checked = $(".chk_microlearning:checked").length;
+
+        $("#cbx_chkAll_microlearning").prop("checked", total === checked);
+    });
+
+    // 숏폼 체크박스 동작
+    $("#cbx_chkAll_shortform").click(function () {
+        $(".chk_shortform").prop("checked", $(this).is(":checked"));
+    });
+
+    $(".chk_shortform").click(function () {
+        var total = $(".chk_shortform").length;
+        var checked = $(".chk_shortform:checked").length;
+
+        $("#cbx_chkAll_shortform").prop("checked", total === checked);
+    });
+});
+
+//삭제기능(이러닝)
+function CourseCheckDel1() {
+	var idx_value = '';
+	var checkbox_count = $("input[name='chk_elearning']").length;
+
+	if(checkbox_count == 0){
+		alert('선택된 항목이 없습니다.');
+		return;
+	}
+
+	if(checkbox_count > 1){
+		for(i = 0; i < checkbox_count; i++){
+			if($("input:checkbox[name='chk_elearning']:eq(" + i + ')').is(':checked') == true){
+				if(idx_value == ''){
+					idx_value = $("input:checkbox[name='chk_elearning']:eq(" + i + ')').val();
+				}else{
+					idx_value = idx_value + '|' + $("input:checkbox[name='chk_elearning']:eq(" + i + ')').val();
+				}
+			}
+		}
+	}else{
+		if($("input:checkbox[name='chk_elearning']").is(':checked') == true){
+			idx_value = $("input:checkbox[name='chk_elearning']").val();
+		}
+	}
+
+	if(!idx_value){
+		alert('삭제하려는 항목을 선택하세요.');
+		return;
+	}
+
+	Yes = confirm('선택한 항목을 삭제하시겠습니까?');
+	if(Yes == true){
+		var currentWidth = $(window).width();
+		var LocWidth = currentWidth / 2;
+		var body_width = screen.width - 20;
+		var body_height = $('html body').height();
+
+		$("div[id='SysBg_White']")
+			.css({
+				width: body_width, 
+				height: body_height,
+				opacity: '0.4',
+				position: 'absolute',
+				'z-index': '99',
+			})
+			.show();
+
+		$("div[id='Roading']")
+			.css({
+				top: '350px',
+				left: LocWidth,
+				opacity: '1.0',
+				position: 'absolute',
+				'z-index': '200',
+			})
+			.show();
+
+		$.post(
+			'/m_public/mypage/archive_save_del.php',
+			{
+				idx_value: idx_value,
+			},
+			function(data, status){
+				$("div[id='Roading']").hide();
+				$("div[id='SysBg_White']").hide();
+
+				if(data == 'Y'){
+					alert('삭제 되었습니다.');
+					location.reload();
+				}else{
+					alert('처리중 문제가 발생했습니다.');
+				}
+			}
+		);
+	}
+}
+
+//삭제기능(마이크로닝)
+function CourseCheckDel2() {
+	var idx_value = '';
+	var checkbox_count = $("input[name='chk_microlearning']").length;
+
+	if(checkbox_count == 0){
+		alert('선택된 항목이 없습니다.');
+		return;
+	}
+
+	if(checkbox_count > 1){
+		for(i = 0; i < checkbox_count; i++){
+			if($("input:checkbox[name='chk_microlearning']:eq(" + i + ')').is(':checked') == true){
+				if(idx_value == ''){
+					idx_value = $("input:checkbox[name='chk_microlearning']:eq(" + i + ')').val();
+				}else{
+					idx_value = idx_value + '|' + $("input:checkbox[name='chk_microlearning']:eq(" + i + ')').val();
+				}
+			}
+		}
+	}else{
+		if($("input:checkbox[name='chk_microlearning']").is(':checked') == true){
+			idx_value = $("input:checkbox[name='chk_microlearning']").val();
+		}
+	}
+
+	if(!idx_value){
+		alert('삭제하려는 항목을 선택하세요.');
+		return;
+	}
+
+	Yes = confirm('선택한 항목을 삭제하시겠습니까?');
+	if(Yes == true){
+		var currentWidth = $(window).width();
+		var LocWidth = currentWidth / 2;
+		var body_width = screen.width - 20;
+		var body_height = $('html body').height();
+
+		$("div[id='SysBg_White']")
+			.css({
+				width: body_width, 
+				height: body_height,
+				opacity: '0.4',
+				position: 'absolute',
+				'z-index': '99',
+			})
+			.show();
+
+		$("div[id='Roading']")
+			.css({
+				top: '350px',
+				left: LocWidth,
+				opacity: '1.0',
+				position: 'absolute',
+				'z-index': '200',
+			})
+			.show();
+
+		$.post(
+			'/m_public/mypage/archive_save_del.php',
+			{
+				idx_value: idx_value,
+			},
+			function(data, status){
+				$("div[id='Roading']").hide();
+				$("div[id='SysBg_White']").hide();
+
+				if(data == 'Y'){
+					alert('삭제 되었습니다.');
+					location.reload();
+				}else{
+					alert('처리중 문제가 발생했습니다.');
+				}
+			}
+		);
+	}
+}
+
+//삭제기능(숏폼)
+function CourseCheckDel3() {
+	var idx_value = '';
+	var checkbox_count = $("input[name='chk_shortform']").length;
+
+	if(checkbox_count == 0){
+		alert('선택된 항목이 없습니다.');
+		return;
+	}
+
+	if(checkbox_count > 1){
+		for(i = 0; i < checkbox_count; i++){
+			if($("input:checkbox[name='chk_shortform']:eq(" + i + ')').is(':checked') == true){
+				if(idx_value == ''){
+					idx_value = $("input:checkbox[name='chk_shortform']:eq(" + i + ')').val();
+				}else{
+					idx_value = idx_value + '|' + $("input:checkbox[name='chk_shortform']:eq(" + i + ')').val();
+				}
+			}
+		}
+	}else{
+		if($("input:checkbox[name='chk_shortform']").is(':checked') == true){
+			idx_value = $("input:checkbox[name='chk_shortform']").val();
+		}
+	}
+
+	if(!idx_value){
+		alert('삭제하려는 항목을 선택하세요.');
+		return;
+	}
+
+	Yes = confirm('선택한 항목을 삭제하시겠습니까?');
+	if(Yes == true){
+		var currentWidth = $(window).width();
+		var LocWidth = currentWidth / 2;
+		var body_width = screen.width - 20;
+		var body_height = $('html body').height();
+
+		$("div[id='SysBg_White']")
+			.css({
+				width: body_width, 
+				height: body_height,
+				opacity: '0.4',
+				position: 'absolute',
+				'z-index': '99',
+			})
+			.show();
+
+		$("div[id='Roading']")
+			.css({
+				top: '350px',
+				left: LocWidth,
+				opacity: '1.0',
+				position: 'absolute',
+				'z-index': '200',
+			})
+			.show();
+
+		$.post(
+			'/m_public/mypage/archive_save_del.php',
+			{
+				idx_value: idx_value,
+			},
+			function(data, status){
+				$("div[id='Roading']").hide();
+				$("div[id='SysBg_White']").hide();
+
+				if(data == 'Y'){
+					alert('삭제 되었습니다.');
+					location.reload();
+				}else{
+					alert('처리중 문제가 발생했습니다.');
+				}
+			}
+		);
+	}
+}
+
+function navigateToCourse() {
+        var selectedValue = document.getElementById("courseSelect").value;
+        if (selectedValue) {
+            window.location.href = selectedValue;
+        }
+    }
+</script>

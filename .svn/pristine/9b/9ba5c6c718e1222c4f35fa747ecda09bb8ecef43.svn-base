@@ -1,0 +1,158 @@
+@charset "UTF-8";
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+}
+header .logo {
+  width: 250px;
+}
+header .logo img {
+  width: 100%;
+}
+header .logout button {
+  padding: 7px 20px;
+  background-color: transparent;
+  border: 1px solid #777;
+  color: #777;
+  border-radius: 40px;
+}
+
+.prev_wrap .top {
+  margin: 20px 0 40px 0;
+}
+.prev_wrap .top .logo {
+  width: 300px;
+}
+.prev_wrap .top .logo img {
+  width: 100%;
+}
+.prev_wrap .top .txt strong {
+  font-size: 20px;
+  margin: 30px 0 10px 0;
+  display: block;
+  letter-spacing: 0.5px;
+}
+.prev_wrap .top .txt p {
+  font-size: 16px;
+  font-weight: 300;
+}
+
+/*curation*/
+.selection {
+  border-top: 1px solid #575757;
+  border-bottom: 1px solid #575757;
+}
+.selection .sec {
+  border-bottom: 1px solid #575757;
+  padding: 40px 0;
+}
+.selection .sec .title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #575757;
+}
+.selection .sec ul {
+  display: flex;
+  flex-wrap: wrap;
+}
+.selection .sec ul li a {
+  border: 1px solid #909090;
+  color: #575757;
+  padding: 10px 25px;
+  margin-top: 20px;
+  margin-right: 20px;
+  display: block;
+  border-radius: 30px;
+  cursor: pointer;
+}
+.selection .sec ul li a.on {
+  border: 1px solid #2269f3;
+  color: #2269f3;
+}
+.selection .sec ul li a.on2 {
+  border: 1px solid #2269f3;
+  color: #2269f3;
+}
+.selection .sec ul li a.off {
+  border: 1px solid #909090;
+  color: #575757;
+}
+
+/*사전진단*/
+.test {
+  margin-bottom: 100px;
+}
+
+.test_title h2 {
+  margin-top: 50px;
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+  padding-left: 20px;
+  border-left: 8px solid #333;
+}
+
+.test_table {
+  margin-top: 30px;
+}
+
+.test_table table {
+  border: 1px solid;
+  text-align: center;
+  width: 100%;
+}
+
+.test_table caption {
+  display: none;
+}
+
+.test_table tr {
+  border-bottom: 1px solid;
+}
+
+.test_table tr th {
+  border-left: 1px solid;
+  padding: 15px 10px;
+  font-weight: 600;
+  background-color: #dfdfdf;
+}
+
+.test_table tr td {
+  border-left: 1px solid;
+  padding: 15px 10px;
+  font-weight: 300;
+  line-height: 30px;
+  background-color: #eee;
+}
+
+.test_table input {
+  width: 20px;
+  height: 20px;
+  background-color: rgba(0, 0, 0, 0);
+  border: 1px solid;
+  border-radius: 50px;
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  cursor: pointer;
+}
+
+.test_table input:checked {
+  -webkit-appearance: auto;
+     -moz-appearance: auto;
+          appearance: auto;
+}
+
+.bottom {
+  text-align: center;
+  margin: 20px 0;
+}
+.bottom button {
+  width: 112px;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #2269f3;
+  color: #fff;
+}/*# sourceMappingURL=prev.css.map */

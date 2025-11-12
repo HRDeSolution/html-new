@@ -1,0 +1,242 @@
+<? include "../include/mypage_header.html"; ?>
+<? include "../include/login_check.php"; ?>
+<?
+$where[] = "b.ID = '$LoginMemberID'";
+$where[] = "a.Del='N'";
+$where[] = "a.UseYN='Y'";
+
+$where = implode(" AND ",$where);
+if($where) $where = "WHERE $where";
+
+$SQLA = "SELECT COUNT(*) FROM CourseFlex a LEFT JOIN CourseFlexLike b on a.LectureCode = b.LectureCode $where";
+$ResultA = mysqli_query($connect, $SQLA);
+$RowA = mysqli_fetch_array($ResultA);
+$TOT_NO = $RowA[0];
+mysqli_free_result($ResultA);
+?>
+<?
+	$idxA = Replace_Check($idx);
+	$pg = Replace_Check_XSS2($pg);
+
+    ##-- 페이지 조건
+    if(!$pg) $pg = 1;
+    $page_size = 10;
+    $block_size = 10;
+
+    ##-- 검색 등록수
+    $SqlA = "SELECT COUNT(*) AS cnt FROM(SELECT DISTINCT LectureCode FROM ProgressFlex WHERE ID = '$LoginMemberID') a";
+	$ResultA = mysqli_query($connect, $SqlA);
+	$RowA = mysqli_fetch_array($ResultA);
+	$TOT_NO = $RowA[0];
+
+    ##-- 페이지 클래스 생성
+    include_once("../../include/include_page.php");
+
+    $PAGE_CLASS = new Page($pg,$TOT_NO,$page_size,$block_size); ##-- 페이지 클래스
+    $BLOCK_LIST = $PAGE_CLASS->blockList(); ##-- 페이지 이동관련
+    $PAGE_UNCOUNT = $PAGE_CLASS->page_uncount; ##-- 게시물 번호 한개씩 감소
+?>
+        <div class="mypage_content">
+        	<div class="sb_box">
+                <h1>관심 과정</h1>
+                <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습현황<i class="ph ph-caret-right"></i>&nbsp;관심 과정
+                </div>
+            </div>
+            <div class="content">
+                 <!--이러닝-->
+                 <div class="table_wrap">
+                    <h2>이러닝</h2>
+                    <div class="top_button">
+                        <div class="left">
+                            <input type="checkbox" id="cbx_chkAll_elearning" name="chkAll_elearning">
+                            <label for="cbx_chkAll_elearning">전체선택</label>
+                        </div>
+                        <div class="right">
+                            <button class="delete" onclick="Javascript:CourseFlexCheckDel();">삭제</button>
+                        </div>
+                    </div>
+                    <table>
+                        <colgroup>
+                            <col width="5%">
+                            <col width="*%">
+                            <col width="90px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>과정명</th>
+                                <th>학습하기</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="checkbox" name="chk_elearning" class="chk_elearning" value="<?=$idx?>"></td>
+                                <td style="text-align: left;">12차시보육과정 및 상호작용-영유아간 상호작용지원</td>
+                                <td><button class="white" onclick="Javascript:ContentsPlayer('TEST0007');">학습하기</button></td>
+                               
+                           </tr>
+                        </tbody>
+                    </table>
+                    <!-- page -->
+                    <?=$BLOCK_LIST?>
+                    <!-- //page -->
+                </div>
+                <!--이러닝-->
+                <!--마이크로러닝-->
+                <div class="table_wrap">
+                <h2>마이크로러닝</h2>
+                <div class="top_button">
+                    <div class="left">
+                        <input type="checkbox" id="cbx_chkAll_microlearning" name="chkAll_microlearning">
+                        <label for="cbx_chkAll_microlearning">전체선택</label>
+                    </div>
+                    <div class="right">
+                        <button class="delete" onclick="Javascript:CourseFlexCheckDel();">삭제</button>
+                    </div>
+                </div>
+                <table>
+                    <colgroup>
+                        <col width="5%">
+                        <col width="*%">
+                        <col width="90px">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>과정명</th>
+                            <th>학습하기</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" name="chk_microlearning" class="chk_microlearning"value="<?=$idx?>"></td>
+                            <td style="text-align: left;">12차시보육과정 및 상호작용-영유아간 상호작용지원</td>
+                            <td><button class="white" onclick="Javascript:ContentsPlayer('TEST0007');">학습하기</button></td>
+                           
+                       </tr>
+                    </tbody>
+                </table>
+                <!-- page -->
+                <?=$BLOCK_LIST?>
+                <!-- //page -->
+            </div>
+            <!--마이크로러닝-->
+            <!--숏폼-->
+            <div class="table_wrap">
+            <h2>숏폼</h2>
+            <div class="top_button">
+                <div class="left">
+                    <input type="checkbox"  id="cbx_chkAll_shortform" name="chkAll_shortform">
+                    <label for="cbx_chkAll_shortform">전체선택</label>
+                </div>
+                <div class="right">
+                    <button class="delete" onclick="Javascript:CourseFlexCheckDel();">삭제</button>
+                </div>
+            </div>
+            <table>
+                <colgroup>
+                    <col width="5%">
+                    <col width="*%">
+                    <col width="90px">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>과정명</th>
+                        <th>학습하기</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><input type="checkbox" name="chk_shortform" class="chk_shortform" value="1"></td>
+                        <td style="text-align: left;">12차시보육과정 및 상호작용-영유아간 상호작용지원</td>
+                        <td><button class="white" onclick="Javascript:ContentsPlayer('TEST0007');">학습하기</button></td>
+                    </tr>
+                </tbody>
+            </table>
+            <!-- page -->
+            <?=$BLOCK_LIST?>
+            <!-- //page -->
+            </div>
+            <!--숏폼-->
+            </div>
+        </div>
+    </div>
+</body>
+
+<? include "../../common/include/footer.html"; ?>
+
+<!--check all-->
+<script>
+$(document).ready(function () {
+    // 이러닝 체크박스 동작
+    $("#cbx_chkAll_elearning").click(function () {
+        $(".chk_elearning").prop("checked", $(this).is(":checked"));
+    });
+
+    $(".chk_elearning").click(function () {
+        var total = $(".chk_elearning").length;
+        var checked = $(".chk_elearning:checked").length;
+
+        $("#cbx_chkAll_elearning").prop("checked", total === checked);
+    });
+
+    // 마이크로러닝 체크박스 동작
+    $("#cbx_chkAll_microlearning").click(function () {
+        $(".chk_microlearning").prop("checked", $(this).is(":checked"));
+    });
+
+    $(".chk_microlearning").click(function () {
+        var total = $(".chk_microlearning").length;
+        var checked = $(".chk_microlearning:checked").length;
+
+        $("#cbx_chkAll_microlearning").prop("checked", total === checked);
+    });
+
+    // 숏폼 체크박스 동작
+    $("#cbx_chkAll_shortform").click(function () {
+        $(".chk_shortform").prop("checked", $(this).is(":checked"));
+    });
+
+    $(".chk_shortform").click(function () {
+        var total = $(".chk_shortform").length;
+        var checked = $(".chk_shortform:checked").length;
+
+        $("#cbx_chkAll_shortform").prop("checked", total === checked);
+    });
+});
+
+</script>
+
+<!--more load-->
+<script>
+$(function(){
+	var clickNum = 1; //버튼을 클릭한 수
+	
+	$("#load").click(function(e){		
+		var totNo = <?=$TOT_NO?>; //컨텐츠 총개수
+	   	var showNo = $(".saved_lecture_list li").length; //현재 보여지는 컨텐츠 개수
+	   	var hiddenNo = totNo - showNo; //아직 보여지지 않은 컨텐츠 개수
+		
+		var pageStart = clickNum * 4;
+	   	
+		CourseFlexLikeAdd(totNo, showNo, hiddenNo, pageStart); //과정더보기		
+		clickNum ++;
+		
+		//컨텐츠가 없으면 버튼도 숨김처리
+		if(hiddenNo < 1){
+			$(".content .hide").show();
+			$('#load').fadeOut(100);
+	   	}
+    });
+})
+</script>
+<script>
+    $(document).ready(function(){
+        $('.mypage_menu .lecture_status').addClass("on");
+        $('.mypage_menu .lecture_status ul').css('display','block');
+        $('.mypage_menu .lecture_status ul .status03').addClass("on");
+        $('.mypage_menu .lecture_status a').find('i').toggleClass("ph-caret-up ph-caret-down");
+    });
+</script>

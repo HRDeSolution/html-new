@@ -1,0 +1,426 @@
+<? include "../include/header.html";?>
+<? include $_SERVER['DOCUMENT_ROOT'] . "/popup/include_popup.php"; ?>
+<?
+$ID = $_SESSION['LoginMemberID'];
+
+if($ID){
+	$Sql = "SELECT * FROM MemberContents WHERE ID='$ID'";
+	$Result = mysqli_query($connect, $Sql);
+	$Row = mysqli_fetch_array($Result);
+	if($Row){
+		$Category1 = $Row['Category1'];
+		$Category2 = $Row['Category2'];
+		$Keyword1  = $Row['Keyword1'];
+		$Keyword2  = $Row['Keyword2'];
+		$Keyword3  = $Row['Keyword3'];
+	}
+
+    $Sql = "SELECT * FROM Member WHERE ID='$ID'";
+	$Result = mysqli_query($connect, $Sql);
+	$Row = mysqli_fetch_array($Result);
+	if($Row){
+		$AbilityYN = $Row['AbilityYN'];
+	}
+}
+?>
+<script>
+    //학습하기
+    function ContentsNext() {
+        var chkID = "<?=$ID?>";
+        var Category1 = "<?=$Category1?>";
+        var Category2 = "<?=$Category2?>";
+        var Keyword1 = "<?=$Keyword1?>";
+        var Keyword2 = "<?=$Keyword2?>";
+        var Keyword3 = "<?=$Keyword3?>";
+        var AbilityYN = "<?=$AbilityYN?>";
+
+        if (chkID) {
+            if (Category1 == "" || Category2 == "") {
+                location.href = "../prev/prev_test01.html";
+            } else if (Keyword1 == "" || Keyword2 == "" || Keyword3 == "") {
+                location.href = "../prev/prev_test01.html";
+            }
+
+            if (AbilityYN == "N") {
+                location.href = "../prev/prev_test02.html";
+            } else {
+                location.href = "../contents/main.html";
+            }
+        } else {
+            location.href = "/public/member/login.html?sitemode=flex2";
+        }
+
+        /*
+        if(chkID){
+            if(Category1 == "" || Category2 == ""){
+                  location.href = "../prev/prev_test01.html";
+            }else if(Keyword1 == "" || Keyword2 == "" || Keyword3 == ""){
+                  location.href = "../prev/prev_test01.html";
+            }
+            
+            if ( AbilityYN == "N" ) {
+                location.href = "../prev/prev_test01.html";
+            } else{
+                location.href = "../contents/main.html";
+            }
+        }else{
+            location.href="/public/member/login.html?sitemode=flex2";
+        }
+        */
+    }
+
+    //비회원 접근
+    /*
+    function guestAccessHandler(){
+        location.href = "/hrdflex/contents/main.html?m=g";
+    	
+    }
+    */
+</script>
+
+<body>
+    <div class="main_banner">
+        <div class="bg"></div>
+        <div class="top_header">
+            <div id="wrap" style="justify-content: flex-end; padding: 10px 0;">
+                <div class="btn">
+                    <? if(empty($_SESSION['LoginMemberID'])) { ?>
+                    <a href="../../public/member/login.html?sitemode=flex">로그인</a>
+                    <!--    <a href="/public/member/join.html">회원가입</a> -->
+                    <?}else{?>
+                    <a href="../../public/member/logout.php?sitemode=flex">로그아웃</a>
+                    <?}?>
+                    <div class="button">
+                        <a href="/public/mypage/lecture_status.html" class="point"><i class="ph ph-sign-out"></i>나의
+                            학습실</a>
+                    </div>
+                </div>
+            </div>
+            <!--wrap-->
+        </div>
+        <div id="wrap">
+            <div class="txt_wrap">
+                <span class="top" data-aos="fade-down" data-aos-delay="400">기업교육 컨텐츠 무제한 수강, 디지털 원격훈련 아카이브</span>
+                <div class="logo" data-aos="fade-down" data-aos-delay="400"><img src="../img/common/archive_logo.png"
+                        alt="HRDe 아카이브"></div>
+                <span class="bottom" data-aos="fade-down" data-aos-delay="400">약 2,200여개의 엄선된 CONTENTS</span>
+                <div class="txt" data-aos="fade-down" data-aos-delay="700">
+                    <p>다양하게!</p>
+                    <p>유연하게!</p>
+                    <p>자체적으로!</p>
+                </div>
+                <div class="button" data-aos="fade-down" data-aos-delay="1000">
+                    <button onclick="Inquiry()" class="modal-btn">수강신청</button>
+                    <button class="content" onclick="ContentsNext()">학습하기</button>
+                    <?if(empty($_SESSION['LoginMemberID'])){?>
+                    <!-- <button class="content" onclick="guestAccessHandler()" >비회원학습하기</button> -->
+                    <?}?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main_con con1">
+        <div id="wrap">
+            <div class="title" data-aos="fade-down">
+                <h1><span>HRDe 아카이브</span>란?</h1>
+                <p>기업에 HRDe만의 노하우가 담긴 고품질 콘텐츠로 구성된 HRDe 아카이브(원격훈련 수강 플랫폼)을 제공하여<br>학습자가 다양한 콘텐츠를 자유롭게 수강할 수 있도록 더 많은 선택과
+                    기회를 제공하는 학습자 중심의 직업훈련 도모를 위한 원격훈련제도 입니다.</p>
+            </div>
+            <!--title-->
+            <div class="content">
+                <ul>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <div class="img">
+                                <img src="../img/main/con1_1.png" alt="아이콘">
+                            </div>
+                            <div class="txt">
+                                <strong>별도의 수강신청 NO!</strong>
+                                <p>간편한 무제한 구독형 교육</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <div class="img">
+                                <img src="../img/main/con1_2.png" alt="아이콘">
+                            </div>
+                            <div class="txt">
+                                <strong>원하는 만큼만, 발췌 수강!</strong>
+                                <p>유연하게 골라서 학습 가능</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <div class="img">
+                                <img src="../img/main/con1_3.png" alt="아이콘">
+                            </div>
+                            <div class="txt">
+                                <strong>평가 / 과제 NO!</strong>
+                                <p>트렌디한 컴팩트 학습</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <div class="img">
+                                <img src="../img/main/con1_4.png" alt="아이콘">
+                            </div>
+                            <div class="txt">
+                                <strong>5300여개 HRDe개발 콘텐츠</strong>
+                                <p>콘텐츠 상시 업데이트</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <div class="img">
+                                <img src="../img/main/con1_5.png" alt="아이콘">
+                            </div>
+                            <div class="txt">
+                                <strong>관심/역량에 맞는 큐레이션</strong>
+                                <p>개인별 맞춤 콘텐츠 추천</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <div class="img">
+                                <img src="../img/main/con1_6.png" alt="아이콘">
+                            </div>
+                            <div class="txt">
+                                <strong>심플한 수료조건!</strong>
+                                <p>학습시간 15시간 이상</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <div class="img">
+                                <img src="../img/main/con1_7.png" alt="아이콘">
+                            </div>
+                            <div class="txt">
+                                <strong>역량진단을 통한 성과관리</strong>
+                                <p>사전/사후 학습현황 및 결과제공</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <!--content-->
+        </div>
+        <!--wrap-->
+    </div>
+    <!--con2-->
+    <div class="main_con con2">
+        <div id="wrap">
+            <div class="title" data-aos="fade-down" data-aos-offset="400">
+                <h1>HRDe 아카이브를 선택해야하는 이유</h1>
+            </div>
+            <!--title-->
+            <div class="content">
+                <ul>
+                    <li data-aos="fade-left" data-aos-delay="400" data-aos-offset="300">
+                        <div class="left">
+                            <span>01</span>
+                            <strong>2,200여개의 수요높은 콘텐츠</strong>
+                            <p>기업 수요조사 결과를 통해 공통역량 / 리더십 / 직무역량 분야의 콘텐츠 선별! <br>신규 콘텐츠 상시 업데이트!</p>
+                        </div>
+                        <div class="right"><img src="../img/main/con2_1.png" alt="아이콘"></div>
+                    </li>
+                    <li data-aos="fade-right" data-aos-delay="400" data-aos-offset="300">
+                        <div class="left">
+                            <span>02</span>
+                            <strong>큐레이션 기반 수강생 니즈에 맞는 콘텐츠 검색 및 추천 가능</strong>
+                            <p>학습자 직급, 관심분야, 학습이력 및 수강 패턴 기반 최적화 큐레이션 및 로드맵 제공</p>
+                        </div>
+                        <div class="right"><img src="../img/main/con2_2.png" alt="아이콘"></div>
+                    </li>
+                    <li data-aos="fade-left" data-aos-delay="400" data-aos-offset="300">
+                        <div class="left">
+                            <span>03</span>
+                            <strong>고품질 콘텐츠 모바일 웹 수강지원</strong>
+                            <p>언제 어디서나 손쉽게 모바일 웹 수강 가능! <br>고품질 콘텐츠를 통한 수강생의 흥미와 역량 향상 가능! </p>
+                        </div>
+                        <div class="right" data-aos-offset="300"><img src="../img/main/con2_3.png" alt="아이콘"></div>
+                    </li>
+                </ul>
+            </div>
+            <!--content-->
+        </div>
+        <!--wrap-->
+    </div>
+    <!--con2-->
+    <div class="main_con con3">
+        <div id="wrap">
+            <div class="title" data-aos="fade-down" data-aos-offset="400">
+                <h1>HRDe 아카이브 운영 프로세스</h1>
+            </div>
+            <!--title-->
+            <div class="content">
+                <ol data-aos="flip-up" data-aos-delay="400" data-aos-offset="300">
+                    <li>
+                        <span>STEP 01</span>
+                        <strong>계약체결 및 <br>실시신고</strong>
+                        <em>교육시작 10일 전</em>
+                        <p>고객사 맞춤 상담,<br> 구독 계약 체결</p>
+                    </li>
+                    <li>
+                        <span>STEP 02</span>
+                        <strong>HRDe 아카이브<br>과정 시작</strong>
+                        <em>교육시작</em>
+                        <p>필수안내사항<br>오리엔테이션</p>
+                    </li>
+                    <li>
+                        <span>STEP 03</span>
+                        <strong>HRDe 아카이브<br>과정 운영</strong>
+                        <em>계약기간</em>
+                        <p>과정 큐레이션 및<br>진도율 관리</p>
+                    </li>
+                    <li>
+                        <span>STEP 04</span>
+                        <strong>HRDe 아카이브<br>운영 종료</strong>
+                        <em>종료 후 2주 이내</em>
+                        <p>고객사별 <br>아카이브 REPORT</p>
+                    </li>
+                    <li>
+                        <span>STEP 05</span>
+                        <strong>수료보고 및<br>계산서 발행</strong>
+                        <em>종료 후 1개월 이내</em>
+                        <p>사업주 자부담금 납부 <br>비용 정산</p>
+                    </li>
+                </ol>
+                <ul data-aos="flip-up" data-aos-delay="400" data-aos-offset="300">
+                    <li><i class="ph-bold ph-binoculars"></i><br> 학습 전 <br>사전역량진단</li>
+                    <li><i class="ph-bold ph-target"></i><br>학습 중 <br>큐레이션 추천</li>
+                    <li><i class="ph-bold ph-chart-line-up"></i><br>학습 후 <br>사후역량진단</li>
+                    <li><i class="ph-bold ph-thumbs-up"></i><br>학습 완료<br>만족도조사</li>
+                </ul>
+            </div>
+            <!--content-->
+        </div>
+        <!--wrap-->
+    </div>
+    <!--con3-->
+    <div class="main_con con4">
+        <div id="wrap">
+            <div class="title" class="title" data-aos="fade-down" data-aos-offset="400">
+                <h1>HRDe 아카이브 보유과정</h1>
+            </div>
+            <!--title-->
+            <div class="content">
+                <!-- 첫번째 슬라이드 -->
+                <div class="swiper" dir="ltr">
+                    <div class="banner">공통역량</div>
+                    <div class="swiper-wrapper">
+                        <?for($i=1; $i<9; $i++){?>
+                        <div class="swiper-slide">
+                            <div class="img" style="background-image: url(../img/lecture/lectureA<?=$i?>.png);"></div>
+                        </div>
+                        <?}?>
+                    </div>
+                </div>
+                <!-- 두번째 슬라이드 -->
+                <div class="swiper" dir="rtl">
+                    <div class="banner">직무역량</div>
+                    <div class="swiper-wrapper">
+                        <?for($i=1; $i<9; $i++){?>
+                        <div class="swiper-slide">
+                            <div class="img" style="background-image: url(../img/lecture/lectureB<?=$i?>.png);"></div>
+                        </div>
+                        <?}?>
+                    </div>
+                </div>
+                <!-- 세번째 슬라이드 -->
+                <div class="swiper" dir="ltr">
+                    <div class="banner">리더십</div>
+                    <div class="swiper-wrapper">
+                        <?for($i=1; $i<9; $i++){?>
+                        <div class="swiper-slide">
+                            <div class="img" style="background-image: url(../img/lecture/LDShorts<?=$i?>.png);"></div>
+                        </div>
+                        <?}?>
+                    </div>
+                </div>
+            </div>
+            <!--content-->
+        </div>
+        <!--wrap-->
+    </div>
+    <!--con4-->
+    <div class="btn_banner">
+        <div id="wrap">
+            <a href="/archive/introduce/archive.html">
+                <img src="../img/main/btn_icon1.png" alt="">
+                <p>훈련제도 안내</p>
+            </a>
+            <a href="/public/support/notice.html">
+                <img src="../img/main/btn_icon2.png" alt="">
+                <p>공지사항</p>
+            </a>
+            <a href="/public/support/faq.html">
+                <img src="../img/main/btn_icon3.png" alt="">
+                <p>자주묻는질문</p>
+            </a>
+            <a href="/public/support/ask.html">
+                <img src="../img/main/btn_icon4.png" alt="">
+                <p>1:1문의</p>
+            </a>
+            <a href="/archive/etc/guide.html">
+                <img src="../img/main/btn_icon5.png" alt="">
+                <p>학습유의사항</p>
+            </a>
+            <a href="/archive/etc/cheating_guide.html">
+                <img src="../img/main/btn_icon6.png" alt="">
+                <p>부정행위방지정책</p>
+            </a>
+        </div>
+
+    </div>
+    <div class="bottom_banner">
+        <div id="wrap">
+            <div class="logo"><img src="../img/common/archive_logo.png" alt="HRDe 아카이브"></div>
+            <span>재직자들의 역량강화를 위한 디지털 원격훈련 아카이브,<br> HRDe 아카이브에서 시작하세요!</span>
+            <div class="button">
+                <button class="ask modal-btn" onclick="Inquiry()">수강신청<i class="ph ph-arrow-right"></i></button>
+                <button class="call">문의전화: 1811-9530</button>
+            </div>
+        </div>
+    </div>
+</body>
+<?php include "../include/footer.html"; ?>
+
+</html>
+
+<!--swiper-->
+<script>
+    $('.swiper').each(function (index) {
+        let t = $(this);
+        t.addClass('swiper-' + index);
+        let swiper = new Swiper(t, {
+            autoplay: {
+                delay: 0, //add      
+                disableOnInteraction: false,
+            },
+            speed: 7000,
+            loop: true,
+            loopAdditionalSlides: 1,
+            slidesPerView: 4,
+            spaceBetween: 30
+        });
+    });
+</script>
+
+<!--slideani-->
+<script>
+    AOS.init({
+        offset: 60,
+        delay: 0,
+        duration: 400,
+        easing: 'ease',
+        once: false,
+        mirror: false,
+        anchorPlacement: 'top-bottom'
+    });    
+</script>

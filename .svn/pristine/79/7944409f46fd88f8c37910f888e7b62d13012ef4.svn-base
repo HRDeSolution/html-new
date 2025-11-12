@@ -1,0 +1,116 @@
+<div class="top_header white">
+    <div id="wrap">
+         <!--PC 메뉴-->
+        <nav class="dropdown-menu">
+            <a href="../main/main.html"> <img class="logo" src="../img/common/archive_logo.png" alt="HRDe아카이브"></a>
+            <ul>
+                <li class="depth01">
+                    <a href="#">공통역량</a>
+                </li>
+                <li class="depth01">
+                    <a href="#">직무역량</a>
+                </li>
+                <li class="depth01">
+                    <a href="#">리더십</a>
+                </li>
+                <li class="depth01">
+                    <a href="#">학습지원센터</a>
+                    <ul class="depth02">
+                        <li><a href="#">HRDe 아카이브</a></li>
+                        <li><a href="/archive_public/support/notice.html">공지사항</a></li>
+                        <li><a href="/archive_public/support/faq.html">FAQ</a></li>
+                        <li><a href="/archive_public/support/ask.html">1:1 문의</a></li>
+                        <li><a href="/archive_public/support/remote.html">원격지원</a></li>
+                    </ul>
+                </li>
+            </ul>
+        
+        </nav>
+        <!--PC 메뉴-->
+        <!--모바일 메뉴-->
+        <div class="menu-list"><i class="ph ph-list"></i></div>
+        <nav class="mobile-menu">
+            <div class="menu-header">
+                <button class="close-btn">×</button>
+              </div>
+            <div class="search_box">
+                <input name="" id="" type="text" title="검색어 입력" placeholder="CSS 실무자에게 필요한 CX스킬"><span class="search_btn"><i class="ph ph-magnifying-glass"></i></span>
+            </div>
+            <ul>
+                <li class="depth01">
+                    <a href="#">공통역량</a>
+                </li>
+                <li class="depth01">
+                    <a href="#">직무역량</a>
+                </li>
+                <li class="depth01">
+                    <a href="#">리더십</a>
+                </li>
+            </ul>
+        </nav>
+        <!--모바일 메뉴-->
+        <div class="search_box">
+            <input name="" id="" type="text" title="검색어 입력" placeholder="과정명을 입력하세요."><span class="search_btn"><i class="ph ph-magnifying-glass"></i></span>
+        </div>
+    </div>
+    <!--wrap-->
+</div>
+<!--top_header-->
+<div class="top_status">
+    <div id="wrap">
+        <div class="left">
+            <div class="txt">
+                <b>홍길동</b>님 1시간 46분 학습하셨어요. ｜ 수료기준: <b>15시간</b>
+            </div>
+            <div class="progress-wrap">
+                <i class="ph-fill ph-chart-donut"></i>
+                완료율 <b>15%</b>
+                <div class="progress-bar">
+                    <span class="progress-bar" style="width: 15%;"></span>
+                </div>
+            </div>
+        </div>
+        <div class="right">
+            <div class="btn">
+                <? if(empty($_SESSION['LoginMemberID'])) { ?>
+                <a href="../../public/member/login.html?sitemode=flex">로그인</a>
+                <a href="/public/member/join.html">회원가입</a>
+                <?}else{?>
+                <a href="../../public/member/logout.php?sitemode=flex">로그아웃</a>
+                <?}?>
+                <div class="button">
+                    <a href="/archive_public/mypage/lecture_status.html" class="point"><i class="ph ph-sign-out"></i>나의 학습실</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--top_status-->
+<script>
+    //PC 메뉴
+    $(document).ready(function () {
+        $(".depth01").hover(
+            function () {
+                $(this).find(".depth02").addClass("active"); 
+            },
+            function () {
+                $(this).find(".depth02").removeClass("active");
+            }
+        );
+    });
+
+    //모바일 메뉴
+    $(document).ready(function () {
+    $('.menu-list').on('click', function () {
+        const menu = $('.mobile-menu');
+        if (menu.css('left') === '-100%') {
+        menu.css('left', '-100%');
+        } else {
+        menu.css('left', '0');
+        }
+    });
+     $('.close-btn').on('click', function () {
+        $('.mobile-menu').css('left', '-100%');
+    });
+});
+</script>

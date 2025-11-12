@@ -1,0 +1,177 @@
+<? include "../include/mypage_header.html"; ?>
+<? include "../include/login_check.php"; ?>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#SearchYear").change(function(){
+			$("#changeList").load(location.href+" #changeList",{SearchYear: $('#SearchYear').val(), memberCompany: $('#memberCompany').val()});
+		});
+		
+		$("#memberCompany").change(function(){
+			$("#changeList").load(location.href+" #changeList",{SearchYear: $('#SearchYear').val(), memberCompany: $('#memberCompany').val()});
+		});
+	});
+</script>
+
+        <div class="mypage_content">
+            <div class="sb_box">
+                <h1>교육담당자</h1>
+                <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;나의학습실<i class="ph ph-caret-right"></i>&nbsp;교육담당자
+                </div>
+            </div>
+            <div class="content">
+                <h2>수료 관리</h2>
+                <ul class="studentlst">
+                    <select name="SearchYear" id="SearchYear" style="width: 150px;margin-bottom: -28px;">
+                        <option value="">년도 검색</option>
+                        <?for($i=2018;$i<=date("Y");$i++) { ?>
+							<option value="<?=$i?>"><?=$i?>년</option>
+						<?}?>
+                    </select>
+                    <select name="memberCompany" id="memberCompany" style="width: 150px;margin-bottom: -28px;">
+						<option value="">사업장 검색</option>
+                        <?
+						$SQL = "SELECT a.ID , a.CompanyCode , b.CompanyName 
+                                FROM MemberCompany a
+                                LEFT JOIN Company b ON a.CompanyCode = b.CompanyCode 
+                                WHERE a.ID = '$LoginMemberID' AND a.Del = 'N'";
+                        $QUERY = mysqli_query($connect, $SQL);
+						if($QUERY && mysqli_num_rows($QUERY)){
+							while($ROW = mysqli_fetch_array($QUERY)){
+                                extract($ROW);
+						?>
+                        <option value="<?=$CompanyCode?>"><?=$CompanyName?></option>
+						<?
+                            }
+                        }
+						?>
+					</select>
+					
+                    <!-- List -->
+                    <li id="changeList">
+                        <!-- info list -->
+						<?
+						if($memberCompany){
+                            $StrMemberCompany = "a.CompanyCode=$memberCompany";
+                        }else{
+                            $StrMemberCompany = "a.CompanyCode=(SELECT CompanyCode FROM Member WHERE ID='$LoginMemberID')";
+                        }
+                        
+						if($SearchYear){
+							$where = " WHERE $StrMemberCompany AND a.ServiceType IN ('A') AND YEAR(a.LectureStart)= '$SearchYear' ";
+						}else{			    
+							$where = " WHERE $StrMemberCompany AND a.ServiceType IN ('A') ";
+						}
+
+						$SQL = "SELECT DISTINCT a.LectureStart AS LectureStart, a.LectureEnd 
+								FROM Study AS a 
+								LEFT OUTER JOIN Company AS b ON a.CompanyCode=b.CompanyCode 
+								$where
+								ORDER BY a.LectureStart ASC, a.LectureEnd ASC ";
+						//echo $SQL;
+						$QUERY = mysqli_query($connect, $SQL);
+						if($QUERY && mysqli_num_rows($QUERY)){
+							while($ROW = mysqli_fetch_array($QUERY)){
+								extract($ROW);
+						?>
+								<ul class="classdate">
+									<li class="left"><?=$LectureStart?> ~ <?=$LectureEnd?> 개강</li>
+								</ul>
+								<?
+								if($memberCompany){
+                                    $StrMemberCompany2 = "b.CompanyCode=$memberCompany";
+                                }else{
+                                    $StrMemberCompany2 = "b.CompanyCode=(SELECT CompanyCode FROM Member WHERE ID='$LoginMemberID')";
+                                }
+                                
+								$SQL2 = "SELECT DISTINCT a.CompanyCode, c.ServiceType, c.Category1, c.Category2, c.ContentsName, c.LectureCode , a.StudyEnd ,
+										(SELECT CategoryName FROM CourseCategory WHERE idx=c.Category1) AS Category1Name, 
+										(SELECT COUNT(*) FROM Study WHERE LectureStart=a.LectureStart AND LectureEnd=a.LectureEnd AND CompanyCode=a.CompanyCode AND LectureCode=a.LectureCode AND PassOk='Y') AS StudyCount, 
+										(SELECT COUNT(*) FROM Study WHERE LectureStart=a.LectureStart AND LectureEnd=a.LectureEnd AND CompanyCode=a.CompanyCode AND LectureCode=a.LectureCode AND PassOk='N') AS StudyBeCount 
+										FROM Study AS a 
+										LEFT OUTER JOIN Company AS b ON a.CompanyCode=b.CompanyCode 
+										LEFT OUTER JOIN Course AS c ON a.LectureCode=c.LectureCode
+										WHERE $StrMemberCompany2 AND a.ServiceType IN ('A') AND a.LectureStart='$LectureStart' AND a.LectureEnd='$LectureEnd' ORDER BY c.ContentsName ASC";
+								//if($LoginMemberID == "test05") echo $SQL2;
+								$QUERY2 = mysqli_query($connect, $SQL2);
+								if($QUERY2 && mysqli_num_rows($QUERY2)){
+									while($ROW2 = mysqli_fetch_array($QUERY2)){
+
+										$StudyCount = $ROW2['StudyCount']; //수료인원
+										$StudyBeCount = $ROW2['StudyBeCount']; //미수료인원
+
+										$StudySum = $StudyCount + $StudyBeCount; //전체인원
+
+										$Category1Name = $ROW2['Category1Name'];
+										$ContentsName = $ROW2['ContentsName'];
+										$LectureCode = $ROW2['LectureCode'];
+										$ServiceType = $ROW2['ServiceType'];
+										$CompanyCode = $ROW2['CompanyCode'];
+										$StudyEnd = $ROW2['StudyEnd'];
+																				
+										if($StudyEnd=='Y')		$CertificatePrintOK = 'Y';
+										else					$CertificatePrintOK = 'N';
+								?>
+										<table width="100%" class="tbl_typeD mt15" border="0" cellspacing="0" summary="">
+											<caption></caption>
+											<colgroup>
+											<col width=""><col width="15%"><col width="15%">
+											</colgroup>
+											<tbody>
+												<tr>
+													<td rowspan="2">
+														<ul class="baseinfo">
+															<li class="subname"><?=$Category1Name?></li>
+															<li class="name"><?=$ContentsName?></li>
+															<li class="refund"><?=$ServiceType_array[$ServiceType]?></span></li>
+														</ul>
+													</td>
+													<td>
+														<div>수료인원: <span class="font_red"><?=$StudyCount?>명</span></div>
+														<div class="mt5">전체인원: <?=$StudySum?>명</div>
+													</td>
+													<td>
+														<div><button type="button" class="btn_02" onclick="CertificatePrintMulti('<?=$CompanyCode?>','<?=$LectureStart?>','<?=$LectureEnd?>','<?=$LectureCode?>','<?=$CertificatePrintOK?>', '')">수료증 PDF</button></div>
+														<br><div><button type="button" class="btn_02" onclick="archiveReport('<?=$CompanyCode?>','<?=$LectureStart?>','<?=$LectureEnd?>');">아카이브 REPORT</button></div>
+
+													</td>
+												</tr>
+											</tbody>
+										</table>	
+						
+						<?
+									} //while문 끝 ($SQL2)
+								}
+							} //while문 끝 ($SQL)
+						}else{
+						?>
+							<br><br>
+							<ul>수강 내역이 없습니다.</ul>
+						<?
+						}
+						?>
+                        
+                        
+                        <!-- info list // -->
+                        </li>
+                    <!-- List // -->
+                                
+                </ul>
+            </div>
+            <!--content-->
+        </div>
+        <!--mypage_content-->
+    </div>
+    <!--wrap-->
+</body>
+<? include "../../archive/include/footer.html"; ?>
+<script>
+    $(document).ready(function(){
+        $('.mypage_menu .manager').addClass("on");
+        $('.mypage_menu .manager ul').css('display','block');
+        $('.mypage_menu .manager ul .complete').addClass("on");
+        $('.mypage_menu .manager a').find('i').toggleClass("ph-caret-up ph-caret-down");
+    });
+
+
+</script>

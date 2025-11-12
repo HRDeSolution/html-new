@@ -1,0 +1,292 @@
+<? include "../include/header.html"; ?>
+<? //include "../include/login_check.php"; ?>
+<style>
+    body{background: #fff;}
+</style>
+
+<body>
+    <div id="wrap">
+        <div class="prev_wrap">
+            <div class="top">
+                <div class="txt">
+					<div class="step-container">
+						<strong>사전역량진단</strong>
+						<span class="step active">1</span>
+						<span class="step">2</span>
+                        <span class="step">3</span>
+					</div>
+                    <p>학습 시작 전, <?=$LoginName?>님의 역량진단을 진행하겠습니다.</p>
+                    <p class="mt5"><b>[공통역량 / 리더십역량]</b></p>
+                </div>
+            </div>
+             <!--직업기초능력-->
+             <div class="selection">
+                <div class="sec sec1">
+                    <div class="title">Q0. 귀하의 현재 직급은 무엇인가요?</div>
+                    <ul>
+                        <?
+                        $SQL = " SELECT col1, col2, col3, col4 FROM ArchiveAbilityResult1 WHERE ID = '$LoginMemberID' AND abilityDepth = 'step01' LIMIT 1 ";
+                        $QUERY = mysqli_query($connect, $SQL);
+                        $ROW = mysqli_fetch_assoc($QUERY);
+                        ?>
+                        <li><a class="<?if ($ROW['col1']=="W") echo "on";?>" value="W" >팀원 [실무자]</a></li>
+                        <li><a class="<?if ($ROW['col1']=="M") echo "on";?>" value="M" >팀장 이상 [관리자]</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="test">
+                <div class="test_title">
+                    <h2>공통역량</h2>
+                </div>
+
+                <div class="test_table">
+                    <input type="hidden" id="Keyword1" name="Keyword1">
+               
+                            <?
+                                $strHtml = "";
+                                $i = 0;
+                                $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='B' AND aDepth = 'step02' AND aGroup = 'C' ORDER BY aOrder ASC ";
+                                $QUERYA = mysqli_query($connect, $SQLA);
+                                if($QUERYA && mysqli_num_rows($QUERYA)){
+                                    while($ROWA = mysqli_fetch_array($QUERYA)){
+                                        extract($ROWA);
+                                        $strHtml .= " <div>";
+                                        $strHtml .= "   <div class='q'> <b>Q".$aOrder.". ".$aValue."</b> ".$aValueDetail."</div>";
+                                        $strHtml .= "   <div class='a'>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=1 data-no=".$idx." id='radio1-".$idx."-1'><label for='radio1-".$idx."-1'>그렇지 않다</label>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=2 data-no=".$idx." id='radio1-".$idx."-2'><label for='radio1-".$idx."-2'>그렇지 않은 편이다</label>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=3 data-no=".$idx." id='radio1-".$idx."-3'><label for='radio1-".$idx."-3'>보통이다</label> <br>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=4 data-no=".$idx." id='radio1-".$idx."-4'><label for='radio1-".$idx."-4'>그런 편이다</label>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=5 data-no=".$idx." id='radio1-".$idx."-5'><label for='radio1-".$idx."-5'>그렇다</label>";
+                                        $strHtml .= "   </div>";
+                                        $strHtml .= " </div>";
+                                        $i++;
+                                    }
+                                }
+                                echo $strHtml;
+                            ?>
+                </div>
+            </div>
+            <!--공통역량-->
+            <!--리더십-->
+            <div class="test">
+                <div class="test_title">
+                    <h2>리더십역량</h2>
+                </div>
+                <div class="test_table">
+                    <!-- <input type="hidden" id="Keyword1" name="Keyword1"> -->
+                            <?
+                                $strHtml = "";
+                                $i = 0;
+                                $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='B' AND aDepth = 'step02' AND aGroup = 'L' ORDER BY aOrder ASC ";
+                                $QUERYA = mysqli_query($connect, $SQLA);
+                                if($QUERYA && mysqli_num_rows($QUERYA)){
+                                    while($ROWA = mysqli_fetch_array($QUERYA)){
+                                        extract($ROWA);
+                                        $strHtml .= " <div>";
+                                            $strHtml .= "   <div class='q'> <b>Q".$aOrder.". ".$aValue."</b> ".$aValueDetail."</div>";
+                                            $strHtml .= "   <div class='a'>";
+                                            $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=1 data-no=".$idx." id='radio2-".$idx."-1'><label for='radio2-".$idx."-1'>그렇지 않다</label>";
+                                            $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=2 data-no=".$idx." id='radio2-".$idx."-2'><label for='radio2-".$idx."-2'>그렇지 않은 편이다</label>";
+                                            $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=3 data-no=".$idx." id='radio2-".$idx."-3'><label for='radio2-".$idx."-3'>보통이다</label> <br>";
+                                            $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=4 data-no=".$idx." id='radio2-".$idx."-4'><label for='radio2-".$idx."-4'>그런 편이다</label>";
+                                            $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=5 data-no=".$idx." id='radio2-".$idx."-5'><label for='radio2-".$idx."-5'>그렇다</label>";
+                                            $strHtml .= "   </div>";
+                                            $strHtml .= " </div>";
+                                        $i++;
+                                    }
+                                }
+                                echo $strHtml;
+                            ?>
+                </div>
+            </div>
+            <!--리더십-->
+            <div class="bottom mb40">
+                <button>다음</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+
+//직급
+// function change_btn1(e, idx) {
+//     var btns = document.querySelectorAll(".sec1 ul li a");
+//     btns.forEach(function (btn, i) {
+//         if (e.currentTarget == btn){
+//             btn.classList.add("on");
+//         }else{
+//             btn.classList.remove("on");
+//         }
+//         // $("#Keyword1").val(idx);
+//         document.getElementById("Keyword1").value = idx;
+//         Keyword1 = document.getElementById("Keyword1").value;
+//         selectedVal.push({ key: "keyword", value: dataValue });
+//     });
+//     updateNextButtonState();
+// }
+
+// function updateNextButtonState() {
+//         let selectedRank = document.querySelector('.sec1 a.on');
+//         let nextButton = document.querySelector('.bottom button');
+        
+//         if (selectedRank > 0 ) {
+//             nextButton.disabled = false;
+//         } else {
+//             nextButton.disabled = true;
+//         }
+//     }
+
+// function change_btn1(e, idx) {
+//     console.log("진입");
+// }
+
+$(document).ready(function () {
+    let selectedVal = [];
+    let selectedRole = null;
+
+    $('input[type="radio"]').on('change', function () {
+        saveSelections();
+        validateSurvey();
+    });
+
+    $('.selection a').on('click', function (event) {
+        event.preventDefault();
+        $('.selection a').removeClass('on'); 
+        $(this).addClass('on');
+        selectedRole = $(this).attr('value'); 
+        saveSelections();
+    });
+
+    function saveSelections() {
+        selectedVal = []; 
+        $('.a').each(function () {
+            const selectedRadio = $(this).find('input[type="radio"]:checked');
+            if (selectedRadio.length > 0) {
+                const dataNo = selectedRadio.attr('data-no');
+                const dataValue = selectedRadio.attr('data-value');
+                selectedVal.push({ no: dataNo, value: dataValue });
+            }
+        });
+
+        if (selectedRole) {
+            selectedVal.push({ no: 'role', value: selectedRole }); //직무 선택 
+        }
+    }
+
+    function validateSurvey() {
+        let allAnswered = true;
+
+        $('.a').each(function () {
+            const checked = $(this).find('input[type="radio"]:checked').length > 0;
+            if (!checked) {
+                allAnswered = false;
+            }
+        });
+
+        console.log("selectedRole", selectedRole);
+
+        if (!selectedRole) {
+            allAnswered = false;
+        }
+
+        $('.bottom button').prop('disabled', !allAnswered);
+    }
+
+    validateSurvey();
+
+    $('.bottom button').on('click', function () {
+        if (!$(this).prop('disabled')) {
+            next(selectedVal);
+        }
+    });
+});
+    
+// $(document).ready(function () {
+//     $('input[type="radio"]').on('change', function () {
+//         validateSurvey();
+//     });
+
+//     function validateSurvey() {
+//         let allAnswered = true;
+        
+
+//         $('tbody > tr').each(function () {
+//             const checked = $(this).find('input[type="radio"]:checked').length > 0;
+//             if (!checked) {
+//                 allAnswered = false;
+//             }
+//         });
+
+//         // 모든 질문이 답변되었으면 버튼 활성화, 아니면 비활성화
+//         if (allAnswered) {
+//             $('.bottom button').prop('disabled', false);
+//         } else {
+//             $('.bottom button').prop('disabled', true);
+//         }
+//     }
+
+//     validateSurvey();
+// });
+
+
+// function validateAndGetRadioSelection() {
+//     const rows = document.querySelectorAll('.test_table tbody tr');
+//     let selectedVal = []; // 선택된 값들을 저장할 배열
+
+//     for (let i = 0; i < rows.length; i++) {
+//         const radios = rows[i].querySelectorAll('input[type="radio"]');
+//         const selectedRadio = Array.from(radios).find(radio => radio.checked);
+
+//         if (!selectedRadio) {
+//             alert(`문항 ${i + 1}의 응답을 선택해주세요.`);
+//             return null; // 한 개의 미선택 항목이 발견되면 null 반환
+//         }
+
+//         // selectedVal.push(selectedRadio.value);
+//         selectedVal.push({
+//             no: selectedRadio.getAttribute('data-no'),
+//             value: selectedRadio.getAttribute('data-value')
+//         });
+//     }
+
+//     return selectedVal; // 모든 문항이 선택되었을 경우 값 배열 반환
+// }
+
+// document.querySelector('.bottom button').onclick = () => {
+//     const selectedVal = validateAndGetRadioSelection();
+//     if (selectedVal) {
+        
+//         CotentsNext(selectedVal); // 모든 문항이 선택되었을 때만 다음으로 진행
+//     }
+// };
+
+function next(selectedVal){
+	// location.href="prev_test02.html";
+
+    // selectedVal.forEach(item => {
+    //     console.log(`문항 이름: ${item.no}, 선택된 값: ${item.value}`);
+    // });
+
+    const datas = {
+        step: "step01",
+        type: "B",
+        responses: selectedVal // responses에 선택된 문항 데이터를 추가
+    };
+
+	$.post('/m_archive/prev/archive_ability_input.php', datas, function (data) {
+		if(data == 'Y') {
+			location.href="prev_test02.html";
+            // location.href="/public/mypage/test_result.html";
+		}else if(data == 'NoID'){
+			alert("로그인후에 이용이 가능합니다.");
+			location.href="/m_public/member/login.html?sitemode=flex";
+		}else{
+			alert('항목들을 선택해주세요.');
+			return;
+		}
+	});
+}
+
+</script>

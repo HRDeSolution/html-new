@@ -1,0 +1,177 @@
+<? include "../include/header.html"; ?>
+<? include "../include/login_check.php"; ?>
+<style>
+    body{background: linear-gradient(to left, #161a18, #4d2868);}
+</style>
+
+<body>
+    <div id="wrap">
+        <header>
+            <div class="logo">
+                <img src="../../common/img/logo.png" alt="HRDe사이버연수원">
+            </div>
+            <div class="logout">
+                <button onclick="location.href='../../public/member/logout.php?sitemode=flex'">로그아웃</button>
+            </div>
+        </header>
+        <div class="curation">
+            <div class="top">
+                <div class="logo">
+                    <img src="../img/common/logo.png" alt="HRDeFLEX">
+                </div>
+                <div class="txt">
+                    <strong>③ <?=$LoginName?>님 해당하는 항목을 선택하세요</strong>
+                    <p>회원님이 좋아하실 만한 강의를 더 많이 추천해 드릴 수 있습니다. 아래에서 해당하는 항목을 선택하세요.</p>
+                </div>
+            </div>
+            <div class="selection">
+                <div class="sec sec1">
+                    <input type="hidden" id="Keyword1" name="Keyword1">
+                    <input type="hidden" id="Keyword2" name="Keyword2">
+                    <input type="hidden" id="Keyword3" name="Keyword3">
+                    <div class="title">관심 분야</div>
+                    <ul>
+                    	<?
+	                    $i = 0;
+                    	$SQLA = "SELECT * FROM ContentsFlexKeyword WHERE Category = 1";
+						$QUERYA = mysqli_query($connect, $SQLA);
+                    	if($QUERYA && mysqli_num_rows($QUERYA)){
+                    		while($ROWA = mysqli_fetch_array($QUERYA)){
+                        		extract($ROWA);
+						?>
+						<li><a id="chkData<?=$idx?>" data-value="<?=$idx?>"><?=$Keyword?></a></li>
+	                    <?
+	                    	   	$i++;
+	                        }
+						}
+                    	?>
+                    </ul>
+                </div>
+                <div class="sec sec2">
+                    <div class="title">직급</div>
+                    <ul>
+                    	<?
+	                    $i = 0;
+                    	$SQLB = "SELECT * FROM ContentsFlexKeyword WHERE Category = 2";
+						$QUERYB = mysqli_query($connect, $SQLB);
+                    	if($QUERYB && mysqli_num_rows($QUERYB)){
+                    		while($ROWB = mysqli_fetch_array($QUERYB)){
+                        		extract($ROWB);
+						?>
+						<li><a onclick="change_btn2(event, '<?=$idx?>')"><?=$Keyword?></a></li>
+						<?
+	                    	   	$i++;
+	                        }
+						}
+                    	?>
+                    </ul>
+                </div>
+                <div class="sec sec3">
+                    <div class="title">근무 분야</div>
+                    <ul>
+                    	<?
+	                    $i = 0;
+                    	$SQLC = "SELECT * FROM ContentsFlexKeyword WHERE Category = 3";
+						$QUERYC = mysqli_query($connect, $SQLC);
+                    	if($QUERYC && mysqli_num_rows($QUERYC)){
+                    		while($ROWC = mysqli_fetch_array($QUERYC)){
+                        		extract($ROWC);
+						?>
+						<li><a onclick="change_btn3(event, '<?=$idx?>')"><?=$Keyword?></a></li>
+						<?
+	                    	   	$i++;
+	                        }
+						}
+                    	?>
+                    </ul>
+                </div>
+            </div>
+            <div class="bottom">
+                <button onclick="Next()" >완료</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+//관심분야
+var btns = document.querySelectorAll(".sec1 ul li a");
+btns.forEach(($toggle) => {
+	$toggle.onclick = () => {
+        $toggle.classList.toggle('on2');
+    }
+});
+
+//직급
+function change_btn2(e, idx) {
+    var btns = document.querySelectorAll(".sec2 ul li a");
+    btns.forEach(function (btn, i) {
+        if (e.currentTarget == btn){
+        	btn.classList.add("on");
+        }else{
+        	btn.classList.remove("on");
+        }
+        $("#Keyword2").val(idx);
+    });
+}
+
+//근무분야
+function change_btn3(e, idx) {
+    var btns = document.querySelectorAll(".sec3 ul li a");
+    btns.forEach(function (btn, i) {
+    	if (e.currentTarget == btn){
+        	btn.classList.add("on");
+        }else{
+        	btn.classList.remove("on");
+        } 
+    });
+    $("#Keyword3").val(idx);
+}
+
+function Next(){
+	var on2 = $(".on2").length;
+
+	if(on2 == 0){
+		alert("관심분야를 선택해주세요.");
+		return;
+	}else{
+		$(".on2").each(function(){
+			var keyword = $(this).data('value');
+		  	if($("#Keyword1").val() == ""){
+		  		$("#Keyword1").val(keyword);
+		  	}else{
+		  		var inputData = $("#Keyword1").val() + "|" + keyword;
+		  		$("#Keyword1").val(inputData);
+		  	}
+		});
+	}
+	if($("#Keyword2").val() == ""){
+		alert("직급을 선택해주세요.");
+		return;
+	}
+	if($("#Keyword3").val() == ""){
+		alert("근무분야를 선택해주세요.");
+		return;
+	}
+	
+	CotentsNext();
+}
+
+function CotentsNext(){
+	var Keyword1 = $("#Keyword1").val();
+	var Keyword2 = $("#Keyword2").val();
+	var Keyword3 = $("#Keyword3").val();
+	
+	$.post('/hrdflex/curation/step_input.php', { step:"step03", Data1: Keyword1, Data2: Keyword2, Data3: Keyword3 }, function (data) {
+		if(data == 'Y') {
+			location.href="../contents/main.html";
+		}else if(data == 'NoID'){
+			alert("로그인후에 이용이 가능합니다.");
+			top.location.href="/public/member/login.html?sitemode=flex3";
+		}else{
+			alert('항목들을 선택해주세요.');
+			return;
+		}
+	});
+	
+}
+</script>

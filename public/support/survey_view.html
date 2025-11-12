@@ -1,0 +1,90 @@
+<? 
+include "../include/support_header.html"; 
+
+//조회수 증가
+$Sql = "UPDATE Review SET ViewCount=ViewCount+1 WHERE idx=$idx";
+$Row = mysqli_query($connect, $Sql);
+?>
+<body>
+    <div class="top_section">
+        <div id="wrap">
+            <div class="inner">
+                <h2>수강후기</h2>
+            </div>
+            <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습지원센터<i class="ph ph-caret-right"></i>&nbsp;수강후기
+            </div>
+        </div>
+    </div>    
+    <?
+	$idx = Replace_Check($idx);
+
+	$Sql = "SELECT a.LectureCode , a.ID , a.StarPoint , a.RegDate , a.Title, a.Contents, a.ViewCount, b.ContentsName
+			FROM Review a
+			LEFT JOIN Course b ON a.LectureCode = b.LectureCode
+			WHERE a.idx=$idx AND a.Del='N'";
+	$Result = mysqli_query($connect, $Sql);
+	$Row = mysqli_fetch_array($Result);
+
+	if($Row) {
+		$LectureCode = $Row['LectureCode'];
+		$ID = $Row['ID'];
+		$StarPoint = $Row['StarPoint'];
+		$RegDate = $Row['RegDate'];
+		$Title = $Row['Title'];
+	    $Contents = nl2br(stripslashes($Row['Contents']));
+	    $ViewCount = $Row['ViewCount'];
+	    $ContentsName = $Row['ContentsName'];
+	    
+	    $Star = StarPointViewA($StarPoint);
+	}else{
+	?>
+	<script type="text/javascript">
+	    location.href="survey.html";
+	</script>
+	<?
+		exit;
+	}
+	?>
+    <div class="support_content">
+        <div id="wrap">
+            <div class="tableTypeA_top">
+                <div class="title">
+                    <?=$Title?>
+                </div>
+                <div class="detail">
+                    <div class="left">
+                        <span>등록일</span>
+                        <?=$RegDate?>
+                    </div>
+                    <div class="bar"></div>
+                    <div class="right">
+                        <span>조회수</span>
+                        <?=$ViewCount?>
+                    </div>
+                </div>
+            </div>
+            <div class="tableTypeA">
+	            <table>
+	                <colgroup>
+	                    <col width="100px">
+	                    <col width="">
+	                    <col width="100px">
+	                    <col width="">
+	                </colgroup>
+	                <tr>
+	                    <th>수강과목</th>
+	                    <td class="al"><?=$ContentsName?></td>
+	                    <th>평점</th>
+	                    <td class="al"><?=$Star?></td>
+	                </tr>
+	                <tr><td colspan="4" class="content"><?=$Contents?></td></tr>
+	            </table>
+	        </div>
+            <div class="button_wrap">
+                <button onclick="location.href='survey.html'">목록</button>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <? include "../../archive/include/footer.html"; ?>

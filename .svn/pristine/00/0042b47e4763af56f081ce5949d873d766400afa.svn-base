@@ -1,0 +1,65 @@
+<? include "../include/member_header.html"; ?>
+
+<body>
+    <div id="member_wrap">
+        <div class="title">
+            <span>비밀번호 찾기</span>
+            <h1>FIND<br>PASSWORD</h1>
+        </div>
+        <div class="content">
+            <div class="top_txt">
+                비밀번호를 잊으셨나요? <br>
+                회원가입 시 등록하셨던 이름, 아이디, 휴대폰번호를 입력하시면 <b>등록된 휴대폰번호로 임시 비밀번호를 문자로 전송</b>해드립니다.
+            </div>
+            <!--이메일로 찾기 table-->
+            <table>
+                <colgroup>
+                    <col width="135px">
+                    <col>
+                </colgroup>
+                <tr>
+                    <th>아이디</th>
+                    <td><input type="text" name="ID" id="ID"></td>
+                </tr>
+                <tr>
+                    <th>이름</th>
+                    <td><input type="text" name="Name" id="Name"></td>
+                </tr>
+                <tr>
+                    <th>휴대폰 번호로 찾기</th>
+                    <td>
+                        <div class="phonenumber_input">
+                            <input type="text" name="" id="Mobile01" maxlength="3" > - <input type="text" name="" id="Mobile02" maxlength="4"> - <input type="text" name="" id="Mobile03" maxlength="4" > 
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <button class="btn_black mt40" onclick="PWD_Find()">OK</button>
+            <div class="mt15 sa_box">
+                <a href="find_id.html" class="">아이디 찾기</a>
+                <div class="bar"></div>
+                <a href="login.html">로그인</a>
+            </div>
+        </div>
+        <!--content-->
+    </div>
+    <!--wrap-->
+</body>
+
+<? include "../../common/include/footer.html";  ?>
+
+<!-- jQuery로 데이터 처리를 위한 영역 -->
+<div id="SysBg_White" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #FFFFFF;display:none;"></div>
+<div id="SysBg_Black" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #000000;display:none;"></div>
+<div id="Roading" style="display:none;z-index:100"><BR /><BR /><BR /><BR /><img src="../../common/img/loader.gif" alt="로딩중" /></div>
+<div id="DataResult" style="display:none;z-index:10000"></div>
+<iframe name="ScriptFrame" border="0" frameborder="0" width="0" height="0" title="데이터 처리를 위한 프레임" style="display:none"></iframe>
+<!-- jQuery로 데이터 처리를 위한 영역 -->
+
+<!--모달팝업-->
+<style> 
+    .modal-bg {display:none;width:100%;height:100%;position:fixed;top:0;left:0;right:0;background: rgba(0, 0, 0, 0.8);z-index:999;}
+    .modal-wrap {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;z-index:1000;}
+    .close-btn{position: absolute;right: 30px;top: 22px; cursor: pointer;}
+    .close-btn i{font-size: 30px;}
+</style>

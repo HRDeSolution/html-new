@@ -1,0 +1,145 @@
+<? include "../include/support_header.html"; ?>
+<? include "../include/login_check.php"; ?>
+
+<body>
+<!-- 페이징에 영향을 주는 form 태그 -->
+<form name="listScriptForm" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="col" value="<?=$col?>">
+<input type="hidden" name="sw" value="<?=$sw?>">
+<input type="hidden" name="pg" value="<?=$pg?>">
+<input type="hidden" name="orderby" value="<?=$orderby?>">
+<input type="hidden" name="StartDate" value="<?=$StartDate?>">
+<input type="hidden" name="EndDate" value="<?=$EndDate?>">
+<input type="hidden" name="FaqCate" value="<?=$FaqCate?>">
+<input type="hidden" name="Gubun" value="<?=$Gubun?>">
+<input type="hidden" name="ExamType" value="<?=$ExamType?>">
+<input type="hidden" name="ServiceType" value="<?=$ServiceType?>">
+<input type="hidden" name="str_TestType" value="<?=$str_TestType?>">
+</form>
+<?
+    $pg = Replace_Check_XSS2($pg);
+    $sw = Replace_Check_XSS2($sw);
+
+    ##-- 페이지 조건
+    if(!$pg) $pg = 1;
+    $page_size = 25;
+    $block_size = 10;
+
+    ##-- 검색 조건
+    $where = array();
+	
+	if($sw)	$where[] = "(a.Title LIKE '%$sw%' OR b.ContentsName LIKE '%$sw%')";
+    $where[] = "a.Del='N'";
+    $where[] = "a.UseYN='Y'";
+
+    $where = implode(" AND ",$where);
+    if($where) $where = "WHERE $where";
+
+    ##-- 검색 등록수
+    $Sql = "SELECT COUNT(*) FROM Review a
+			LEFT JOIN Course b ON a.LectureCode = b.LectureCode $where";
+    $Result = mysqli_query($connect, $Sql);
+    $Row = mysqli_fetch_array($Result);
+    $TOT_NO = $Row[0];
+
+
+    ##-- 페이지 클래스 생성
+    include_once("../../include/include_page3.php");
+
+    $PAGE_CLASS = new Page($pg,$TOT_NO,$page_size,$block_size); ##-- 페이지 클래스
+    $BLOCK_LIST = $PAGE_CLASS->blockList(); ##-- 페이지 이동관련
+    $PAGE_UNCOUNT = $PAGE_CLASS->page_uncount; ##-- 게시물 번호 한개씩 감소
+?>    
+
+<div class="top_section">
+    <div id="wrap">
+        <div class="inner"><h2>수강후기</h2></div>
+        <div class="navi">
+            <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습지원센터<i class="ph ph-caret-right"></i>&nbsp;수강후기
+        </div>
+    </div>
+</div>
+<div class="support_content">
+    <div id="wrap">
+		<div class="edudata_top">
+            <form name="BoardSearchForm" action="<?=$_SERVER['PHP_SELF']?>" method="GET">
+                <div class="search_box">
+                    <input name="sw" id="sw" type="text" title="검색어 입력" <?if($sw){?>value="<?=$sw?>"<?}?> placeholder="검색어를 입력해주세요">
+                    <span class="search_btn" onclick="Javascript:BoardSearch();"><i class="ph ph-magnifying-glass"></i></span>
+                </div>
+            </form>
+            <div class="count">총 <span><?=$TOT_NO?></span>건</div>
+        </div>
+        <div class="tableTypeA">
+  
+            <table>
+                <colgroup>
+                    <col width="10%">
+                    <col>
+                    <col>
+                    <col width="15%">
+                    <col width="10%">
+                    <col width="10%">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th>번호</th>
+                        <th>과정명</th>
+                        <th>제목</th>
+                        <th>평점</th>
+                        <th>작성일</th>
+                        <th>조회수</th>
+                    </tr>
+                </thead>
+                <tbody>
+                <?
+                $i = 0;
+                $sql = "SELECT a.idx , a.LectureCode , a.ID , a.StarPoint , a.RegDate , a.Title, a.ViewCount, b.ContentsName 
+						FROM Review a
+						LEFT JOIN Course b ON a.LectureCode = b.LectureCode
+						$where ORDER BY a.RegDate DESC   LIMIT $PAGE_CLASS->page_start, $page_size";
+                $query = mysqli_query($connect, $sql);
+				if($query && mysqli_num_rows($query)){
+					while($row = mysqli_fetch_array($query)){
+						extract($row);
+						$Title = strcut_utf8($Title,45);
+						$Star = StarPointViewA($StarPoint);
+                ?>
+                    <tr>
+                        <td><?=$PAGE_UNCOUNT--?></td>
+                        <td><a href="survey_view.html?idx=<?=$idx?>"><?=$ContentsName?></a></td>
+                        <td><a href="survey_view.html?idx=<?=$idx?>"><?=$Title?></a></td>
+                        <td><?=$Star?></td>
+                        <td><?=$RegDate?></td>
+                        <td><?=$ViewCount?></td>
+                    </tr>
+                <?
+                		$i++;
+                	}
+                }else{?>
+                	<tr>
+                		<td colspan='5'>수강후기가 없습니다.</td>
+                	</tr>
+                <?}?>
+                </tbody>
+            </table>
+        </div>
+        <!-- page -->
+        <?=$BLOCK_LIST?>
+        <!-- //page -->
+    </div>
+</div>
+</body>
+<? include "../../archive/include/footer.html"; ?>
+
+<script>
+$(document).ready(function(){
+    $('.middle_header .survey').addClass("on");
+});
+</script>
+<style> 
+    .modal-bg {display:none;width:100%;height:100%;position:fixed;top:0;left:0;right:0;background: rgba(0, 0, 0, 0.6);z-index:999;}
+    .modal-wrap {display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;z-index:1000;}
+    .modal-wrap .close-btn { position: absolute;cursor: pointer;}
+    .modal-wrap .close-btn i {font-size: 35px;}
+</style>

@@ -1,0 +1,121 @@
+<footer>
+    <div class="footer_top">
+        <div id="wrap">
+            <ul class="footer_menu">
+                <li><a href="/m_public/support/notice.html">공지사항</a></li>
+                <li><a href="/m_public/support/ask.html">1:1 문의</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer_bottom">
+        <div id="wrap">
+            <ul class="footer_info">
+                <li>문의전화: <?=$SitePhone?></li>
+                <li>상담시간: 평일 오전 9시 ~ 오후 6시｜이메일: <?=$SiteEmail?></li>
+                <li><?=$SiteAddress?></li>
+                <li><?=$SiteCopyright?> 본 사이트 내의 컨텐츠는 저작권법 상의 보호를 받고 있습니다.</li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+<form name="TimeCheckForm">
+	<input type="hidden" name="NowTime" id="NowTime" value="0">
+</form>
+<!-- jQuery로 데이터 처리를 위한 영역 -->
+<div id="SysBg_White" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #FFFFFF;display:none;"></div>
+<div id="SysBg_Black" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #000000;display:none;"></div>
+<div id="Roading" style="display:none;z-index:100"><BR /><BR /><BR /><BR /><img src="/m_images/loader.gif" alt="로딩중" /></div>
+<div id="DataResult" style="display:none;z-index:10000"></div>
+<iframe name="ScriptFrame" border="0" frameborder="0" width="0" height="0" title="데이터 처리를 위한 프레임" style="display:none"></iframe>
+<!-- jQuery로 데이터 처리를 위한 영역 -->
+<? if(isset($_SESSION['LoginMemberID'])) { ?>
+<script type="text/javascript">
+$(document).ready(function() {
+	setInterval("LogoutTimeCheck()",1000);
+	LogOutTimeView();
+	setInterval("LogInCheck()",6000);
+});
+</script>
+
+<!--prev_test01.html에서 넘어왔을 때-->
+<script>
+    function getQueryParam(name) {
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(name);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const fromParam = getQueryParam("from");
+
+        // main.html로 처음 왔을 때
+        if (fromParam === "prev_test01") {
+            sessionStorage.setItem("forceRedirect", "true"); // 강제 이동 설정
+        }
+
+        // forceRedirect 값이 있으면 5초 후 무조건 이동
+        if (sessionStorage.getItem("forceRedirect") === "true") {
+            setTimeout(function () {
+                location.href = "/m_archive/prev/prev_test02.html"; // 5초 후 강제 이동
+                sessionStorage.removeItem("forceRedirect");// 강제 이동 후 값 제거
+            }, 5000);
+        }
+    });
+</script>
+
+<?}?>
+
+<!-- player -->
+<!-- <div id="SysBg_White" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #FFFFFF;display:none;"></div>
+<div id="SysBg_Black" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #000000;display:none;"></div>
+<div id="Roading" style="display:none;z-index:100"><BR /><BR /><BR /><BR /><img src="/m_images/loader.gif" alt="로딩중" /></div>
+<div id="DataResult" style="display:none;z-index:10000; height:100vh; overflow-y: auto; padding: 50px 0;"></div>
+<iframe name="ScriptFrame" border="0" frameborder="0" width="0" height="0" title="데이터 처리를 위한 프레임" style="display:none"></iframe> -->
+<!-- // player -->
+
+<!--초기비밀번호 시-->
+<?php
+if(!empty($_SESSION['LoginMemberID'])) {
+	$LoginMemberID = $_SESSION['LoginMemberID'];
+    
+	$Sql = "SELECT * FROM Member WHERE ID='$LoginMemberID' AND MemberOut='N' AND UseYN='Y'";
+    $Result = mysqli_query($connect, $Sql);
+    $Row = mysqli_fetch_array($Result);
+    
+	if ($Row) {
+		$PassChange = $Row['PassChange'];
+		$Mandatory = $Row['Mandatory'];
+        $AbilityYN = $Row['AbilityYN'];    
+
+  
+		if ($PassChange == "N" && $Mandatory == "Y") {
+?>
+<script type="text/javascript">
+// 비밀번호를 변경하지 않았으면 리다이렉트
+if (window.location.pathname !== '/m_public/member/pwd_first_change.html') {
+    window.location.href = '/m_public/member/pwd_first_change.html';
+}
+</script>
+<?
+		} else if ( $PassChange == "Y" && $Mandatory == "Y" && $AbilityYN == "N" ) {
+?>
+            <script type="text/javascript">
+            // 사전역량진단을 안했을 경우 
+            alert("사전역량진단을 진행해주세요.");
+            window.location.href = "/m_archive/prev/prev_test01.html";
+            </script>
+
+<?
+        }
+    } else {
+?>
+<script type="text/javascript">
+    alert("회원정보에 문제가 있습니다.\n\n관리자에게 문의하세요.");
+    location.href="/member/logout.php";
+</script>
+<?
+ 	}
+}
+?>
+<!--초기비밀번호 시-->
+</html>

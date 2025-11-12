@@ -1,0 +1,225 @@
+<?
+include "../include/header.html";
+include "../include/guest_session.php";
+
+if($UserDevice=="PC") { //PC인 경우
+	$url = $SiteURL;
+	header( "Location: $url" );
+}
+?>
+<?
+$ID = $_SESSION['LoginMemberID'];
+
+//컨텐츠좋아요 list
+$Like_list = array();
+$SqlLike = "SELECT * from CourseLike WHERE ID = '$LoginMemberID'";
+$QueqryLike = mysqli_query($connect, $SqlLike);
+if($QueqryLike && mysqli_num_rows($QueqryLike)){
+	while($RowLike = mysqli_fetch_array($QueqryLike)){
+		$LikeCode = $RowLike['LectureCode'];
+    	$Like_list[$LikeCode] = $LikeCode;
+	}
+}
+
+//get study column lecturecode, seq 
+$SqlM    = "SELECT LectureCode AS StudyLectureCode, Seq AS Study_Seq FROM Study WHERE ID = '$ID'";
+$ResultM = mysqli_query($connect, $SqlM);
+$RowM = mysqli_fetch_assoc($ResultM);
+
+
+?>
+<script>
+//카테고리 검색
+function CategorySearch(idx) {
+    var data = $("#catChk"+idx).attr('value');
+    $("#CategoryData").val(data);
+    CategorySearchForm.submit();
+}
+</script>
+<body>
+    <? include "../include/top_header.html";?>
+    <div class="carousel-container">
+        <div class="carousel-track">
+            <div class="carousel-slide"><img src="../img/main/banner1.png?ver=2" alt="1"/></div>
+            <div class="carousel-slide"><img src="../img/main/banner2.png?ver=4" alt="2"/></div>
+            <div class="carousel-slide"><img src="../img/main/banner3.png?ver=4" alt="3"/></div>
+        </div>
+        <div class="carousel-dots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+          </div>
+    </div>
+    <div id="wrap">   
+	    <div class="lecture main">
+	        <h5><span class="fc_purple">오늘의 TOP10</span>인기 컨텐츠</h5>
+			<div class="more">
+				<a href="../contents/main.html">더보기 +</a>
+			</div>
+	        <div class="swiper mySwiper2">
+	            <div class="swiper-wrapper">
+	            	<?
+					$i = 0;
+					$SQL = "SELECT a.*, b.ServiceType, b.ContentsName, b.ctype, b.Del, b.UseYN , b.Keyword3 , b.PreviewImage, b.ContentsTime, b.Chapter , b.cnt
+	                        FROM ContentsList AS a 
+							LEFT OUTER JOIN Course AS b ON a.LectureCode=b.LectureCode 
+							WHERE b.Del='N' AND a.gubun='2' AND b.UseYN = 'Y'
+							ORDER BY a.OrderByNum ASC, a.idx ASC";
+					$QUERY = mysqli_query($connect, $SQL);
+					if($QUERY && mysqli_num_rows($QUERY)){
+						while($ROW = mysqli_fetch_array($QUERY)){
+							$LectureCode = $ROW['LectureCode'];
+							$Keyword3 = $ROW['Keyword3'];
+							$PreviewImage = $ROW['PreviewImage'];
+							$ContentsName = $ROW['ContentsName'];
+							$ContentsTime = $ROW['ContentsTime'];
+							$Chapter      = $ROW['Chapter'];
+							$idx	      = $ROW['idx'];
+							$CourseCnt	  = $ROW['cnt'];
+	
+							$Keyword = str_replace(' ', '', $Keyword3);
+							$Keyword_array = explode('#',$Keyword);
+							$Keyword_arrayA = array_slice($Keyword_array, 1, 2);
+							$ImgUrl = "/upload/Course/".$PreviewImage;
+	
+							$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseLike WHERE LectureCode ='$LectureCode'";
+							$ResultCNT = mysqli_query($connect, $SqlCNT);
+							$RowCNT = mysqli_fetch_array($ResultCNT);
+							$CNT = $RowCNT[0];
+					?>
+					<?if($i < 4){?>
+						<div class="swiper-slide">
+							<?if($Chapter == "0"){?>
+							<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+							<?}else{?>
+							<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1', '<?=$RowM['Study_Seq']?>', '<?=$RowM['StudyLectureCode']?>');">
+							<?}?>
+								<li class="img" style="background-image: url(<?=$ImgUrl?>);"></li>
+								<li class="title">
+									<strong><?=$ContentsName?></strong>
+								</li>
+							</ul>
+						</div>
+					<?}?>
+					
+					<?
+							$i++;
+						}
+					}
+					?>
+	            </div>
+	        </div>
+		</div>
+		<!--lecture-->
+	</div>
+	<!--wrap-->
+	<div class="main_con2">
+		<div id="wrap">
+			<div class="title">HRDe 아카이브 교육 프로세스</div>
+		</div>
+		<!--wrap-->
+		<div class="content">
+			<ul>
+				<li><i class="ph-bold ph-binoculars"></i><br> 학습 전 <br>사전역량진단</li>
+				<li><i class="ph-bold ph-target"></i><br>학습 중 <br>큐레이션 추천</li>
+				<li><i class="ph-bold ph-chart-line-up"></i><br>학습 후 <br>사후역량진단</li>
+				<li><i class="ph-bold ph-thumbs-up"></i><br>학습 완료<br>만족도조사</li>
+			</ul>
+		</div>
+	</div>
+	<!--교육 프로세스-->
+	<div class="main_con3">
+		<div id="wrap">
+			<div class="title">공지사항</div>
+			<div class="more">
+				<a href="/m_public/support/notice.html">더보기 +</a>
+			</div>
+			<div class="content">
+				<ul>
+				<?
+				$SQL = "SELECT * FROM Notice 
+						WHERE Del='N' AND UseYN='Y' 
+						ORDER BY RegDate DESC LIMIT 3";
+				//echo $SQL;
+                $QUERY = mysqli_query($connect, $SQL);
+                if($QUERY && mysqli_num_rows($QUERY)){
+                    while($ROW = mysqli_fetch_array($QUERY)){
+                        extract($ROW);
+                        $Title = strcut_utf8($Title,45);
+                        
+                        $NoticeStr = '';
+                        if($Notice=='Y') $NoticeStr = '<em>[공지]</em>'.$Title;
+                        else $NoticeStr = $Title;
+            	?>
+					<li><a href="/m_public/support/notice_view.html?idx=<?=$idx?>"><?=$NoticeStr?></a></li>
+                <?
+					}
+				}
+				?>
+				</ul>
+			</div>
+		</div>
+		<!--wrap-->
+	</div>
+
+	   
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+	//메인배너 슬라이더
+    const track = document.querySelector('.carousel-track');
+    const slides = Array.from(document.querySelectorAll('.carousel-slide'));
+    const slideWidth = slides[0].clientWidth;
+
+    let currentIndex = 0;
+    let startX = 0;
+    let currentTranslate = 0;
+    let prevTranslate = 0;
+    let isDragging = false;
+
+    const setSliderPosition = () => {
+      track.style.transform = `translateX(${currentTranslate}px)`;
+    };
+
+    const touchStart = (e) => {
+      isDragging = true;
+      startX = e.touches[0].clientX;
+    };
+
+    const touchMove = (e) => {
+      if (!isDragging) return;
+      const currentX = e.touches[0].clientX;
+      const deltaX = currentX - startX;
+      currentTranslate = prevTranslate + deltaX;
+      setSliderPosition();
+    };
+
+    const touchEnd = () => {
+      isDragging = false;
+      const movedBy = currentTranslate - prevTranslate;
+
+      if (movedBy < -50 && currentIndex < slides.length - 1) currentIndex++;
+      if (movedBy > 50 && currentIndex > 0) currentIndex--;
+
+      currentTranslate = -currentIndex * slideWidth;
+      prevTranslate = currentTranslate;
+      setSliderPosition();
+      updateDots();
+    };
+
+    track.addEventListener('touchstart', touchStart);
+    track.addEventListener('touchmove', touchMove);
+    track.addEventListener('touchend', touchEnd);
+
+    const dots = document.querySelectorAll('.dot');
+
+    const updateDots = () => {
+    dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === currentIndex);
+    });
+    };
+
+</script>
+<!--<? include $_SERVER['DOCUMENT_ROOT'] . "/popup/include_popup.php"; ?>-->
+<?php include "../include/footer.html"; ?>

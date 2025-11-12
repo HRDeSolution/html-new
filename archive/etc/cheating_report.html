@@ -1,0 +1,166 @@
+<? include '../include/header.html'; ?>
+<? include '../include/top_header.html'; ?>
+<body>
+ <!-- 메인배너 -->
+<div class="mainbanner_wrap mb30 ac">
+    <div class="mainbanner" style="background-image: url(../img/etc/banner.png); height:270px; background-size: cover;">
+        <div id="wrap" class="fcwhite">
+            <strong>부정행위 제보</strong>
+            <span class="bottom">교육을 수강하고 훈련 비용도 지원받을 수 있도록 <br>
+                수강 전 유의사항을 다시 한 번 확인해 보시기 바랍니다.</span>
+        </div>
+    </div>
+    <ul class="sub_gnb etc">
+        <li><a href="/archive/etc/guide.html">교육유의사항</a></li>
+        <li><a href="/archive/etc/cheating_guide.html">부정행위방지정책</a></li>
+        <li class="on"><a href="/archive/etc/cheating_report.html">부정행위 제보</a></li>
+	</ul> 
+</div>
+<!-- //메인배너 -->
+<div class="refund_con">
+    <div id="report_wrap">
+        <div class="title">
+            <span>제보하기</span>
+            <strong>제보자의 비밀은 절대적으로 보호되며, 제보자는 제보로 인해 <br>
+                 어떠한 불이익도 받지 않습니다.</strong>
+            <em>* 항목은 필수항목입니다.</em>
+        </div> 
+        <div class="notice_box">
+            <strong>제보내용</strong>
+            <div class="box">
+                <p>
+                    <b>부정제보</b>
+                    뇌물/향용수수, 거래업체 특혜, 공금횡령 및 절도, 정뵤유출 등
+                </p>
+                <p>
+                    <b>기업의 공정거래</b>
+                    공정거래법 및 하도급/파견법 위반, 개인정보보호법 위반 등
+                </p>
+            </div>
+        </div>
+        <div class="notice_box">
+            <strong>정보채널</strong>
+            <div class="box">
+                <p>
+                   담당부서: 디지털 아카이브 원격훈련팀 <br>
+                   TEL: <?=$SitePhone?> <br>
+                   MAIL: <?=$SiteEmail?><br>
+                   주소: <?=$SiteAddress?>
+                </p>
+            </div>
+        </div>
+        <div class="input_wrap">
+            <form name="CheatingForm" method="POST" action="./cheating_ok.php" target="ScriptFrame">
+                <div class="s_title">제보하기</div>
+                <div class="input_box">
+                    <label for="report_title"><i class="fcred">*</i>제목</label>
+                    <input type="text" id="report_title" name="report_title" class="report-title" placeholder="제목을 입력해주세요">
+                </div>
+                <div class="input_box">
+                    <label for="report_content"><i class="fcred">*</i>내용</label>
+                    <textarea id="report_content" name="report_content" class="report-content" placeholder="내용을 입력해주세요"></textarea>
+                </div>
+            </div>
+            <div class="input_wrap">
+                <div class="s_title">제보자 정보</div>
+                <div class="input_box">
+                    <label for="report_name">성명</label>
+                    <input type="text" id="report_name" name="report_name" class="report-name" placeholder="이름을 입력해주세요">
+                </div>
+                <div class="flex_box">
+                    <div class="input_box">
+                        <label for="report_email">이메일</label>
+                        <input type="text" id="report_email" name="report_email" class="report-email" placeholder="이메일">
+                    </div>
+                    <div class="input_box">
+                        <label for="report_phone">연락처</label>
+                        <input type="text" id="report_phone" name="report_phone" class="report-phone" placeholder="휴대폰 번호">
+                    </div>
+                </div>
+                <div class="input_box">
+                    <label for="report_reply"><i class="fcred">*</i>제보회신</label>
+                    <select id="report_reply" name="report_reply" class="report-reply">
+                        <option value="">제보회신방법</option>
+                        <option value="A">전화</option>
+                        <option value="B">이메일</option>
+                        <option value="C">방문</option>
+                        <option value="D">기타</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+        <div class="notice_box">
+            <strong>
+                개인정보 수집 및 활용 동의
+            </strong>
+            <div class="box">
+                <p>제보하기 서비스 이용을 위하여 아래의 개인정보 수집ㆍ이용에 대한 내용을 자세히 읽어 보신 후 동의 여부를 결정하여 주시기 바랍니다.</p>
+                <p>1. 개인정보의 수집 및 이용 목적 <br>
+                    부정제보 민원처리 및 결과 회신</p>
+                <p>
+                    2. 수집하는 개인정보의 항목 <br>
+                    - 필수정보 : 제보회신(전화, 이메일) <br>
+                    - 선택정보 : 이름, 이메일, 연락처
+                </p>
+                <p>
+                    3. 수집한 개인정보의 보유ㆍ이용기간 <br>
+                    개인정보 수집 및 이용에 관한 동의 후 1년간 개인정보를 보유하고 이후 해당 정보를 지체 없이 파기합니다.단, 법률에 의해 보존의무가 있는 경우에는 법령이 지정한 일정 기간 동안 보존합니다.
+                </p>
+                <p>
+                    4. 귀하는 위와 같은 개인정보 수집ㆍ이용에 동의하지 않으실 수 있습니다. <br>
+                    (동의를 하지 않을 경우 문의하기 서비스가 제한될 수 있습니다.)
+                </p>
+            </div>
+            <div class="input_box2"><input type="checkbox" id="consent_required"><span>개인정보 수집 및 이용에 동의합니다.(필수)</span>
+            </div>
+            <div class="input_box2">
+                <input type="checkbox"><span>선택정보 수집 및 이용에 동의합니다.(선택)</span>
+            </div>
+        </div>
+        <button type="submit" onclick="validateForm(event)">신청하기</button>
+    </div>
+    <!--wrap-->
+</div>
+<!--con3-->
+
+<script>
+    function validateForm(event) {
+        let title = document.querySelector(".report-title").value.trim();
+        let content = document.querySelector(".report-content").value.trim();
+        let contactMethod = document.querySelector(".report-reply").value;
+        let consent = document.querySelector("#consent_required");
+    
+        if (!title) {
+            alert("제목을 입력해주세요.");
+            document.querySelector(".report-title").focus();
+            event.preventDefault();
+            return false;
+        }
+    
+        if (!content) {
+            alert("내용을 입력해주세요.");
+            document.querySelector(".report-content").focus();
+            event.preventDefault();
+            return false;
+        }
+    
+        if (!contactMethod) {
+            alert("제보회신 방법을 선택해주세요.");
+            document.querySelector(".report-reply").focus();
+            event.preventDefault();
+            return false;
+        }
+    
+        if (!consent.checked) {
+            alert("개인정보 수집 및 이용 동의는 필수입니다.");
+            document.querySelector("#consent_required").focus();
+            event.preventDefault();
+            return false;
+        }
+        CheatingForm.submit();
+    }
+    </script>
+    
+
+
+<? include "../include/footer.html"; ?>

@@ -1,0 +1,98 @@
+<? 
+include "../include/mypage_header.html";
+include "../include/login_check.php";
+
+$idx = Replace_Check($idx);
+
+$Sql = "SELECT a.LectureCode , a.ID , a.StarPoint , a.RegDate , a.Title, a.Contents, a.ViewCount, b.ContentsName
+		FROM Review a
+		LEFT JOIN Course b ON a.LectureCode = b.LectureCode
+		WHERE a.idx=$idx AND a.Del='N'";
+$Result = mysqli_query($connect, $Sql);
+$Row = mysqli_fetch_array($Result);
+if($Row) {
+	$LectureCode = $Row['LectureCode'];
+	$ID = $Row['ID'];
+	$StarPoint = $Row['StarPoint'];
+	$RegDate = $Row['RegDate'];
+	$Title = $Row['Title'];
+    $Contents = nl2br(stripslashes($Row['Contents']));
+    $ViewCount = $Row['ViewCount'];
+    $ContentsName = $Row['ContentsName'];
+    
+    $Star = StarPointViewA($StarPoint);
+}else{
+?>
+<script type="text/javascript">
+	alert('해당 수강후기 내용이 없습니다.');
+    location.href="lectue_review.html";
+</script>
+<?
+	exit;
+}
+?>
+<div class="mypage_content">
+    <div class="sb_box">
+        <h1>수강후기</h1>
+        <div class="navi">
+            <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;나의학습실<i class="ph ph-caret-right"></i>&nbsp;수강후기
+        </div>
+    </div>
+    <div class="content">
+    	<form name="DeleteForm" method="post" action="/m_public/mypage/survey_script.php" enctype="multipart/form-data" target="ScriptFrame">
+			<INPUT TYPE="hidden" name="mode" value="del">
+			<INPUT TYPE="hidden" name="idx" value="<?=$idx?>">
+		</form>
+        <div class="tableTypeA_top">
+            <div class="title"><?=$Title?></div>
+            <div class="detail">
+                <div class="date"><span>등록일</span><?=substr($RegDate,0,10)?></div>
+                <div class="bar"></div>
+                <div class="view"><span>조회</span><?=$ViewCount?></div>
+            </div>
+        </div>
+        <div class="tableTypeA">
+            <table>
+                <colgroup>
+                    <col width="100px">
+                    <col width="">
+                    <col width="100px">
+                    <col width="">
+                </colgroup>
+                <tr>
+                    <th>수강과목</th>
+                    <td class="al"><?=$ContentsName?></td>
+                    <th>평점</th>
+                    <td class="al"><?=$Star?></td>
+                </tr>
+                <tr><td colspan="4" class="content"><?=$Contents?></td></tr>
+                <?if($Status == "B"){?>
+                <tr>
+                    <th>답변</th>
+                    <td colspan="3" class="al"><?=$Contents2?></td>
+                </tr>
+                <?}?>
+            </table>
+        </div>
+        <div class="button_wrap">
+            <button onclick="DelOk()">삭제</button>
+            <button onclick="location.href='survey_modify.html?idx=<?=$idx?>'">수정</button>
+            <button onclick="location.href='survey.html'">목록</button>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+<? include "../../archive/include/footer.html"; ?>
+<script>
+    $(document).ready(function(){
+        $('.lecture_review').addClass("on");
+    });
+    //삭제기능
+    function DelOk() {
+    	del_confirm = confirm("현재 수강후기를 삭제하시겠습니까?");
+    	if(del_confirm==true) {
+    		DeleteForm.submit();
+    	}
+    }
+</script>

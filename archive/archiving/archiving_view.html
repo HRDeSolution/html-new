@@ -1,0 +1,94 @@
+<? include "../include/header.html";?>
+<? include "../include/login_check.php"; ?>
+<body>
+    <? include "../include/top_header.html";?>
+    <div class="top_section">
+        <div id="wrap">
+            <div class="inner">
+                <h2>아카이빙</h2>
+            </div>
+            <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습지원센터<i class="ph ph-caret-right"></i>&nbsp;아카이빙
+            </div>
+        </div>
+    </div>
+    <?
+	$idx = Replace_Check($idx);
+
+	$Sql = "SELECT * FROM Archiving WHERE idx=$idx AND Del='N'";
+	$Result = mysqli_query($connect, $Sql);
+	$Row = mysqli_fetch_array($Result);
+	if($Row) {
+	    $Title = $Row['Title'];
+	    $Content = stripslashes($Row['Contents']);
+	    $Content2 = stripslashes($Row['Contents2']);
+	    $FileName1 = $Row['FileName1'];
+	    $RealFileName1 = $Row['RealFileName1'];
+	    $RegDate = $Row['RegDate'];	
+    	$RegDate2 = $Row['RegDate2'];	
+    	$Name2 = $Row['Name2'];
+    	$Status = $Row['Status'];
+	}else{
+	?>
+	<script type="text/javascript">
+	    location.href="archiving.html";
+	</script>
+	<?
+		exit;
+	}
+	?>
+    <div class="support_content">
+        <div id="wrap">
+            <div class="tableTypeA_top">
+                <div class="title">
+                    <?=$Title?>
+                </div>
+                <div class="detail">
+                    <div class="left">
+                        <span>등록일</span><?=$RegDate?>
+                    </div>
+                    <div class="bar"></div>
+                    <div class="right">
+                        <span>처리상태</span><?=$CounselStatus_array[$Status]?>
+                    </div>
+                </div>
+            </div>
+            <div class="tableTypeA">
+                <table>
+                    <colgroup>
+                        <col width="200px">
+                        <col width="">
+                    </colgroup>
+                    <tr class="file">
+                        <th>첨부파일</th>
+                        <td><a href="../../include/download.php?idx=<?=$idx?>&code=Archiving&file=1"><img src="../img/common/file_icon.png" alt="파일아이콘" class="download_view"><?=$RealFileName1?></a></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="content pt50 pb50"><?=$Content?></td>
+                    </tr>
+                </table>
+            </div>
+            <?if($Status == "B") {?>
+            <div class="comment">
+                <div class="left">
+                    <i class="line"></i>
+                    <span>답변</span>
+                </div>
+                <div class="right">
+                    <b><?=$SiteName?> <?=$Name2?>의 답변입니다.</b>
+                    <span>등록일 <?=$RegDate2?></span>
+                    <p>
+                    	<?=$Content2?>
+                    </p>
+
+                </div>
+            </div>
+            <? } ?>
+            
+        </div>
+        <div class="button_wrap">
+            <button onclick="location.href='archiving.html'">목록</button>
+        </div>
+    </div>
+    </div>
+    <?php include "../include/footer.html"; ?>

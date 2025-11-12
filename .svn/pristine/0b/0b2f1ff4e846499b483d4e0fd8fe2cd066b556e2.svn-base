@@ -1,0 +1,144 @@
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . "/include/include_function.php"; //DB연결 및 각종 함수 정의
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?=$SiteName2?></title>
+    <script type="text/javascript" src="../../common/js/jquery-2.1.4.js"></script>
+    <link rel="stylesheet" href="../../common/css/base.css?ver=240517">
+    <link rel="stylesheet" href="../../common/css/common.css?ver=240517">
+    <link rel="stylesheet" href="css/mypage.css?ver=240723">
+    <link rel="stylesheet" href="css/player.css?ver=2410222">
+    <script src="https://kit.fontawesome.com/ebace215db.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <!-- <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>  -->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script type="text/javascript" src="/include/function.js?t=<?=date('YmdHis')?>"></script>
+</head>
+<header>
+    <div class="top_header">
+        <!--wrap-->
+        <div id="wrap">
+            <div class="logo" >
+            	<a href="/archive/contents/main.html">
+	           		<img src="/archive/img/common/archive_logo.png" alt="HRDe아카이브">
+	           	</a>
+            </div> 
+            <div class="btn">
+            	<? if(empty($_SESSION['LoginMemberID'])) { ?>
+                <a href="/public/member/login.html">로그인</a>
+                <a href="/public/member/join.html">회원가입</a>
+                <?}else{?>
+                <p style="display: inline-block; margin-left: 15px; padding: 10px 0; font-weight: 500;"><strong style="color:#2c5db4;"><?=$_SESSION['LoginName']?></strong> 훈련생님 반갑습니다.</p>
+                <a href="/public/member/logout.php">로그아웃</a>
+                <?}?>
+                <a href="/public/support/ask.html">1:1상담</a>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <div class="middle_header">
+        <!--wrap-->
+        <div id="wrap">
+            <div class="left">
+                <h1>나의 학습실</h1>
+            </div>
+            <div class="right">
+                <div class="search_box">
+                    <input name="" id="" type="text" title="검색어 입력" placeholder="CSS 실무자에게 필요한 CX스킬"><span class="search_btn"><i class="ph ph-magnifying-glass"></i></span>
+                </div>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+</header>
+<body>
+    <div id="wrap">
+        <div class="mypage_menu">
+            <div class="top_point">
+                <div>
+                    <span class="icon">
+                        <img src="img/graduationcap.png" alt="학사모아이콘">
+                    </span>
+                    <span class="name">
+                        <b><?=$_SESSION["LoginName"]?></b>님
+                    </span>
+                </div>
+                <p>새로운 도전을 <br> 응원합니다.</p>
+            </div>
+            <a class="menuicon">
+                <i class="fa-solid fa-bars"></i>
+            </a>
+            <ul>
+                <li class="lecture_status depth1"><a href="lecture_status.html">학습현황<span><i class="ph-bold ph-caret-down"></i></span></a>
+                    <ul style="display: none;">
+                        <li class="status01"><a href="lecture_status.html"><i>·</i>학습중인 과정</a></li>
+                        <li class="status02"><a href="lecture_status02.html"><i>·</i>학습완료 과정</a></li>
+                        <li class="status03"><a href="lecture_status03.html"><i>·</i>관심 과정</a></li>
+                    </ul>
+                </li>
+                <li class="prevtest_result depth1"><a href="prevtest_result.html">역량진단</a></li>
+                <li class="lecture_history depth1"><a href="lecture_history.html">학습통계</a></li>
+                <li class="point depth1"><a href="point.html">HRDe아카이브</a></li>
+                <li class="memberinfo depth1"><a href="memberinfo.html">회원관리</a></li>
+            </ul>
+        </div>
+
+
+<script>
+    $(document).ready(function() {
+        var op = false;  //네비가 열려있으면(true) , 닫혀있으면(false)
+            
+        $(".menuicon").click(function(e) { //메뉴버튼 클릭시
+            e.preventDefault();
+            var documentHeight =  $(document).height(); //전체페이지의 높이
+            $(".mypage_menu > ul").css('height',documentHeight); 
+
+            if(op==false){ //메뉴가 닫혀있는 상태에서 클릭하면
+                $(".mypage_menu > ul").animate({right:0,opacity:1}, 'fast');
+                $("body").css('overflow','hidden')
+                op=true;
+            }else{ //메뉴가 열려있는 상태에서 클릭하면
+                $(".mypage_menu > ul").animate({right:'-100%',opacity:0}, 'fast');
+                $("body").css('overflow','auto')
+                op=false;
+            }
+
+        });
+           //2depth 메뉴 교대로 열기 처리 
+        var onoff=[false,false,false,false,false,false]; //가정법 false(2depth서브가 닫혀있는 상태) true(2depth서브가 열려있는 상태)
+        var arrcount=onoff.length; //배열의 개수 6개
+        
+        $('.mypage_menu > ul > li > a').click(function(e){ //1depth메뉴를 클릭하면
+            var ind=$(this).parents('.depth1').index(); //0~5
+            //var ind=$(this).index('.navArea_m .depth1 h3 a')
+            // console.log(ind);
+            
+            if(onoff[ind]==false){ //1depth 메뉴의 서브가 닫혀있으면
+            //$('.navArea_m .depth1 ul').hide();
+            $(this).parents('.depth1').find('ul').slideDown('slow'); //자신의 서브를 열어라
+            $(this).parents('.depth1').siblings('li').find('ul').slideUp('fast'); //자신을 제외한 모든 서브를 닫아라
+                for(var i=0; i<arrcount; i++) onoff[i]=false; // 모든 배열값을 fALSE (닫힘) 상태로 만들고
+                onoff[ind]=true; //자신에 대한 (열린)배열만 TRUE로 변경
+                
+                $(this).css('color','#005793')
+                $('.depth1 span').html('<i class="fa-solid fa-chevron-down"></i>'); 
+                $(this).find('span').html('<i class="fa-solid fa-chevron-up"></i>'); 
+                
+            }else{//1depth 메뉴의 서브가 열려있으면
+                $(this).css('color','#333')
+                $(this).parents('.depth1').find('ul').slideUp('fast'); //서브 닫기 
+                onoff[ind]=false;   
+                
+                $(this).find('span').html('<i class="fa-solid fa-chevron-down"></i>');   
+                
+      }
+   });  
+    });
+</script>

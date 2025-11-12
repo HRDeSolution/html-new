@@ -1,0 +1,148 @@
+<? include "../include/support_header.html"; ?>
+<body>
+<form name="listScriptForm" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="col" value="<?=$col?>">
+<input type="hidden" name="sw" value="<?=$sw?>">
+<input type="hidden" name="pg" value="<?=$pg?>">
+<input type="hidden" name="orderby" value="<?=$orderby?>">
+<input type="hidden" name="StartDate" value="<?=$StartDate?>">
+<input type="hidden" name="EndDate" value="<?=$EndDate?>">
+<input type="hidden" name="FaqCate" value="<?=$FaqCate?>">
+<input type="hidden" name="Gubun" value="<?=$Gubun?>">
+<input type="hidden" name="ExamType" value="<?=$ExamType?>">
+<input type="hidden" name="ServiceType" value="<?=$ServiceType?>">
+<input type="hidden" name="str_TestType" value="<?=$str_TestType?>">
+</form>
+<?
+	$idxA = Replace_Check($idx);
+	$pg = Replace_Check_XSS2($pg);
+    $sw = Replace_Check_XSS2($sw);
+	$FaqCate = Replace_Check_XSS2($FaqCate);
+
+    ##-- 페이지 조건
+    if(!$pg) $pg = 1;
+    $page_size = 10;
+    $block_size = 5;
+
+    ##-- 검색 조건
+    $where = array();
+    if($sw){
+        $where[] = "(Title LIKE '%$sw%' OR Content LIKE '%$sw%')";
+    }
+    $where[] = "Del='N'";
+    $where[] = "UseYN='Y'";
+
+	if($FaqCate) {
+    	$where[] = "Category='$FaqCate'";
+    }
+
+    $where = implode(" AND ",$where);
+    if($where) $where = "WHERE $where";
+
+    ##-- 정렬조건
+    if($orderby=="") {
+        $str_orderby = "ORDER BY OrderByNum ASC, RegDate ASC";
+    }else{
+        $str_orderby = "ORDER BY $orderby";
+    }
+
+    ##-- 검색 등록수
+    $Sql = "SELECT COUNT(*) FROM Faq $where";
+    $Result = mysqli_query($connect, $Sql);
+    $Row = mysqli_fetch_array($Result);
+    $TOT_NO = $Row[0];
+
+    ##-- 페이지 클래스 생성
+    include_once("../../include/include_page3.php");
+
+    $PAGE_CLASS = new Page($pg,$TOT_NO,$page_size,$block_size); ##-- 페이지 클래스
+    $BLOCK_LIST = $PAGE_CLASS->blockList(); ##-- 페이지 이동관련
+    $PAGE_UNCOUNT = $PAGE_CLASS->page_uncount; ##-- 게시물 번호 한개씩 감소
+
+
+?>
+    <div class="top_section">
+        <div id="wrap">
+            <div class="inner">
+                <h2>자주묻는 질문</h2>
+                <form name="BoardSearchForm" action="<?=$_SERVER['PHP_SELF']?>" method="GET">
+	                <div class="search_box">
+	                    <input name="sw" id="sw" type="text" title="검색어 입력" <?if($sw){?>value="<?=$sw?>"<?}?> placeholder="검색어를 입력해주세요">
+	                    <span class="search_btn" onclick="Javascript:BoardSearch();"><i class="ph ph-magnifying-glass"></i></span>
+	                </div>
+                </form>
+            </div>
+            <div class="navi"><i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습지원센터<i class="ph ph-caret-right"></i>&nbsp;자주묻는 질문</div>
+        </div>
+        <!--wrap-->
+    </div>
+    <!--top_banner-->
+    <div class="category">
+        <div id="wrap">
+            <ul>
+            	<li class="<?if(!$FaqCate) {?>on<?}?>"><a href="faq.html?FaqCate=&col=<?=$col?>&sw=<?=$sw?>">전체</a></li>
+	            <?while (list($key,$value)=each($Faq_array)) {?>
+	            <li class="<?if($FaqCate==$key) {?>on<?}?>"><a href="faq.html?FaqCate=<?=$key?>&col=<?=$col?>&sw=<?=$sw?>"><?=$value?></a></li>
+	            <?}?>
+            </ul>
+        </div>
+    </div>
+    <div class="support_content">
+        <div id="wrap">
+            <div class="count">총 <span><?=$TOT_NO?></span>건</div>
+            <ul class="faq">
+            	<?
+					$i = 0;
+                    $SQL = "SELECT * FROM Faq $where $str_orderby LIMIT $PAGE_CLASS->page_start, $page_size";
+					$QUERY = mysqli_query($connect, $SQL);
+                    if($QUERY && mysqli_num_rows($QUERY)){
+                    	while($ROW = mysqli_fetch_array($QUERY)){
+                        	extract($ROW);
+                            $Title = strcut_utf8($Title,45);
+							$Content = stripslashes($Content);
+				?>
+                <li>
+                	<div class="q" id="ContentView"><span class="fcred">[<?=$Faq_array[$Category]?>]</span>&nbsp;<?=$Title?><i class="ph-bold ph-caret-down"></i></div>
+                	<div class='a' id='ContentElement' <? if($idxA!=$idx){ ?> style='display: none;' <? } ?>  ><?=$Content?></div>
+                </li>
+                <?
+                	$i++;
+					}
+				}
+				?>
+            </ul>
+            
+            <!-- page -->
+            <?=$BLOCK_LIST?>
+            <!-- //page -->
+        </div>
+        <!--wrap-->
+    </div>
+
+    
+    
+</body>
+<? include "../../archive/include/footer.html"; ?>
+<!--header class-->
+<script>
+    $(document).ready(function(){
+        $('.middle_header .faq').addClass("on");
+    });
+    </script>
+
+<!--답변여닫기-->
+<script>
+    $(document).ready(function(){
+        $('ul li #ContentView').click(function(){
+            if($(this).next($('#ContentElement')).is(":visible")){
+                $(this).find('i').toggleClass("ph-caret-up ph-caret-down");
+                $(this).next($('#ContentElement')).slideUp();
+            }else{
+
+                $(this).find('i').toggleClass("ph-caret-down ph-caret-up");
+                $(this).next($('#ContentElement')).slideDown();
+            }
+        });
+    });
+
+</script>

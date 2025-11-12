@@ -1,0 +1,108 @@
+<?
+include $_SERVER['DOCUMENT_ROOT'] . "/include/include_function.php"; //DB연결 및 각종 함수 정의
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?=$SiteName2?></title>
+    <script type="text/javascript" src="../../common/js/jquery-2.1.4.js"></script>
+    <link rel="stylesheet" href="../../common/css/base.css?ver=240418">
+    <link rel="stylesheet" href="../../common/css/common.css?ver=240418">
+    <link rel="stylesheet" href="css/member.css?ver=240418">
+    <script src="https://kit.fontawesome.com/ebace215db.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script type="text/javascript" src="/include/function.js?t=<?=date('YmdHis')?>"></script>
+</head>
+<header>
+    <div class="top_header">
+        <!--wrap-->
+        <div id="wrap">
+            <div class="logo" >
+				<a href="/archive/main/main.html">
+					<img src="/archive/img/common/archive_logo.png" alt="HRDe아카이브">
+				</a>            
+            </div> 
+        </div>
+        <!--wrap-->
+    </div>
+</header>
+<script type="text/javascript">
+	alert('필수동의 항목에 동의가 되어있지 않습니다. 동의여부를 체크해주세요.');
+</script>
+<body>
+    <div id="member_wrap">
+        <div class="title mb30">
+            <h1>동의항목</h1>
+        </div>
+        <div class="content">
+	        <form name="AfterAgreeForm">
+	        	<input type="hidden" name="pwchg" id="pwchg" value="<?=$pwchg?>">
+	        	
+	            <div class="agree_box">
+	                <input type="checkbox" name="AllCheck" id="AllCheck" onchange="JoinAgreeAllCheck()"><label for="AllCheck"> <b>모두 동의(선택 정보 포함)</b> </label>
+	            </div>
+	            <div class="agree_box">
+	                <input type="checkbox" name="Agree01" id="Agree01" class="chk" onclick="JoinAgreeCheck()"><label for="Agree01">이용약관 동의 (필수)</label>
+	                <span class="more">전체보기 <i class="ph-bold ph-caret-down"></i></span>
+	                <div class="term" style="display: none;">
+	                    <? include "../../public/etc/include/agreement_include.html"; ?>
+	                </div>
+	            </div>
+	            <div class="agree_box">
+	                <input type="checkbox" name="Agree02" id="Agree02" class="chk" onclick="JoinAgreeCheck()"><label for="Agree02">개인정보 수집 및 이용 동의 (필수)</label>
+	                <span class="more">전체보기 <i class="ph-bold ph-caret-down"></i></span>
+	                <div class="term" style="display: none;">
+	                    <? include "../../public/etc/include/privacy_include.html"; ?>
+	                </div>
+	            </div>
+	            <div class="agree_box">
+	                <input type="checkbox" name="Agree03" id="Agree03" class="chk" onclick="JoinAgreeCheck()"><label for="Agree03">개인정보 제 3자 제공 동의 (필수)</label>
+	                <span class="more">전체보기 <i class="ph-bold ph-caret-down"></i></span>
+	                <div class="term" style="display: none;">
+	                    <? include "../../public/etc/include/privacy_provide_include.html"; ?>
+	                </div>
+	            </div>
+	            <div class="agree_box">
+	                <input type="checkbox" name="Mailling" id="Mailling" class="chk" onclick="JoinAgreeCheck()"><label for="Mailling">수강확인SMS / 알림톡 / 메일발송 동의</label>
+	                <em class="fcred">*비동의 시 수강진도나 수료에 관한 안내가 되지 않습니다. </em>
+	                <span class="more">전체보기 <i class="ph-bold ph-caret-down"></i></span>
+	                <div class="term" style="display: none;">
+	                    훈련생에게 SMS/알림톡/메일 등을 발송하여 훈련수강과 관련된 사실관계 확인을 통해 부정수급을 방지하고 설문조사를 진행하여 훈련품질을 향상하기 위한 한국산업인력공단의 모니터링 기능입니다.
+	                </div>
+	            </div>
+	            <div class="agree_box">
+	                <input type="checkbox" name="Marketing" id="Marketing" class="chk" onclick="JoinAgreeCheck()"><label for="Marketing">마케팅 수신동의 (선택)</label>
+	                <span class="more">전체보기 <i class="ph-bold ph-caret-down"></i></span>
+	                <div class="term" style="display: none;">
+	                    HRDE평생교육원 내 홍보 등 광고성 정보의 수신에 동의합니다. (단, 교육과 관련된 필수 과정 정보, 주요 공지사항, 안내 등은 수신 동의 여부에 관계없이 자동 발송됩니다.)
+	                </div>
+	                <div class="input_wrap">
+	                    <input type="checkbox" name="chk5Email" id="chk5Email" class="chk2" onclick="JoinAgreeCheckA()"><label for="chk5Email">이메일</label>
+	                    <input type="checkbox" name="chk5Sms" id="chk5Sms" class="chk2" onclick="JoinAgreeCheckA()"><label for="chk5Sms">SMS</label>
+	                </div>
+	            </div>
+            	<button type="button" class="btn_black mt50" onclick="termsAgree()">동의하기</button>
+            </form>
+        </div>
+        <!--content-->
+    </div>
+    <!--wrap-->
+</body>
+<? include "../../archive/include/footer.html";  ?>
+
+<!--약관여닫기-->
+<script>
+$(document).ready(function(){
+    $('.agree_box .more').click(function(){
+        if($(this).next($('.term')).is(":visible")){
+            $(this).find('i').toggleClass("ph-caret-up ph-caret-down");
+            $(this).next($('.term')).slideUp();
+        }else{
+            $(this).find('i').toggleClass("ph-caret-down ph-caret-up");
+            $(this).next($('.term')).slideDown();
+        }
+    });
+});
+</script>

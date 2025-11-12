@@ -1,0 +1,56 @@
+    <ul class="top-menu">
+        <li><a href="/m_archive/contents/contents_list.html?PCategory=1" <? if($PCategory == 1) {?> class='on' <? } ?>>공통역량</a></li>
+        <li><a href="/m_archive/contents/contents_list.html?PCategory=5" <? if($PCategory == 5) {?> class='on' <? } ?>>직무역량</a></li>
+        <li><a href="/m_archive/contents/contents_list.html?PCategory=9" <? if($PCategory == 9) {?> class='on' <? } ?>>리더십</a></li>
+        <li><a href="/m_archive/contents/contents_list.html?PCategory=13" <? if($PCategory == 13) {?> class='on' <? } ?>>HRDe++</a></li>
+        <li><a href="/m_public/mypage/lecture_status.html">나의학습실</a></li>
+    </ul>
+    <form name="CategorySearchForm" action="<?=$_SERVER['PHP_SELF']?>" method="GET">
+    <input type="hidden" name="CategoryData" id="CategoryData" value="<?=$CategoryData?>">
+    <input type="hidden" name="ctype" id="ctype" value="<?=$ctype?>">
+    <input type="hidden" name="PCategory" id="PCategory" value="<?=$PCategory?>">
+    <? if($PCategory != "") { ?>
+    <ul class="sub-menu">
+        <li><a name="catChk" id="catChk0" href="Javascript:CategorySearch(<?=$PCategory?>, 0, '<?=$ctype?>');" <?if($CategoryData == "0" || $CategoryData == ""){?>class="on"<?}?> value="">전체</a></li>
+        <?
+        $k = 1;
+        $SqlS = "SELECT * FROM ContentsKeyword WHERE Category=2 AND jobCate = $PCategory ORDER BY Category ASC, OrderByNum ASC";
+        $QueryS = mysqli_query($connect, $SqlS);
+        if($QueryS && mysqli_num_rows($QueryS)){
+            while($RowS = mysqli_fetch_array($QueryS)){
+                $idx         = $RowS['idx'];
+                $KeywordName = $RowS['Keyword'];
+        ?>
+        <li><a name="CategoryChk" id="CategoryChk<?=$idx?>" href="Javascript:CategorySearch(<?=$PCategory?>, <?=$idx?>, '<?=$ctype?>');" <?if($CategoryData == $idx){?>class="on"<?}?> value="<?=$idx?>"><?=$KeywordName?></a>
+        <?
+                $k++;
+            }
+        }?>
+    </ul>
+    <? } ?>
+    </form>
+<? if(!empty($_SESSION['LoginMemberID'])) { ?>
+<div class="top_status">
+    <div id="wrap">
+        <div class="left">
+            <div class="txt">
+                <b><?=$LoginName?></b>님 &nbsp; 오늘 <?=$TodayStudyTime?> 학습하셨어요｜완료율 <b><?=$StudyTimePercent?>%</b>
+                <br>
+                 수료기준: <b>15시간</b>｜ 훈련기간: <b class="mr10"><?=$LectureStart?> ~ <?=$LectureEnd?>  </b>  
+            </div>
+        </div>
+    </div>
+</div>
+<?}?>
+<!--top_status-->
+
+<script>
+       //카테고리
+    function CategorySearch(PCategory, idx, ctype) {
+        var data = $("#CategoryChk"+idx).attr('value');
+        $("#PCategory").val(PCategory);
+        $("#CategoryData").val(idx);
+        $("#ctype").val(ctype);
+        CategorySearchForm.submit();
+    }
+</script>

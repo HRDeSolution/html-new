@@ -1,0 +1,199 @@
+<? include "../include/support_header.html"; ?>
+<? include "../../m_archive/include/top_header.html";?>
+<? include "../../m_archive/include/contents_header.html";?>
+
+<? include "../include/login_check.php"; ?>
+
+<body>
+<!-- 페이징에 영향을 주는 form 태그 -->
+<form name="listScriptForm" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="col" value="<?=$col?>">
+<input type="hidden" name="sw" value="<?=$sw?>">
+<input type="hidden" name="pg" value="<?=$pg?>">
+<input type="hidden" name="orderby" value="<?=$orderby?>">
+<input type="hidden" name="StartDate" value="<?=$StartDate?>">
+<input type="hidden" name="EndDate" value="<?=$EndDate?>">
+<input type="hidden" name="FaqCate" value="<?=$FaqCate?>">
+<input type="hidden" name="Gubun" value="<?=$Gubun?>">
+<input type="hidden" name="ExamType" value="<?=$ExamType?>">
+<input type="hidden" name="ServiceType" value="<?=$ServiceType?>">
+<input type="hidden" name="str_TestType" value="<?=$str_TestType?>">
+</form>
+<?
+    $pg = Replace_Check_XSS2($pg);
+    $col = Replace_Check_XSS2($col); // 지워도 될까
+    $sw = Replace_Check_XSS2($sw);
+
+    ##-- 페이지 조건
+    if(!$pg) $pg = 1;
+    $page_size = 25;
+    $block_size = 10;
+
+    ##-- 검색 조건
+    $where = array();
+
+    if($sw){
+        $where[] = "(Title LIKE '%$sw%' OR Contents LIKE '%$sw%')";
+    }
+
+    $where[] = "ID='$LoginMemberID'";
+    $where[] = "Del='N'";
+
+    $where = implode(" AND ",$where);
+    if($where) $where = "WHERE $where";
+
+
+    ##-- 정렬조건
+    if($orderby=="") {
+        $str_orderby = "ORDER BY RegDate DESC, idx DESC";
+    }else{
+        $str_orderby = "ORDER BY $orderby";
+    }
+
+    ##-- 검색 등록수
+    $Sql = "SELECT COUNT(*) FROM Counsel $where";
+    $Result = mysqli_query($connect, $Sql);
+    $Row = mysqli_fetch_array($Result);
+    $TOT_NO = $Row[0];
+
+
+    ##-- 페이지 클래스 생성
+    include_once("../../m_include/include_page3.php");
+
+    $PAGE_CLASS = new Page($pg,$TOT_NO,$page_size,$block_size); ##-- 페이지 클래스
+    $BLOCK_LIST = $PAGE_CLASS->blockList(); ##-- 페이지 이동관련
+    $PAGE_UNCOUNT = $PAGE_CLASS->page_uncount; ##-- 게시물 번호 한개씩 감소
+?>    
+
+    <div class="top_section">
+        <div id="wrap">
+            <div class="inner">
+                <h2>1:1 상담</h2>
+                <div class="search_box">
+                    <input name="" id="" type="text" title="검색어 입력" placeholder="검색어를 입력해주세요"><span class="search_btn"><i class="ph ph-magnifying-glass"></i></span>
+                </div>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <!--top_banner-->
+    <div class="support_content">
+        <div id="wrap">
+            <button onclick="Javascript:CounselAsk()"><i class="ph ph-list-plus"></i>1:1 상담 등록</button>
+            <div class="count">총 <span><?=$TOT_NO?></span>건</div>
+            <div class="tableTypeA">
+      
+                <table>
+                    <colgroup>
+                        <col width="10%">
+                        <col width="*">
+                        <col width="10%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>제목</th>
+                            <th>답변</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    
+                    <?
+                    $sql = "SELECT * FROM Counsel $where $str_orderby LIMIT $PAGE_CLASS->page_start, $page_size";
+                    $query = mysqli_query($connect, $sql);
+					if($query && mysqli_num_rows($query)){
+						while($row = mysqli_fetch_array($query)){
+
+							extract($row);
+							$title = strcut_utf8($Title,45);
+							$contents = stripslashes($Contents);
+                    ?>
+                        <tr>
+                            <td><?=$PAGE_UNCOUNT--?></td>
+                            <td class="al">
+                                <a href="ask_view.html?idx=<?=$idx?>"><?=$title?></a>
+                            </td>
+                            <td class="fcred"><?=$CounselStatus_array[$Status]?></td>
+                        </tr>
+                    <?
+                    	}
+                    }else{?>
+                    	<tr>
+                    		<td colspan='5'>상담 이력이 없습니다.</td>
+                    	</tr>
+                    <?}?>
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- page -->
+            <?=$BLOCK_LIST?>
+            <!-- //page -->
+        </div>
+        <!--wrap-->
+    </div>
+
+    
+    
+</body>
+<? include "../../m_archive/include/footer.html"; ?>
+
+<!--header class-->
+<script>
+$(document).ready(function(){
+    $('.middle_header .ask').addClass("on");
+});
+</script>
+
+
+<!--모달팝업-->
+
+<script>
+    jQuery(document).ready(function() {
+    $('.modal-btn').each(function() {
+        var modalID = $(this).attr('href');
+    
+        $(this).on('click', function(e) {
+            e.preventDefault();
+
+            $('.modal-bg').fadeIn();
+            
+            $('.modal-wrap').hide();
+            $(modalID).show();
+
+            $('html').css({overflow: 'hidden'});
+        });
+
+        $('.close-btn').on('click', function() {
+            $('.modal-bg').fadeOut();
+            $(modalID).hide();
+            $(modalID).removeAttr('style');
+
+            $('html').removeAttr('style');
+        });
+    });
+});
+</script>
+<style> 
+    .modal-bg {display:none;width:100%;height:100%;position:fixed;top:0;left:0;right:0;background: rgba(0, 0, 0, 0.6);z-index:999;}
+    .modal-wrap {display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;z-index:1000;}
+    .modal-wrap .close-btn { position: absolute;cursor: pointer;}
+    .modal-wrap .close-btn i {font-size: 35px;}
+</style>
+<!--modal02-->
+<div class="modal-bg"></div>
+<div id="modal02" class="modal-wrap">
+    <div class="close-btn">
+        <i class="ph-thin ph-x"></i>
+    </div>
+    <div class="complete_inner">
+        <i class="ph-fill ph-check-circle"></i>
+        <strong>상담 문의 등록 완료</strong>
+        <p>문의 하신 내용이 정상적으로 접수되었습니다. <br>
+            문의에 대한 답변은 나의 문의 내역에서 확인 가능하십니다</p>
+    </div>
+    <div class="btn"> 
+        <a href="ask.html">상담 문의 내역으로 이동</a>
+    </div>
+</div>
+    			

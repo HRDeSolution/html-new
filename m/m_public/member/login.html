@@ -1,0 +1,61 @@
+<? include "../include/member_header.html";?>
+<? include "../../m_archive/include/top_header.html";?>
+<?
+//로그인 여부 체크
+include $_SERVER['DOCUMENT_ROOT'] . "/m_include/login_not_check.php";
+?>
+
+
+<body>
+    <div id="member_wrap">
+        <div class="title">
+            <h1>LOGIN</h1>
+        </div>
+        <div class="content">
+        	<form name="LoginForm" autocomplete="off">
+            	<input type="hidden" name="MemberType">
+	            <div class="input_box">
+	                <label for="userid">사용자 ID</label>
+	                <input type="text" name="ID" id="ID1" placeholder="아이디를 입력해주세요." value="<?if (isset($_COOKIE["MemberSavedID"])) { echo $_COOKIE["MemberSavedID"];}?>">
+	            </div>
+	            <div class="input_box">
+	                <label for="userpw">사용자 비밀번호</label>
+	                <input type="password" name="Pwd" id="Pwd1" placeholder="비밀번호를 입력해주세요">
+	            </div>
+	            <div class="member_classify" style="display:none;">
+	                <input type="radio" name="MemberType1" id="MemberType" value="A" checked><label for="">기업근로자 회원</label>
+	                <input type="radio" name="MemberType1" id="MemberType" value="B"><label for="">국민내일배움카드</label>
+	                <div class="bubble">기업 교육 학습자는 반드시 기업 근로자 회원에 체크해 주세요</div>
+	            </div>
+	            <div class="flex_box">
+	                <div>
+	                    <input type="checkbox" name="idSave" id="idSave" <?if (isset($_COOKIE["MemberSavedID"])){?> checked<?}?>> <label for="idsave">아이디 저장</label>
+	                </div>
+	         <!--        <div>
+	                    <a href="find_id.html">아이디 찾기</a>
+	                    <span class="bar"></span>
+	                    <a href="find_pw.html">비밀번호 찾기</a>
+	                </div> -->
+	            </div>
+	            <button type="button" class="btn_black mt30" onclick="LoginSubmit();">LOGIN</button>
+                <p class="mt10" style="color: #999;">아이디/비밀번호 찾기는 PC에서 가능합니다.</p>
+            </form>
+            
+            <!-- 
+            
+            <div class="sns_box">
+                <span>SNS 계정으로 로그인</span>
+                <a class="naver" href="#">
+                    <img src="img/naver.png" alt="네이버로그인">
+                </a>
+                <a class="kakao" href="#">
+                    <img src="img/kakao.png" alt="카카오로그인">
+                </a>
+            </div>
+            <button class="btn_white"  onclick="location.href='join.html'">회원가입</button> -->
+        </div>
+        <!--content-->
+    </div>
+    <!--wrap-->
+</body>
+<? include "../../m_archive/include/footer.html";  ?>

@@ -1,0 +1,389 @@
+<? include "../include/mypage_header.html"; ?>
+<? include "../include/login_check.php"; ?>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#SearchYear").change(function(){
+			$("#changeList").load(location.href+" #changeList",{SearchYear: $('#SearchYear').val()});
+		});
+	});
+</script>
+<!-- 페이징에 영향을 주는 form 태그 -->
+<form name="listScriptForm1" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="pg1" value="<?=$pg1?>">
+</form>
+<form name="listScriptForm2" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="pg2" value="<?=$pg2?>">
+</form>
+<form name="listScriptForm3" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="pg3" value="<?=$pg3?>">
+</form>
+<?
+
+if(!$SearchYear)	$SearchYear = "2025";
+
+$where = " WHERE a.ID = '$LoginMemberID'  AND c.StudyEnd = 'Y' AND YEAR(c.LectureStart)= '$SearchYear' ";
+$where2 = "  AND c.StudyEnd = 'Y'  AND YEAR(c.LectureStart)= '$SearchYear' ";
+
+
+$JoinQuery = " Progress a 
+			  LEFT JOIN Course b ON a.LectureCode = b.LectureCode 
+			  LEFT JOIN Study c ON a.ID = c.ID ";
+			  
+$pg1 = Replace_Check_XSS2($pg1);
+$pg2 = Replace_Check_XSS2($pg2);
+$pg3 = Replace_Check_XSS2($pg3);
+
+##-- 페이지 조건
+$page_size = 5;
+$block_size = 10;
+//이러닝
+if(!$pg1) $pg1 = 1;
+//마이크로닝
+if(!$pg2) $pg2 = 1;
+//숏폼
+if(!$pg3) $pg3 = 1;
+
+##-- 검색 등록수
+//이러닝 카운트
+$SqlA = "SELECT COUNT(*) FROM $JoinQuery $where AND b.ServiceType = 'X' ";
+$ResultA = mysqli_query($connect, $SqlA);
+$RowA = mysqli_fetch_array($ResultA);
+$CNT1 = $RowA[0];
+//마이크로닝 카운트
+$SqlB = "SELECT COUNT(*) FROM $JoinQuery $where AND b.ServiceType = 'Z' ";
+$ResultB = mysqli_query($connect, $SqlB);
+$RowB = mysqli_fetch_array($ResultB);
+$CNT2 = $RowB[0];
+//숏폼 카운트
+$SqlC = "SELECT COUNT(*) FROM $JoinQuery $where AND b.ServiceType = 'Y' ";
+$ResultC = mysqli_query($connect, $SqlC);
+$RowC = mysqli_fetch_array($ResultC);
+$CNT3 = $RowC[0];
+
+##-- 페이지 클래스 생성
+include_once("../../include/include_page2.php");
+
+//이러닝
+$PAGE_CLASS1 = new Page($pg1,$CNT1,$page_size,$block_size); ##-- 페이지 클래스
+$BLOCK_LIST1 = $PAGE_CLASS1->blockList('X'); ##-- 페이지 이동관련
+$PAGE_UNCOUNT1 = $PAGE_CLASS1->page_uncount; ##-- 게시물 번호 한개씩 감소
+//마이크로닝
+$PAGE_CLASS2 = new Page($pg2,$CNT2,$page_size,$block_size); ##-- 페이지 클래스
+$BLOCK_LIST2 = $PAGE_CLASS2->blockList('Y'); ##-- 페이지 이동관련
+$PAGE_UNCOUNT2 = $PAGE_CLASS2->page_uncount; ##-- 게시물 번호 한개씩 감소
+//숏폼
+$PAGE_CLASS3 = new Page($pg3,$CNT3,$page_size,$block_size); ##-- 페이지 클래스
+$BLOCK_LIST3 = $PAGE_CLASS3->blockList('Z'); ##-- 페이지 이동관련
+$PAGE_UNCOUNT3 = $PAGE_CLASS3->page_uncount; ##-- 게시물 번호 한개씩 감소
+?>
+        <div class="mypage_content">
+            <div class="sb_box" style="border-bottom: 2px solid;">
+                <h1>학습완료 과정</h1>
+                <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습현황<i class="ph ph-caret-right"></i>&nbsp;학습완료 과정
+                </div>
+            </div>
+            <div class="content">
+				<select name="SearchYear" id="SearchYear" style="width: 150px;margin-bottom: -26px; margin-top: 26px;">
+					<option value="">년도 검색</option>
+					<option value="2024">2024년</option>
+					<? for($i=2025;$i<=date("Y");$i++) { ?>
+					<option value="<?=$i?>" <?if($SearchYear==$i){ ?> selected <?}?> ><?=$i?>년</option>
+					<? } ?>
+				</select>
+            	<?
+            	//총학습시간
+            	$SqlD = "SELECT SUM(a.StudyTime) AS TotalProgressTime , c.PassOK 
+            			 FROM Progress a
+            			 LEFT JOIN Study c ON a.ID = c.ID
+            			 WHERE a.ID = '$LoginMemberID'  $where2";
+				$ResultD = mysqli_query($connect, $SqlD);
+				$RowD = mysqli_fetch_array($ResultD);
+				
+				$TotalStudyTime = gmdate("H: i", $RowD['TotalProgressTime']);
+				$Time_array     = explode(': ',$TotalStudyTime);
+				
+				if($RowD['PassOK']=="Y") $PassOKStr = "(수료)";
+				else $PassOKStr = "(미수료)";
+				?>
+				<div  id="changeList">
+	                <div class="top_category">
+	                    <div id="elearning-link">
+	                        <strong>이러닝</strong>
+	                        <p>과정수<b><?=$CNT1?></b></p>
+	                    </div>
+	                    <div id="microlearning-link">
+	                        <strong>마이크로러닝</strong>
+	                        <p>과정수<b><?=$CNT2?></b></p>
+	                    </div>
+	                    <div id="shortform-link">
+	                        <strong>숏폼</strong>
+	                        <p>과정수<b><?=$CNT3?></b></p>
+	                    </div>
+	                    <div>
+	                        <strong>총 학습시간</strong>
+	                        <p><b><?=$Time_array[0]?></b>시간<b><?=$Time_array[1]?></b>분<em><?=$PassOKStr?></em></p>
+	                    </div>
+	                </div>
+	                
+	                <!--이러닝-->
+	                <div class="table_wrap" id="e-learning">
+	                    <h2>이러닝</h2>
+	                    <table>
+	                        <colgroup>
+	                            <col  class="mh"  width="5%">
+	                            <col width="*%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh"  width="10%">
+	                            <col  class="mh"  width="10%">
+	                            <col  class="mh"  width="90px">
+	                        </colgroup>
+	                        <thead>
+	                            <tr>
+	                                <th  class="mh" >NO</th>
+	                                <th>과정명</th>
+	                                <th class="mh" >과정시간</th>
+	                                <th class="mh" >이수시간</th>
+	                                <th class="mh" >진도율</th>
+	                                <th  class="mh" >수강 시작일</th>
+	                                <th  class="mh" >최근 학습일</th>
+	                                <th class="mh" >이수증</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+							<?
+		                    $i = 1;
+							$sql = "SELECT b.LectureCode , b.ContentsName , b.ContentsTime , a.StudyTime , a.Progress ,
+										   (SELECT RegDate FROM ProgressLog c WHERE c.LectureCode = a.LectureCode AND c.ID = '$LoginMemberID' ORDER BY c.idx LIMIT 1) AS StartDate ,
+										   a.RegDate AS RecentDate , b.Chapter 
+									FROM $JoinQuery
+									$where AND b.ServiceType = 'X'
+									LIMIT $PAGE_CLASS1->page_start, $page_size";
+							//echo $sql;
+							$query = mysqli_query($connect, $sql);
+							if($query && mysqli_num_rows($query)){
+								while($row = mysqli_fetch_array($query)){
+									extract($row);
+									
+									$StudyTime = gmdate("H:i:s", $row['StudyTime']);
+							?>
+								<tr>
+	                                <td class="mh"><?=$PAGE_UNCOUNT1--?></td>
+	                                <td style="text-align: left;"><?=$ContentsName?></td>
+	                                <td class="mh"><?=$ContentsTime?>분</td>
+	                                <td class="mh"><?=$StudyTime?></td>
+	                                <td class="mh"><?=$Progress?>%</td>
+	                                <td class="mh"><?=$StartDate?></td>
+	                                <td class="mh"><?=$RecentDate?></td>
+	                                <td>
+									<?if($Progress >= 100){?>	
+										<button class="black" onclick="Javascript:CertificatePrint('<?=$LectureCode?>');">이수증</button>
+									<?}?>
+									</td>
+	                            </tr>
+		                        <?
+		                        	$i++;
+		                        }
+							}else{
+							?>
+								<tr>
+									<td colspan="9">학습이력이 존재하지 않습니다.</td>
+								</tr>
+							<?	
+							}
+		                    ?>
+	                        </tbody>
+	                    </table>
+	                    <!-- page -->
+	                    <?=$BLOCK_LIST1?>
+	                    <!-- //page -->
+	                </div>
+	                <!--//이러닝-->
+	                
+	                <!--마이크로러닝-->
+	                <div class="table_wrap" id="micro-learning">
+	                    <h2>마이크로러닝</h2>
+	                    <table>
+	                        <colgroup>
+	                            <col  class="mh"  width="5%">
+	                            <col width="*%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh"  width="10%">
+	                            <col  class="mh"  width="10%">
+	                            <col  class="mh"  width="90px">
+	                        </colgroup>
+	                        <thead>
+	                            <tr>
+	                                <th  class="mh" >NO</th>
+	                                <th>과정명</th>
+	                                <th class="mh" >과정시간</th>
+	                                <th class="mh" >이수시간</th>
+	                                <th class="mh" >진도율</th>
+	                                <th  class="mh" >수강 시작일</th>
+	                                <th  class="mh" >최근 학습일</th>
+	                                <th class="mh" >이수증</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+							<?
+		                    $i = 1;
+							$sql = "SELECT b.LectureCode , b.ContentsName , b.ContentsTime , a.StudyTime , a.Progress ,
+										   (SELECT RegDate FROM ProgressLog c WHERE c.LectureCode = a.LectureCode AND c.ID = '$LoginMemberID' ORDER BY c.idx LIMIT 1) AS StartDate ,
+										   a.RegDate AS RecentDate , b.Chapter 
+									FROM $JoinQuery
+									$where AND b.ServiceType = 'Z'
+									LIMIT $PAGE_CLASS2->page_start, $page_size";
+							//echo $sql;
+							$query = mysqli_query($connect, $sql);
+							if($query && mysqli_num_rows($query)){
+								while($row = mysqli_fetch_array($query)){
+									extract($row);
+									
+									$StudyTime = gmdate("H:i:s", $row['StudyTime']);
+							?>
+								<tr>
+	                                <td class="mh"><?=$PAGE_UNCOUNT2--?></td>
+	                                <td style="text-align: left;"><?=$ContentsName?></td>
+	                                <td class="mh"><?=$ContentsTime?>분</td>
+	                                <td class="mh"><?=$StudyTime?></td>
+	                                <td class="mh"><?=$Progress?>%</td>
+	                                <td class="mh"><?=$StartDate?></td>
+	                                <td class="mh"><?=$RecentDate?></td>
+	                                <td>
+									<?if($Progress >= 100){?>	
+										<button class="black" onclick="Javascript:CertificatePrint('<?=$LectureCode?>');">이수증</button>
+									<?}?>
+	                                </td>
+	                            </tr>
+		                        <?
+		                        	$i++;
+		                        }
+							}else{
+							?>
+								<tr>
+									<td colspan="9">학습이력이 존재하지 않습니다.</td>
+								</tr>
+							<?	
+							}
+		                    ?>
+	                        </tbody>
+	                    </table>
+	                    <!-- page -->
+	                    <?=$BLOCK_LIST2?>
+	                    <!-- //page -->
+	                </div>
+	                <!--//마이크로러닝-->
+	                
+	                <!--숏폼-->
+	                <div class="table_wrap" id="short-form">
+	                    <h2>숏폼</h2>
+	                    <table>
+	                        <colgroup>
+	                            <col  class="mh"  width="5%">
+	                            <col width="*%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh" width="7%">
+	                            <col  class="mh"  width="10%">
+	                            <col  class="mh"  width="10%">
+	                            <col  class="mh"  width="90px">
+	                        </colgroup>
+	                        <thead>
+	                            <tr>
+	                                <th  class="mh" >NO</th>
+	                                <th>과정명</th>
+	                                <th class="mh" >과정시간</th>
+	                                <th class="mh" >이수시간</th>
+	                                <th class="mh" >진도율</th>
+	                                <th  class="mh" >수강 시작일</th>
+	                                <th  class="mh" >최근 학습일</th>
+	                                <th class="mh" >이수증</th>
+	                            </tr>
+	                        </thead>
+	                        <tbody>
+	                        <?
+		                    $i = 1;
+							$sql = "SELECT b.LectureCode , b.ContentsName , b.ContentsTime , a.StudyTime , a.Progress ,
+										   (SELECT RegDate FROM ProgressLog c WHERE c.LectureCode = a.LectureCode AND c.ID = '$LoginMemberID' ORDER BY c.idx LIMIT 1) AS StartDate ,
+										   a.RegDate AS RecentDate , b.Chapter 
+									FROM $JoinQuery
+									$where AND b.ServiceType = 'Y'
+								    LIMIT $PAGE_CLASS3->page_start, $page_size";
+							//echo $sql;
+							$query = mysqli_query($connect, $sql);
+							if($query && mysqli_num_rows($query)){
+								while($row = mysqli_fetch_array($query)){
+									extract($row);
+									
+									$StudyTime = gmdate("H:i:s", $row['StudyTime']);
+							?>
+								<tr>
+	                            </tr>
+	                                <td class="mh"><?=$PAGE_UNCOUNT3--?></td>
+	                                <td style="text-align: left;"><?=$ContentsName?></td>
+	                                <td class="mh"><?=$ContentsTime?>분</td>
+	                                <td class="mh"><?=$StudyTime?></td>
+	                                <td class="mh"><?=$Progress?>%</td>
+	                                <td class="mh"><?=$StartDate?></td>
+	                                <td class="mh"><?=$RecentDate?></td>
+	                                <td class="mh">
+									<?if($Progress >= 100){?>	
+										<button class="black" onclick="Javascript:CertificatePrint('<?=$LectureCode?>');">이수증</button>
+									<?}?>
+	                                </td>
+	                            </tr>
+		                        <?
+		                        	$i++;
+		                        }
+							}else{
+							?>
+								<tr>
+									<td colspan="9">학습이력이 존재하지 않습니다.</td>
+								</tr>
+							<?	
+							}
+		                    ?>
+	                        </tbody>
+	                    </table>
+	                    <!-- page -->
+	                    <?=$BLOCK_LIST3?>
+	                    <!-- //page --> 
+	                </div>
+	                <!--//숏폼-->
+				</div>
+            </div>
+            <!--content-->
+        </div>
+        <!--mypage_content-->
+    </div>
+    <!--wrap-->
+</body>
+<? include "../../archive/include/footer.html"; ?>
+<script>
+    $(document).ready(function(){
+        $('.mypage_menu .lecture_status').addClass("on");
+        $('.mypage_menu .lecture_status ul').css('display','block');
+        $('.mypage_menu .lecture_status ul .status02').addClass("on");
+        $('.mypage_menu .lecture_status a').find('i').toggleClass("ph-caret-up ph-caret-down");
+
+        document.getElementById('elearning-link').addEventListener('click', function(event) {
+        event.preventDefault();
+        document.getElementById('e-learning').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('microlearning-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('micro-learning').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        document.getElementById('shortform-link').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('short-form').scrollIntoView({ behavior: 'smooth' });
+        });
+    });
+</script>
+</script>

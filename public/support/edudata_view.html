@@ -1,0 +1,206 @@
+<? include "../include/support_header.html"; 
+
+$idx = Replace_Check($idx);
+
+$Sql = "UPDATE StudyPDS SET ViewCount = ViewCount + 1 WHERE idx=$idx";
+$Result = mysqli_query($connect, $Sql);
+
+$Sql = "SELECT * FROM StudyPDS WHERE idx=$idx AND UseYN='Y' AND Del='N'";
+$Result = mysqli_query($connect, $Sql);
+$Row = mysqli_fetch_array($Result);
+
+if($Row) {
+    $Category = $Row['Category'];
+    $Title = $Row['Title'];
+    $Content = stripslashes($Row['Content']);
+    $FileName1 = $Row['FileName1'];
+    $RealFileName1 = $Row['RealFileName1'];
+    $FileName2 = $Row['FileName2'];
+    $RealFileName2 = $Row['RealFileName2'];
+    $FileName3 = $Row['FileName3'];
+    $RealFileName3 = $Row['RealFileName3'];
+    $FileName4 = $Row['FileName4'];
+    $RealFileName4 = $Row['RealFileName4'];
+    $FileName5 = $Row['FileName5'];
+    $RealFileName5 = $Row['RealFileName5'];
+    $ViewCount = $Row['ViewCount'];
+    $RegDate = $Row['RegDate'];
+}else{
+?>
+<script type="text/javascript">
+<!--
+    location.href="edudata.html?EduCate=<?=$Category?>";
+//-->
+</script>
+<?
+exit;
+}
+
+?>
+<body>
+    <div class="top_section">
+        <div id="wrap">
+            <div class="inner">
+                <h2>학습자료실</h2>
+                <div class="search_box">
+                    <input name="" id="" type="text" title="검색어 입력" placeholder="검색어를 입력해주세요"><span class="search_btn"><i class="ph ph-magnifying-glass"></i></span>
+                </div>
+            </div>
+            <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습지원센터<i class="ph ph-caret-right"></i>&nbsp; 학습자료실
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <!--top_banner-->
+    <div class="category">
+        <div id="wrap">
+            <ul>
+	            <?while (list($key,$value)=each($Edudata_array)) {?>
+	            	<li class="<?if($Category==$key) {?>on<?}?>"><a href="edudata.html?EduCate=<?=$key?>"><?=$value?></a></li>
+	            <?}?>
+            </ul>
+        </div>
+    </div>
+    <div class="edudata_content">
+        <div id="wrap">
+            <div class="tableTypeA_top">
+                <div class="title">
+                    <?=$Title?>
+                </div>
+                <div class="detail">
+                    <div class="date">
+                        <span>등록일</span>
+                        <?=substr($RegDate,0,10)?>
+                    </div>
+                    <div class="bar"></div>
+                    <div class="view">
+                        <span>조회</span>
+                        <?=$ViewCount?>
+                    </div>
+                </div>
+            </div>
+            <div class="tableTypeA">
+                <table>
+                    <colgroup>
+                        <col max-width="200px">
+                        <col width="">
+                    </colgroup>
+                    <tr>
+                        <th class="c_box">첨부파일 다운로드<i class="ph-fill ph-arrow-fat-down"></i></th>
+                        <td class="al pl20">
+                        	<?if($FileName1) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=StudyPDS&file=1"><img src="img/icon_black.png" alt="파일아이콘" class="download_view"><?=$RealFileName1?></a><?}?>
+                            <?if($FileName2) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=StudyPDS&file=2"><img src="img/icon_black.png" alt="파일아이콘" class="download_view"><?=$RealFileName2?></a><?}?>
+                            <?if($FileName3) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=StudyPDS&file=3"><img src="img/icon_black.png" alt="파일아이콘" class="download_view"><?=$RealFileName3?></a><?}?>
+			                <?if($FileName4) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=StudyPDS&file=4"><img src="img/icon_black.png" alt="파일아이콘" class="download_view"><?=$RealFileName4?></a><?}?>
+			                <?if($FileName5) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=StudyPDS&file=5"><img src="img/icon_black.png" alt="파일아이콘" class="download_view"><?=$RealFileName5?></a><?}?>                        
+			            </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="content">
+							<?=$Content?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="button_wrap">
+<!--                 <button type="button" class="save modal-btn" onclick="location.href='save_learning_material.php?idx=<?=$idx?>'">학습자료 찜하기</button> href="#modal01" -->
+            <?
+	            if($LoginMemberID) {
+					$Sql = "SELECT COUNT(*) FROM StudyPDS_Scrap WHERE idx=$idx AND ID='$LoginMemberID'";
+					$Result = mysqli_query($connect, $Sql);
+					$Row = mysqli_fetch_array($Result);
+
+					$ScrapCount = $Row[0];
+            ?>
+		            <?if($ScrapCount<1) {?>
+		             <!--      <button type="button" class="btn_01" onclick="Javascript:StudyPDS_Scrap(<?=$idx?>,'Regist');">학습자료 찜하기</button> -->
+		            <?}else{?>
+		             <!--   <button type="button" class="btn_01" onclick="Javascript:StudyPDS_Scrap(<?=$idx?>,'Delete');">학습자료 찜 취소하기</button> -->
+		            <?}?>
+	            <?
+	            }else{
+	            ?>
+	              <!--  <button type="button" class="btn_01" onclick="Javascript:StudyPDS_Scrap(<?=$idx?>,'Guest');">학습자료 찜하기</button> -->
+	            <?
+	            }
+            ?>
+                <button onclick="location.href='edudata.html?EduCate=<?=$Category?>'">목록</button>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+   
+    
+    
+</body>
+<? include "../../archive/include/footer.html"; ?>
+
+<!--header class-->
+<script>
+    $(document).ready(function(){
+        $('.middle_header .edudata').addClass("on");
+    });
+</script>
+
+<!--관심강의 버튼 toggle-->
+<script>
+    $(document).ready(function() {
+    
+        (function($) {
+        $.fn.clickToggle = function(func1, func2) {
+            var funcs = [func1, func2];
+            this.data('toggleclicked', 0);
+            this.click(function() {
+                var data = $(this).data();
+                var tc = data.toggleclicked;
+                $.proxy(funcs[tc], this)();
+                data.toggleclicked = (tc + 1) % 2;
+            });
+            return this;
+        };
+    }(jQuery));
+    
+    $(".modal-btn").clickToggle(
+        function(){
+            $(".modal-btn").text("학습자료 찜 취소하기");
+    
+            $('.modal-bg').fadeIn();
+            $('.modal-wrap').hide();
+            $('#modal01').show();
+            $('html').css({overflow: 'hidden'});
+    
+                $('.close-btn').on('click', function() {
+                $('.modal-bg').fadeOut();
+                $('#modal01').hide();
+                $('#modal01').removeAttr('style');
+    
+                $('html').removeAttr('style');
+                });
+            },
+        function(){
+            $(".modal-btn").text("학습자료 찜하기");
+
+            $('.modal-bg').fadeIn();
+            $('.modal-wrap').hide();
+            $('#modal02').show();
+            $('html').css({overflow: 'hidden'});
+    
+                $('[class*=close-btn]').on('click', function() {
+                $('.modal-bg').fadeOut();
+                $('#modal02').hide();
+                $('#modal02').removeAttr('style');
+    
+                $('html').removeAttr('style');
+                });
+            },
+        )
+    });
+</script>
+
+<style> 
+    .modal-bg {width:100%;height:100%;position:fixed;top:0;left:0;right:0;background: rgba(0, 0, 0, 0.6);z-index:999;}
+    .modal-wrap {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;z-index:1000;}
+    .modal-wrap .close-btn { position: absolute;cursor: pointer;}
+    .modal-wrap .close-btn i {font-size: 35px;}
+</style>

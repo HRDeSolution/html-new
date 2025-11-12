@@ -1,0 +1,35 @@
+<?
+include "../include/include_function.php";
+//include "./include/include_admin_check.php";
+
+$Seq = Replace_Check($Seq);
+$sType = Replace_Check($sType);
+
+//241118.YEON
+//재응시요청시,수료여부 '미수료'로 처리
+
+if($sType=="Mid") { //중간평가
+	$str_query = " MidScore=NULL, MidStatus='N', ReMid='Y', PassOK='N', reDate=NOW() ";
+}
+
+if($sType=="Test") { //최종평가
+	$str_query = " TestScore=NULL, TestStatus='N', ReTest='Y', PassOK='N', reDate=NOW() ";
+}
+
+if($sType=="Report") { //과제
+	$str_query = " ReportScore=NULL, ReportStatus='N', ReReport='Y', PassOK='N', reDate=NOW() ";
+}
+
+$Sql = "UPDATE Study SET $str_query WHERE Seq=$Seq";
+$Row = mysqli_query($connect, $Sql);
+
+
+if($Row) {
+	echo "Y";
+}else{
+	//echo "N";
+	echo("오류 : " . mysqli_error($connect));
+}
+
+mysqli_close($connect);
+?>

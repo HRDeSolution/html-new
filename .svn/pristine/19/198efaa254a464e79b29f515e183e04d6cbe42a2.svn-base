@@ -1,0 +1,262 @@
+<?
+header("content-type:text/html; charset=EUC-KR");
+include "../include/include_function.php";
+require('../lib/fpdf181/korean.php');
+
+function truncateText($text, $maxLength) {
+    if (mb_strlen($text, 'UTF-8') > $maxLength) {
+        return mb_substr($text, 0, $maxLength, 'UTF-8'). '...';
+    }
+    return $text;
+}
+
+$LectureStart = Replace_Check($LectureStart);
+$LectureEnd = Replace_Check($LectureEnd);
+$CompanyName = Replace_Check($CompanyName);
+$ServiceType = Replace_Check($ServiceType);
+
+$where = array();
+
+if($LectureStart) {
+    $where[] = "s.LectureStart='".$LectureStart."'";
+}
+if($LectureEnd) {
+    $where[] = "s.LectureEnd='".$LectureEnd."'";
+}
+if($CompanyName) {
+    $where[] = "c.CompanyName = '".$CompanyName."'";
+}
+if($ServiceType) {
+    $where[] = "s.ServiceType=".$ServiceType;
+    $whereA = " WHERE c.CompanyName='$CompanyName' AND a.LectureStart='$LectureStart' AND a.LectureEnd='$LectureEnd' AND a.ServiceType='$ServiceType' AND a.PassOk='Y' ";
+}else{
+    $where[] = "s.ServiceType IN (1,3,5,9)";
+    $whereA = " WHERE c.CompanyName='$CompanyName' AND a.LectureStart='$LectureStart' AND a.LectureEnd='$LectureEnd' AND a.ServiceType IN (1,3,5,9) AND a.PassOk='Y' ";
+}
+
+$where = implode(" AND ",$where);
+if($where) $where = "WHERE $where";
+
+//해당 데이터가 있어야지만 수료증 출력
+$NotPDF = "N";
+
+$SqlA = "SELECT COUNT(s.Seq)
+        FROM Study s JOIN Company c JOIN Course f ON s.CompanyCode = c.CompanyCode and s.LectureCode = f.LectureCode
+        $where $where2 AND s.PassOK = 'Y'  ";
+$ResultA = mysqli_query($connect, $SqlA);
+$RowA = mysqli_fetch_array($ResultA);
+$TOT_NO = $RowA[0];
+
+if($TOT_NO>0) {
+    $NotPDF = "Y";
+}
+
+if($NotPDF=="Y"){
+    $pdf = new PDF_Korean();
+    $pdf->AddUHCFont();
+    $pdf->AddPage();
+    $pdf->AddUHCFont('바탕', 'Batang');
+    
+    $i = 0;
+    $SQLB = "SELECT a.ID, a.LectureStart, a.LectureEnd, a.PassOk, a.ServiceType, a.LectureCode,
+                    b.Name, AES_DECRYPT(UNHEX(BirthDay),'$DB_Enc_Key') AS BirthDay,
+                    c.CompanyName, d.ContentsName, d.ContentsTime
+            FROM Study AS a
+            LEFT OUTER JOIN Member AS b ON a.ID=b.ID
+            LEFT OUTER JOIN Company AS c ON a.CompanyCode=c.CompanyCode
+            LEFT OUTER JOIN Course AS d ON a.LectureCode=d.LectureCode
+            $whereA
+            ORDER BY b.Name ASC  ";
+    $QUERYB = mysqli_query($connect, $SQLB);
+    if($QUERYB && mysqli_num_rows($QUERYB)){
+        while($ROWB = mysqli_fetch_array($QUERYB)){
+            extract($ROWB);
+            
+            $LectureStart_array = explode("-",$LectureStart);
+            $LectureStart_Year = $LectureStart_array[0];
+            $LectureStart_Month = $LectureStart_array[1];
+            $LectureStart_Day = $LectureStart_array[2];
+            $LectureStart_view = $LectureStart_Year."년 ".$LectureStart_Month."월 ".$LectureStart_Day."일";
+            
+            $LectureEnd_array = explode("-",$LectureEnd);
+            $LectureEnd_Year = $LectureEnd_array[0];
+            $LectureEnd_Month = $LectureEnd_array[1];
+            $LectureEnd_Day = $LectureEnd_array[2];
+            $LectureEnd_view = $LectureEnd_Year."년 ".$LectureEnd_Month."월 ".$LectureEnd_Day."일";
+            
+            $resultDate00 = date('Y-m-d');
+            $resultDate01 = substr($resultDate00,0,4);
+            $resultDate02 = substr($resultDate00,5,2);
+            $resultDate03 = substr($resultDate00,8,2);
+            $resultDate = $resultDate01." 년  ".(int)$resultDate02."월  ".(int)$resultDate03."일";
+            
+            if($i>0) {
+                $pdf->AddPage();
+            }
+            
+            $pdf->Image('../images/certi_print_img01.jpg',2.5,2.5,205,292.5,'','');
+            
+            $pdf->Ln(25);
+            $pdf->SetLeftMargin(63);
+            $pdf->SetFont('바탕','',32);
+            $pdf->WriteHTML("수      료      증");
+            
+            $pdf->SetLeftMargin(0);
+            $pdf->Ln(26);
+            $pdf->SetFont('바탕','',14);
+            
+            $userName = iconv("UTF-8", "CP949", $Name);
+            $pdf->WriteHTML("                성      명 : ".$userName);
+            
+            $pdf->Ln(10);
+            $birth = iconv("UTF-8", "CP949", $BirthDay);
+            $pdf->WriteHTML("                생년월일 : ".$birth);
+            
+            $pdf->Ln(16);
+            $companyName = iconv("UTF-8", "CP949", $CompanyName);
+            $pdf->WriteHTML("                소속회사 : ".$companyName);
+            
+            // 제목 길어져서 _ 기준으로 자르기.
+            $pdf->Ln(10);
+            $contentsName = iconv("UTF-8", "CP949", $ContentsName);
+            $contentsNameArr = explode("_",$contentsName);
+            
+            if(count($contentsNameArr) == 5) {
+                $contentsName1 = $contentsNameArr[0] . "_" . $contentsNameArr[1] . "_" . $contentsNameArr[2];
+                $contentsName2 =  "_" . $contentsNameArr[3] . "_" . $contentsNameArr[4];
+                $pdf->WriteHTML("                훈련과정 : ". $contentsName1);
+                $pdf->Ln(7);
+                $pdf->WriteHTML("                                ". $contentsName2);
+            }else{
+                $pdf->WriteHTML("                훈련과정 : ". $contentsName);
+            }
+            
+            $pdf->Ln(10);
+            $start_end = $LectureStart_Year.'년 '.$LectureStart_Month.'월 '.$LectureStart_Day.'일 ~ '.$LectureEnd_Year.'년 '.$LectureEnd_Month.'월 '.$LectureEnd_Day.'일 ('.$ContentsTime.'h)';
+            $pdf->WriteHTML("                훈련기간 : ".$start_end);
+            $pdf->Ln(10);
+            
+            if($ServiceType == 1){
+                $typeText = '사업주 직업능력개발 훈련과정(인터넷 원격)';
+            }else if($ServiceType == 3 || $ServiceType == 5 || $ServiceType == 9){
+                $typeText = '인터넷 훈련과정';
+            }else if($ServiceType == 4){
+                $typeText = "근로자 교육과정";
+            }
+            
+            $pdf->WriteHTML("                교육장소 : ".$typeText);
+            $pdf->SetLeftMargin(10);
+            $pdf->Ln(34);
+            $pdf->SetFont('바탕','',17);
+            $pdf->Cell(0, 10, '위 사람은 본 교육원이 실시한', 0, 0, 'C');
+            $pdf->Ln(10);
+            $pdf->Cell(0, 10, '상기의 교육과정을 위 기간 동안 성실히 수행하여', 0, 0, 'C');
+            $pdf->Ln(10);
+            $pdf->Cell(0, 10, '수료하였기에 본 증서를 수여합니다.', 0, 0, 'C');
+            
+            $pdf->Ln(30);
+            $pdf->SetFont('바탕','',18);
+            $pdf->Cell(0, 10, $resultDate, 0, 0, 'C');
+            $pdf->Ln(32);
+            $pdf->SetFont('바탕','',18);
+            $SiteName = iconv("UTF-8", "CP949", $CertSiteName);
+            
+            $textWidth = $pdf->GetStringWidth($SiteName);
+            $pageWidth = $pdf->GetPageWidth();
+            $centerX = ($pageWidth - $textWidth) / 2;
+            
+            $pdf->SetXY($centerX, 245);
+            $pdf->Cell($textWidth, 10, $SiteName, 0, 0, 'C');
+            $imageX = $centerX + $textWidth - ($textWidth * 0.1);
+            $pdf->Image('../images/company_stamp.png',$imageX, 235,25,26,'','');
+            
+            //차시 페이지 -----------------------------------------------------------------------------------------------------
+            if($ServiceType == 3){
+                $sql4Chapter = "SELECT ContentsTitle
+                                    FROM Contents
+                                    WHERE idx IN (SELECT Sub_idx
+                                                  FROM Chapter
+                                                  WHERE LectureCode='$LectureCode')";
+                $query = mysqli_query($connect,$sql4Chapter);
+                $printedChaptersCount = 1;
+                $row_count = mysqli_num_rows($query);
+                if($row_count > 1){
+                    while($row = mysqli_fetch_assoc($query)){
+                        if($printedChaptersCount % 14 == 1){//차시 페이지 윗 부분 고정 -------------------------
+                            $pdf->AddPage();
+                            $pdf->Image('../images/certi_print_img01.jpg',2.5,2.5,205,292.5,'','');
+                            $pdf->Ln(15);
+                            $pdf->SetLeftMargin(20);
+                            $pdf->SetFont('바탕','',12);
+                            $pdf->Cell(0, 1, '(별지)', 0, 1, 'L');
+                            $pdf->Ln(15);
+                            $pdf->SetFont('바탕', '', 12);
+                            $pdf->Cell(0, 1, "가. 교육생 인증사항", 0, 1, 'L');
+                            $pdf->Ln(5);
+                            
+                            //첫 번째 표 (교육생 인증사항)
+                            $pdf->SetFont('바탕', '', 10);
+                            $pdf->Cell(60, 10, "성명", 1, 0, 'C');
+                            $pdf->Cell(40, 10, "생년월일", 1, 0, 'C');
+                            $pdf->Cell(70, 10, "소속회사", 1, 1, 'C');
+                            
+                            $pdf->Cell(60, 10, $userName, 1, 0, 'C');
+                            $pdf->Cell(40, 10, $birth, 1, 0, 'C');
+                            $pdf->Cell(70, 10, $companyName, 1, 1, 'C');
+                            
+                            $pdf->Ln(15);
+                            $pdf->SetFont('바탕', '', 12);
+                            if($contentsNameArr2[1] != ""){
+                                $pdf->Cell(0, 1, '나. 훈련과정 : '. $contentsName1.' : ', 0, 1, 'L');
+                                $pdf->Ln(7);
+                                $pdf->Cell(0, 1, $contentsName2, 0, 1, 'L');
+                            }else{
+                                $pdf->Cell(0, 1, '나. 훈련과정 : '. $contentsName, 0, 1, 'L');
+                            }
+                            $pdf->Ln(5);
+                            
+                            $pdf->SetFont('바탕', '', 10);
+                            $pdf->Cell(10, 10, "연번", 1, 0, 'C');
+                            $pdf->Cell(120, 10, "교육과정", 1, 0, 'C');
+                            $pdf->Cell(20, 10, "교육시간", 1, 0, 'C');
+                            $pdf->Cell(20, 10, "패스여부", 1, 1, 'C');
+                        }//--------------------------------------------------------------------------------
+                        //두번째 표
+                        $chapterName = iconv("UTF-8", "CP949", $row['ContentsTitle']);
+                        $pdf->Cell(10, 10, $printedChaptersCount, 1, 0, 'C');
+                        $truncatedChapterName = truncateText($chapterName, 55); // 원하는 길이 설정
+                        $pdf->Cell(120, 10, $truncatedChapterName, 1, 0, 'C');
+                        $pdf->Cell(20, 10, "1H", 1, 0, 'C');
+                        $pdf->Cell(20, 10, "P", 1, 1, 'C');
+                        
+                        if($printedChaptersCount % 14 == 0 || $row_count == $printedChaptersCount){//스탬프 부분
+                            $pdf->Ln(5);
+                            $pdf->Cell(0, 1, "*패스여부는 P(Pass) 또는 F(Fail)로 표기되었습니다.", 0, 1, 'L');
+                            $pdf->SetFont('바탕','',18);
+                            $pdf->SetXY($centerX, 260);
+                            $pdf->Cell($textWidth, 1, $SiteName, 0, 0, 'C');
+                            $imageY = 248;
+                            $pdf->Image('../images/company_stamp.png', $imageX, $imageY, 25, 26, '', '');
+                        }
+                        $printedChaptersCount++;
+                    }
+                }
+            }
+            $i++;
+        }
+    }
+    $FileName = iconv("CP949","UTF-8", "수료증(전체)_".$companyName.".pdf");
+    $pdf->Output('D',$FileName,true);    
+}else{
+    $msg = "수료내역이 없습니다.";
+    $msg = iconv("CP949","UTF-8",$msg);
+?>
+<script type="text/javascript">
+<!--
+	alert("<?=$msg?>");
+	self.close();
+//-->
+</script>
+<?
+}
+?>

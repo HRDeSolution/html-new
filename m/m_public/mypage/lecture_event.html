@@ -1,0 +1,114 @@
+<? include "../include/mypage_header.html"; ?>
+<? include "../../m_archive/include/top_header.html";?>
+<? include "../../m_archive/include/mypage_header.html";?>
+
+<div class="mypage_content">
+	<div class="sb_box">
+    	<h1>출석 체크</h1>
+        <div class="navi">
+        	<i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;나의학습실<i class="ph ph-caret-right"></i>&nbsp;출석 체크
+		</div>
+    </div>
+    <div class="content">
+        <h2>HRDe Archive 매일매일 출석체크 이벤트</h2>
+        <div class="top_box">
+            <div class="img">
+                <img src="img/event_bg.png" alt="">
+            </div>
+            <div class="txt">
+                <p><i>·</i><b>1일 1시간</b> 이상을 수강한 수강생 여러분께 출석 도장이 발행됩니다.</p>
+                <p><i>·</i>출석 도장을 10개 이상 모아 주시면 <b>커피 쿠폰</b>을 증정해드립니다.</p>
+                <p><i>·</i>매일 매일 1시간! <b>최대 40시간 4개</b>의 커피 쿠폰을 모아 보세요!</p>
+            </div>
+        </div>
+            <div class="stamp_box">
+                <div class="stamp_ttl">10 Days</div>
+                <div class="stamp_wrap">
+					<?
+					$Sql1 = "SELECT StageCount FROM LectureEvent WHERE ID = '$LoginMemberID' AND Stage=10";
+					$Result1 = mysqli_query($connect, $Sql1);
+					$Row1 = mysqli_fetch_array($Result1);
+					$StageCnt1 = $Row1[0];
+					
+					for($i=1; $i<11; $i++){
+						if($i <= $StageCnt1)	$ClassStr1 = "active";
+						else					$ClassStr1 = "";
+						
+					?>
+						<div class="stamp <?=$ClassStr1?>"></div>
+					<?	
+					}
+					?>
+                </div>
+                
+				<div class="stamp_ttl">20 Days</div>
+                <div class="stamp_wrap">
+				<?
+				$Sql1 = "SELECT StageCount FROM LectureEvent WHERE ID = '$LoginMemberID' AND Stage=20";
+				$Result1 = mysqli_query($connect, $Sql1);
+				$Row1 = mysqli_fetch_array($Result1);
+				$StageCnt1 = $Row1[0];
+				
+				for($i=1; $i<11; $i++){
+					if($i <= $StageCnt1)	$ClassStr1 = "active";
+					else					$ClassStr1 = "";
+					
+				?>
+					<div class="stamp <?=$ClassStr1?>"></div>
+				<?	
+				}
+				?>
+                </div>
+                
+                <div class="stamp_ttl">30 Days</div>
+                <div class="stamp_wrap">
+				<?
+				$Sql1 = "SELECT StageCount FROM LectureEvent WHERE ID = '$LoginMemberID' AND Stage=30";
+				$Result1 = mysqli_query($connect, $Sql1);
+				$Row1 = mysqli_fetch_array($Result1);
+				$StageCnt1 = $Row1[0];
+				
+				for($i=1; $i<11; $i++){
+					if($i <= $StageCnt1)	$ClassStr1 = "active";
+					else					$ClassStr1 = "";
+					
+				?>
+					<div class="stamp <?=$ClassStr1?>"></div>
+				<?	
+				}
+				?>
+                </div>
+                
+                <div class="stamp_ttl">40 Days</div>
+                <div class="stamp_wrap">
+				<?
+				$Sql1 = "SELECT StageCount FROM LectureEvent WHERE ID = '$LoginMemberID' AND Stage=40";
+				$Result1 = mysqli_query($connect, $Sql1);
+				$Row1 = mysqli_fetch_array($Result1);
+				$StageCnt1 = $Row1[0];
+				
+				for($i=1; $i<11; $i++){
+					if($i <= $StageCnt1)	$ClassStr1 = "active";
+					else					$ClassStr1 = "";
+					
+				?>
+					<div class="stamp <?=$ClassStr1?>"></div>
+				<?	
+				}
+				?>
+                </div>
+            </div>
+        </div>
+       
+    </div>
+</div>
+</body>
+
+<? include "../../m_archive/include/footer.html"; ?>
+
+<script>
+    $(document).ready(function(){
+        $('.top-menu .event').addClass("on");
+    });
+    
+</script>

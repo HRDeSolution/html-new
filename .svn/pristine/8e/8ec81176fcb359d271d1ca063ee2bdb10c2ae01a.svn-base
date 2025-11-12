@@ -1,0 +1,50 @@
+<footer>
+    <div class="footer_top">
+        <div id="wrap">
+            <ul class="footer_menu">
+                <li><a href="http://new.hrdeedu.com/public/etc/agreement.html">이용약관</a></li>
+                <li><a href="http://new.hrdeedu.com/public/etc/privacy.html">개인정보처리방침</a></li>
+                <li><a href="http://new.hrdeedu.com/public/support/faq.html">자주묻는질문</a></li>
+                <li><a href="http://new.hrdeedu.com/public/support/remote.html">원격학습지원</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="footer_bottom">
+        <div id="wrap">
+            <ul class="footer_info">
+                <li>문의전화: <?=$SitePhone?></li>
+                <li>상담시간:평일 오전 9시 ~ 오후 6시｜이메일: <?=$SiteEmail?></li>
+                <li><?=$SiteAddress?></li>
+                <li><?=$SiteCopyright?> 본 사이트 내의 컨텐츠는 저작권법 상의 보호를 받고 있습니다.</li>
+            </ul>
+        </div>
+    </div>
+</footer>
+
+<form name="TimeCheckForm">
+	<input type="hidden" name="NowTime" id="NowTime" value="0">
+</form>
+<!-- jQuery로 데이터 처리를 위한 영역 -->
+<div id="SysBg_White" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #FFFFFF;display:none;"></div>
+<div id="SysBg_Black" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #000000;display:none;"></div>
+<div id="Roading" style="display:none;z-index:100"><BR /><BR /><BR /><BR /><img src="/images/loader.gif" alt="로딩중" /></div>
+<div id="DataResult" style="display:none;z-index:10000"></div>
+<iframe name="ScriptFrame" border="0" frameborder="0" width="0" height="0" title="데이터 처리를 위한 프레임" style="display:none"></iframe>
+<!-- jQuery로 데이터 처리를 위한 영역 -->
+<? if(isset($_SESSION['LoginMemberID'])) { ?>
+<script type="text/javascript">
+$(document).ready(function() {
+	setInterval("LogoutTimeCheck()",1000);
+	LogOutTimeView();
+	setInterval("LogInCheck()",6000);
+});
+</script>
+<?}?>
+
+<!-- player -->
+<div id="SysBg_White" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #FFFFFF;display:none;"></div>
+<div id="SysBg_Black" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #000000;display:none;"></div>
+<div id="Roading" style="display:none;z-index:100"><BR /><BR /><BR /><BR /><img src="/images/loader.gif" alt="로딩중" /></div>
+<div id="DataResult" style="display:none;z-index:10000; height:100vh; overflow-y: auto; padding: 50px 0;"></div>
+<iframe name="ScriptFrame" border="0" frameborder="0" width="0" height="0" title="데이터 처리를 위한 프레임" style="display:none"></iframe>
+<!-- // player -->

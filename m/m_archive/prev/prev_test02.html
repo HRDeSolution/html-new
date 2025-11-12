@@ -1,0 +1,142 @@
+<? include "../include/header.html"; ?>
+<? //include "../include/login_check.php"; ?>
+<style>
+    body{background: #fff;}
+</style>
+
+<body>
+    <div id="wrap">
+        <div class="prev_wrap">
+            <div class="top">
+                <div class="txt">
+					<div class="step-container">
+						<strong>사전역량진단</strong>
+						<span class="step">1</span>
+						<span class="step active">2</span>
+                        <span class="step">3</span>
+					</div>
+                    <p>학습 시작 전, <?=$LoginName?>님의 역량진단을 진행하겠습니다.</p>
+                    <p style="color: red; font-size: 12px;">* 앞서 선택한 직급에 따라 맞춤 문항이 제시됩니다. </p>
+                </div>
+            </div>
+             <!--직업기초능력-->
+            <div class="test">
+                <div class="test_title">
+                    <?
+                    $SQL   = " SELECT col1 FROM ArchiveAbilityResult1 WHERE ID = '$LoginMemberID' LIMIT 1 ";
+                    $QUERY = mysqli_query($connect, $SQL);
+                    $row   = mysqli_fetch_assoc($QUERY);
+
+                    echo " <h2>".(($row['col1'] == "M") ? "관리자" : "실무자")."로써의 역량을 솔직하게 판단해 보세요.</h2>";
+                    ?>
+                </div>
+                <div class="test_table">
+                            <?
+                                $strHtml = "";
+                                $i = 0;
+                                $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='B' AND aDepth = 'step03' AND aGroup = '".$row['col1']."' ORDER BY aOrder ASC ";
+                                $QUERYA = mysqli_query($connect, $SQLA);
+                                if($QUERYA && mysqli_num_rows($QUERYA)){
+                                    while($ROWA = mysqli_fetch_array($QUERYA)){
+                                        extract($ROWA);
+                                        $strHtml .= " <div data-no=".$idx.">";
+                                        $strHtml .= "   <div class='q'> <b>Q".$aOrder.". ".$aValue."</b> ".$aValueDetail."</div>";
+                                        $strHtml .= "   <div class='a'>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=1 data-no=".$idx." id='radio1-".$idx."-1'><label for='radio1-".$idx."-1'>그렇지 않다</label>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=2 data-no=".$idx." id='radio1-".$idx."-2'><label for='radio1-".$idx."-2'>그렇지 않은 편이다</label>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=3 data-no=".$idx." id='radio1-".$idx."-3'><label for='radio1-".$idx."-3'>보통이다</label> <br>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=4 data-no=".$idx." id='radio1-".$idx."-4'><label for='radio1-".$idx."-4'>그런 편이다</label>";
+                                        $strHtml .= "     <input type='radio' name='radio".$idx."' data-value=5 data-no=".$idx." id='radio1-".$idx."-5'><label for='radio1-".$idx."-5'>그렇다</label>";
+                                        $strHtml .= "   </div>";
+                                        $strHtml .= " </div>";
+                                        $i++;
+                                    }
+                                }
+                                echo $strHtml;
+                            ?>
+                </div>
+            </div>
+            <div class="bottom mb40">
+                <!-- <button onclick="location.href='prev_test_result.html'">완료</button> -->
+                <!-- <button onclick="Next()">다음</button> -->
+                <button>다음</button>
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+$(document).ready(function () {
+    let selectedVal = [];
+
+    $('input[type="radio"]').on('change', function () {
+        saveSelections();
+        validateSurvey();
+    });
+
+    function saveSelections() {
+        selectedVal = []; 
+        // $('tbody > tr').each(function () {
+        $('[data-no]').each(function () {
+            const selectedRadio = $(this).find('input[type="radio"]:checked');
+            if (selectedRadio.length > 0) {
+                const dataNo = selectedRadio.attr('data-no');
+                const dataValue = selectedRadio.attr('data-value');
+                
+                selectedVal.push({ no: dataNo, value: dataValue });
+            }
+        });
+    }
+
+    function validateSurvey() {
+        let allAnswered = true;
+
+        $('.a').each(function () {
+            const checked = $(this).find('input[type="radio"]:checked').length > 0;
+            if (!checked) {
+                allAnswered = false;
+            }
+        });
+
+        if (allAnswered) {
+            $('.bottom button').prop('disabled', false);
+        } else {
+            $('.bottom button').prop('disabled', true);
+        }
+    }
+
+    validateSurvey();
+
+    $('.bottom button').on('click', function () {
+        if (!$(this).prop('disabled')) {
+            next(selectedVal);
+        }
+    });
+});
+
+
+function next(selectedVal){
+    const datas = {
+        step: "step02",
+        type: "B",
+        responses: selectedVal // responses에 선택된 문항 데이터를 추가
+    };
+
+	$.post('/m_archive/prev/archive_ability_input.php', datas, function (data) {
+		if(data == 'Y') {
+			// location.href="/archive/main/main.html";
+            // location.href="/archive/prev/prev_roadmap.html";
+            // location.href = "/m_public/mypage/test_result.html";
+            location.href = "/m_archive/prev/prev_test_result.html";
+            
+		}else if(data == 'NoID'){
+			alert("로그인후에 이용이 가능합니다.");
+			location.href="/m_public/member/login.html?sitemode=flex";
+		}else{
+			alert('항목들을 선택해주세요.');
+			return;
+		}
+	});
+}
+
+</script>

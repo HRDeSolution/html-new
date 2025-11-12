@@ -1,0 +1,485 @@
+<? include "./include_function.php"; ?> 
+<head>
+    <title>HRD 아카이브 훈련진행보고서</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="imagetoolbar" content="no">
+    <link rel="stylesheet" href="./css/style2.css" type="text/css">
+
+    <style>
+    * {font-family: sans-serif; }
+    @page{
+      margin-top: 70px;
+      margin-bottom: 70px;
+    }
+    body {-webkit-print-color-adjust: exact;}
+
+    .title{
+        text-align:left; font-size:20px; font-weight:bold;margin-top: 40px ; margin-bottom:10px;padding-bottom: 7px; border-bottom: 5px solid #0000FF;
+    }
+    .chart-title{
+        font-size: 20px;
+        font-weight: 500;
+        margin: 20px 0;
+    }
+    .chart-container {
+            margin:30px  auto 50px auto;
+            width: 80%;
+            position: relative;
+            height: 250px;
+        }
+        .y-axis {
+            position: absolute;
+            top: -10px;
+            left: -30px;
+            height: 108%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: flex-end;
+            font-size: 12px;
+            width: 100%;
+            em{
+                position: absolute;
+                top: -30px; 
+                left: 0;
+            }
+            >span{
+                position: relative;
+                width: 100%;
+                text-align: left;
+            }
+            span::after{
+                position: absolute;
+                top: 10px;
+                left: 30px;
+                content: '';
+                width: 100%;
+                height: 1px;
+                background-color: #cbcbcb;
+            }
+        }
+        .bar-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: flex-end;
+            height: 100%;
+            .bar{
+            text-align: center;
+            position: relative;
+                > div {
+                width: 100%;
+         
+                text-align: center;
+                color: white;
+                border-radius: 5px;
+                }
+                p {
+                    position: absolute;
+                    left: 50%;
+                    transform: translatex(-50%);
+                    width: 200%;
+                }
+            }
+            .bar1{
+                background-color: #4472c4;}
+            .bar2 {
+                background-color: #ed7d31;
+            }
+            .bar3 {
+                background-color: #a5a5a5;
+            }
+            .bar4 {
+                background-color: #ffcc00;
+            }
+            .bar5 {
+                background-color: #5b9bd5;
+            }
+            .bar6 {
+                background-color: #70ad47;
+            }
+            .bar7 {
+                background-color: #264478;
+            }
+            .bar8 {
+                background-color: #9e480e;
+            }
+            .bar9 {
+                background-color: #636363;
+            }
+            .bar10 {
+                background-color: #997300;
+            }
+        }
+    .tableArea th {
+        font-size : 12px;
+    }
+    </style>
+</head>
+<?
+$CompanyCode  = Replace_Check_XSS2($CompanyCode);
+$LectureStart = Replace_Check_XSS2($LectureStart);
+$LectureEnd   = Replace_Check_XSS2($LectureEnd);
+
+$where = "";
+if($LectureStart) $where = " AND a.LectureStart = '$LectureStart' ";
+if($LectureEnd)   $where = $where." AND a.LectureEnd = '$LectureEnd' ";
+
+//전체 적인 쿼리
+$Sql = "SELECT a.LectureCode, a.LectureStart, a.LectureEnd, c.ContentsName, b.CompanyName 
+            , COUNT(DISTINCT a.ID) AS totPerson
+            , ( SELECT COUNT(DISTINCT ID) FROM Study WHERE PassOk = 'Y' AND CompanyCode = a.CompanyCode AND LectureCode = a.LectureCode) AS totPersonPass
+            , ( SELECT COUNT(DISTINCT s.ID) 
+                FROM Study s 
+                LEFT JOIN `Member` m ON s.ID = m.ID 
+                WHERE m.SatisfactionYN = 'Y' 
+                AND s.CompanyCode = a.CompanyCode 
+                AND s.LectureStart = '$LectureStart'
+                AND s.LectureEnd = '$LectureEnd' ) AS SatisfactionY
+            , ( SELECT COUNT(*) FROM (SELECT ID FROM ArchiveAbilityResult2 WHERE question_idx BETWEEN 31 AND 40 GROUP BY ID ) AS result) AS SatisfactionTot
+            , SUM(DISTINCT(e.StudyTime)) AS StudyTime
+            , SUM(DISTINCT(a.Progress)) AS StudyProgress
+        FROM Study a
+        LEFT JOIN Company AS b ON a.CompanyCode=b.CompanyCode 
+        LEFT JOIN Course AS c ON a.LectureCode=c.LectureCode 
+        LEFT JOIN `Member` AS d ON d.CompanyCode = a.CompanyCode 
+        LEFT JOIN Progress AS e ON e.ID=a.ID 
+        WHERE b.CompanyCode = $CompanyCode 
+        $where
+        AND a.ServiceType IN ('A')
+        ORDER BY c.ContentsName ASC";
+//echo $Sql;
+$Result = mysqli_query($connect, $Sql);
+$Row = mysqli_fetch_array($Result);
+
+//사전, 사후 공통역량
+$SQLC = "SELECT 
+            MAX(CASE WHEN aq.aType = 'B' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalA
+            , MAX(CASE WHEN aq.aType = 'A' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalB
+            , aq.aValue AS aQuestion
+            , MAX(aq.aValueDetail)  AS aQuestionDetail
+        FROM ArchiveAbilityResult2 ar
+        LEFT JOIN ArchiveQuestion aq ON ar.question_idx = aq.idx
+        WHERE ar.ID = '$LoginMemberID'
+        AND aq.aDepth IN ('step02', 'step03')
+        AND aq.aGroup IN ('C', '".$ROWGROUP['col1']."')
+        AND aq.aBind BETWEEN 'A' AND 'E'
+        GROUP BY aq.aValue
+        ORDER BY aq.aType, aq.aDepth, aq.aGroup, aq.aOrder ASC ";
+$QUERYC = mysqli_query($connect, $SQLC);
+
+
+//사전, 사후 직무역량
+$SQLJ = "SELECT 
+            MAX(CASE WHEN aq.aType = 'B' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalA
+            , MAX(CASE WHEN aq.aType = 'A' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalB
+            , aq.aValue AS aQuestion
+            , MAX(aq.aValueDetail)  AS aQuestionDetail
+        FROM ArchiveAbilityResult2 ar
+        LEFT JOIN ArchiveQuestion aq ON ar.question_idx = aq.idx
+        WHERE ar.ID = '$LoginMemberID'
+        AND aq.aDepth IN ('step02', 'step03')
+        AND aq.aGroup IN ('".$ROWGROUP['col1']."')
+        AND aq.aBind BETWEEN 'K' AND 'T'
+        GROUP BY aq.aValue
+        ORDER BY aq.aType, aq.aDepth, aq.aGroup, aq.aOrder ASC ";
+$QUERYJ = mysqli_query($connect, $SQLJ);
+
+
+//사전, 사후 리더십역량
+$SQLL = "SELECT 
+              MAX(CASE WHEN aq.aType = 'B' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalA
+            , MAX(CASE WHEN aq.aType = 'A' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalB
+            , aq.aValue AS aQuestion, 
+            MAX(aq.aValueDetail)  AS aQuestionDetail
+        FROM ArchiveAbilityResult2 ar
+        LEFT JOIN ArchiveQuestion aq ON ar.question_idx = aq.idx
+        WHERE ar.ID = '$LoginMemberID'
+        AND aq.aDepth IN ('step02', 'step03')
+        AND aq.aGroup IN ('L', '".$ROWGROUP['col1']."')
+        AND aq.aBind BETWEEN 'F' AND 'J'
+        GROUP BY aq.aValue
+        ORDER BY aq.aType, aq.aDepth, aq.aGroup, aq.aOrder ASC ";
+$QUERYL = mysqli_query($connect, $SQLL);
+?>
+<body>
+    <div id="certi_print_wrap" class="certi_print_wrap" style="width:830px">
+        <!-- 페이지 1====================================================================== -->
+        <div style="page-break-after: always;">
+            <div class="certi_print_info">
+                <div class="infoArea">
+                    <div class="tableArea">
+                        <table>
+                            <tbody><tr>
+                                    <td width="12%">문서번호</td>
+                                    <td width="25%"></td>
+                                    <td rowspan="2" width="7%">결<br>재</td>
+                                    <td width="12%">담당</td>
+                                    <td width="12%"></td>
+                                    <td width="12%"></td>
+                                    <td width="12%">대표이사</td>
+                                </tr>
+                                <tr>
+                                    <td>접수일자</td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </tbody></table>
+                    </div>
+
+                    <div class="tableArea" style="margin-top:50px">
+                        <table style="border:0px">
+                            <tbody>
+                                <tr>
+                                    <td style="font-size:20px; font-weight:bold; border:1px #000 dashed; border-right:5px #5D5D5D solid;width:120px">디지털 원격훈련 아카이브</td>
+                                </tr>
+                                <tr>
+                                    <td style="font-size:34px; font-weight:bold; border:1px #000 dashed;  border-right:5px #5D5D5D solid;  border-bottom:5px #5D5D5D solid; ">훈련진행보고서</td>
+                                </tr>
+                            </tbody></table>
+                    </div>
+
+                    <div class="tableArea mainTitle02">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td>훈련과정</td>
+                                    <td colspan="3"><?=$Row['ContentsName']?></td>
+                                </tr>
+                                <tr>
+                                    <td>훈련기간</td>
+                                    <td colspan="3"> <?=(new DateTime($Row['LectureStart']))->format('Y.m.d');?> ~ <?=(new DateTime($Row['LectureEnd']))->format('Y.m.d');?></td>
+                                </tr>
+                                <tr>
+                                    <td>훈련인원</td>
+                                    <td colspan="3">총 <?=$Row['totPerson'];?>명</td>
+                                </tr>
+                                <tr>
+                                    <td>훈련목표</td>
+                                    <td colspan="3" style="text-align: left;">1. 재직근로자의 직무역량 강화 <br>
+                                        2. 직무 전문성 향상 및 실무 적용도 강화
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>제출기관</td>
+                                    <td colspan="3" style="text-align: left;"><?=$Row['CompanyName'];?></td>
+                                </tr>
+                                <tr>
+                                    <td rowspan=2>작성자</td>
+                                    <td>소속</td>
+                                    <td>성명</td>
+                                </tr>
+                                <tr>
+                                    <td>아카이브</td>
+                                    <td><?=$LoginName?></td>
+                                </tr>
+                                <tr>
+                                    <td>제출일자</td>
+                                    <td colspan="3"><?=(new DateTime())->format('Y. m. d');?></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="4">다음과 같이 훈련진행보고서를 제출합니다.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="tableArea" style="text-align:center; margin-top:50px; margin-bottom: 50px;">
+                        <table style="margin:0 auto; border:0; font-weight:bold;">
+                            <tbody>
+								<tr>
+                                    <td style="border:0"></td>
+                                    <td width="60" style="border:0"><img
+                                            src="/public/mypage/img/logo_mark.png"
+                                            align="absmiddle" width="55"
+                                            height="55"></td>
+                                    <td style="border:0;text-align:left; width:220px;">
+                                        <div style="font-size:19px;margin-bottom:5px;">고용노동부 인증</div>
+                                        <div style="font-size:28px;">HRDe평생교육원</div>
+                                    </td>
+                                    <td style="border:0"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div class="tableArea mainTitle02">
+                        <table>
+                            <tbody>
+                                <tr><td style="color:red;">대리수강•대리평가•답안지제공등은 부정훈련입니다.</td></tr>
+                                <tr><td style="color:red;">부정훈련신고시 소정의 사례를 드립니다.</td></tr>
+                                <tr><td>부정훈련 신고 직통전화 / 담당자 전화번호 / 1811-9530</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- 페이지 1====================================================================== -->
+        <!-- 교육개요 ====================================================================== -->
+        <div style="page-break-after: always;">
+            <div class="certi_print_info">
+                <div class="infoArea">
+                    <div class="tableArea">
+                        <!--1.학습결과요약-->
+                        <div class="title">
+                            1.학습 결과 요약
+                        </div>
+                        <table class="mb10">
+                            <colgroup>
+                                <col width="25%">
+                                <col width="25%">
+                                <col>
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>구분</th>
+                                    <th>내용</th>
+                                    <th>결과</th>
+                                </tr>
+                                <tr>
+                                    <td rowspan="4">학습 진도 및 성과</td>
+                                    <td>평균 진도율</td>
+                                    <td>30%</td>
+                                </tr>
+                                <tr>
+                                    <td>총 수료 인원</td>
+                                    <td><?=$Row['totPersonPass'];?>명 /  <?=round(($Row['totPersonPass']/$Row['totPerson'])*100);?> %</td>
+                                </tr>
+                                <!-- <tr>
+                                    <td>중도이탈</td>
+                                    <td>0명 /  0%</td>
+                                </tr> -->
+                                <tr>
+                                    <td>학습 시간(평균)</td>
+                                    <td><?=gmdate("H:i:s", ($Row['StudyTime']/$Row['totPerson']));?></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="3">
+                                        <div class="chart-title">
+                                            학습 진도 및 성과
+                                        </div>
+                                        <div class="chart-container">
+                                            <!-- Y축 눈금 -->
+                                            <div class="y-axis">
+                                                <em>단위(%)</em>
+                                                <span>100</span> <span>90</span> <span>80</span> <span>70</span><span>60</span>
+                                                <span>50</span><span>40</span><span>30</span><span>20</span><span>10</span><span>0</span>
+                                            </div>
+                                            <!-- 막대 그래프 -->
+                                            <div class="bar-container">
+                                                <div class="bar" style="width: 20%;">
+                                                    <div class="bar1" style="height: <?=round($Row['StudyProgress']/$Row['totPerson'])?>%;"><?=round($Row['StudyProgress']/$Row['totPerson'])?></div>
+                                                    <p>평균진도율</p>
+                                                </div >
+                                                <div class="bar" style="width: 20%;">
+                                                    <div class="bar2" style="height: <?=round(($Row['totPersonPass']/$Row['totPerson'])*100);?>%;"><?=round(($Row['totPersonPass']/$Row['totPerson'])*100);?></div>
+                                                    <p>최종수료율</p>
+                                                </div>
+                                                <!-- <div class="bar" style="width: 20%;">
+                                                    <div class="bar3" style="height: 0%;">0</div>
+                                                    <p>중도이탈</p>
+                                                </div> -->
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <!--1.학습결과요약-->
+                        
+                        <!--2.학습자 훈련형황-->
+                        <div class="title">
+                            2. 학습자 훈련형황
+                        </div>
+                        <table class="mb30">
+                            <colgroup>
+                                <col width="6%">
+                                <col width="9%">
+                                <col width="10%">
+                                <col width="9%">
+                                <col width="9%">
+                            </colgroup>
+                            <tbody>
+                                <tr>
+                                    <th>연번</th>
+                                    <th>성명</th>
+                                    <th>아이디</th>
+                                    <th>총 학습시간</th>
+                                    <th>수료여부</th>
+                                </tr>
+                                <?
+                                $i = 1;
+                                $SQL4 = " SELECT d.ID, d.Name, a.Seq, SUM(e.StudyTime) AS StudyTime
+                                            FROM Study AS a 
+                                            LEFT JOIN Company AS b ON a.CompanyCode=b.CompanyCode 
+                                            LEFT JOIN `Member` AS d ON a.ID = d.ID
+                                            LEFT JOIN Progress AS e ON e.ID=a.ID 
+                                            WHERE b.CompanyCode=$CompanyCode
+                                            AND a.LectureStart = '$LectureStart'
+                                            AND a.LectureEnd = '$LectureEnd'
+                                            AND a.ServiceType IN ('A') 
+                                            GROUP BY a.ID 
+                                            ORDER BY a.InputDate ASC ";
+                                $QUERY4 = mysqli_query($connect, $SQL4);
+                                // echo $SQL4;
+
+                                while ($ROW4 = mysqli_fetch_array($QUERY4)) {
+                                    extract($ROW4); 
+
+                                    //역량, 만족도 점수
+                                    $SQLD = "SELECT 
+                                                  AVG(CASE WHEN aq.aType = 'B' AND aq.aDepth IN ('step02', 'step03') AND aq.aGroup IN ('A', 'C') AND aq.aBind BETWEEN 'A' AND 'J' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalCB -- 공통사전
+                                                , AVG(CASE WHEN aq.aType = 'A' AND aq.aDepth IN ('step02', 'step03') AND aq.aGroup IN ('A', 'C') AND aq.aBind BETWEEN 'A' AND 'J' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalCA -- 공통사후 
+                                                , AVG(CASE WHEN aq.aType = 'B' AND aq.aDepth IN ('step02', 'step03') AND aq.aGroup IN ('A', 'L') AND aq.aBind BETWEEN 'A' AND 'J' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalLB -- 리더십사전
+                                                , AVG(CASE WHEN aq.aType = 'A' AND aq.aDepth IN ('step02', 'step03') AND aq.aGroup IN ('A', 'L') AND aq.aBind BETWEEN 'A' AND 'J' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalLA -- 리더십사후 
+                                                , AVG(CASE WHEN aq.aType = 'B' AND aq.aDepth IN ('step02', 'step03') AND aq.aGroup IN ('A', 'M', 'W') AND aq.aBind BETWEEN 'K' AND 'T' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalJB -- 직무사전(실무/관리)
+                                                , AVG(CASE WHEN aq.aType = 'A' AND aq.aDepth IN ('step02', 'step03') AND aq.aGroup IN ('A', 'M', 'W') AND aq.aBind BETWEEN 'K' AND 'T' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalJA -- 직무사후(실무/관리)
+                                                , AVG(CASE WHEN aq.aBind IS NULL OR aq.aBind = '' THEN ROUND((ar.aValue / 5.0) * 100, 2) ELSE NULL END) AS aTotalCS -- 만족도
+                                                , (SELECT PassOK FROM Study WHERE ID = '$ID') AS PassOK -- 수료 여부
+                                            FROM ArchiveAbilityResult2 ar
+                                            LEFT JOIN ArchiveQuestion aq ON ar.question_idx = aq.idx
+                                            WHERE ar.ID = '$ID'
+                                            GROUP BY ar.ID
+                                            ORDER BY aq.aType, aq.aDepth, aq.aGroup, aq.aOrder ASC ";
+
+                                    // echo $SQLD."<br/><br/>";
+                                    $QUERYD = mysqli_query($connect, $SQLD);
+                                    $ROWD   = mysqli_fetch_array($QUERYD);
+
+                                    //수강시간 계산
+                                    $StudyTimeResult = gmdate("H:i:s", $StudyTime);
+                                ?>
+                                <tr>
+                                    <td><?=$i;?></td>
+                                    <td><?=$Name;?></td>
+                                    <td><?=$ID;?></td>
+                                    <td><?=$StudyTimeResult;?></td>
+                                    <td><?=($ROWD['PassOK'] == "Y") ? "수료" : "미수료" ?></td>
+                                </tr>
+                                <?
+                                    $i++;
+                                } ?>
+                            </tbody>
+                        </table>
+                        <!--2.학습자 훈련형황-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script> 
+    $(function(){
+        window.print();
+    }); 
+    </script>
+
+</body>

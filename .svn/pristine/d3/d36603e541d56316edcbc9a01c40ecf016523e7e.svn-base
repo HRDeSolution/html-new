@@ -1,0 +1,37 @@
+<?
+include "../include/include_function.php";
+include "./include/include_admin_check.php";
+
+//트랜잭션 시작
+mysqli_query($connect, "SET AUTOCOMMIT=0");
+mysqli_query($connect, "BEGIN");
+
+$error_count = 0;
+
+$seq_value = Replace_Check($seq_value);
+$seq_array = explode('|',$seq_value);
+
+$update_count = 0; 
+
+//비밀번호 초기화 (1111)
+$enc_pwd = hash("sha256", "1111"); //비밀번호 암호화
+
+foreach($seq_array as $seq) {
+	$Sql = "UPDATE Member SET Pwd='$enc_pwd', PassChange='N' WHERE ID=(SELECT ID FROM Study WHERE Seq=".$seq.");";
+	$Row = mysqli_query($connect, $Sql);
+
+	if(!$Row) { //쿼리 실패시 에러카운터 증가
+		$error_count++;
+	}
+}
+
+if($error_count>0) {
+	mysqli_query($connect, "ROLLBACK");
+	echo "N";
+}else{
+	mysqli_query($connect, "COMMIT");
+	echo "Y";
+}
+
+mysqli_close($connect);
+?>

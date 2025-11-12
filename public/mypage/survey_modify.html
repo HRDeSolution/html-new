@@ -1,0 +1,112 @@
+<? 
+include "../include/mypage_header.html";
+include "../include/login_check.php";
+
+$idx = Replace_Check($idx);
+
+$Sql = "SELECT a.LectureCode , a.ID , a.StarPoint , a.RegDate , a.Title, a.Contents, a.ViewCount, b.ContentsName
+		FROM Review a
+		LEFT JOIN Course b ON a.LectureCode = b.LectureCode
+		WHERE a.idx=$idx AND a.Del='N'";
+$Result = mysqli_query($connect, $Sql);
+$Row = mysqli_fetch_array($Result);
+if($Row) {
+	$LectureCode = $Row['LectureCode'];
+	$ID = $Row['ID'];
+	$StarPoint = $Row['StarPoint'];
+	$RegDate = $Row['RegDate'];
+	$Title = $Row['Title'];
+    $Contents = $Row['Contents'];
+    $ViewCount = $Row['ViewCount'];
+    $ContentsName = $Row['ContentsName'];
+    
+    $Star = StarPointViewA($StarPoint);
+}else{
+?>
+<script type="text/javascript">
+	alert('해당 수강후기 내용이 없습니다.');
+    location.href="survey.html";
+</script>
+<?
+	exit;
+}
+?>
+<div class="mypage_content">
+    <div class="sb_box">
+        <h1>수강후기</h1>
+        <div class="navi">
+            <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;나의학습실<i class="ph ph-caret-right"></i>&nbsp;수강후기
+        </div>
+    </div>
+    <form name="ModifyForm" method="post" action="/public/mypage/survey_script.php" enctype="multipart/form-data" target="ScriptFrame">
+    	<INPUT TYPE="hidden" name="mode" value="modify">
+		<INPUT TYPE="hidden" name="idx" value="<?=$idx?>">
+	    <div class="content">
+	        <div class="tableTypeA_top">
+	            <div class="title modify">
+	                <span>제목</span>
+	                <input type="text" class="modify" name="Title" id="Title" value="<?=$Title?>">
+	            </div>
+	            <div class="detail">
+	                <div class="date"><span>등록일</span><?=substr($RegDate,0,10)?></div>
+	                <div class="bar"></div>
+	                <div class="view"><span>조회</span><?=$ViewCount?></div>
+	            </div>
+	        </div>
+	        <div class="tableTypeA">
+	            <table>
+	                <colgroup>
+	                    <col width="100px">
+	                    <col width="">
+	                    <col width="100px">
+	                    <col width="">
+	                </colgroup>
+	                <tr>
+	                    <th>수강과목</th>
+	                    <td class="al"><?=$ContentsName?></td>
+	                    <th>평점</th>
+	                    <td class="al">
+	                    	<select name="StarPoint" id="StarPoint" class="wid60">
+	                    	<?
+	                    	$i = 1;
+							while($i<6){
+							?>
+								<option <?if($i == $StarPoint){?> selected <?}?> value='<?=$i?>'><?=$i?>점</option>
+							<?
+								$i++;
+							}
+	                    	?>
+	                    	</select>
+	                    </td>
+	                </tr>
+	                <tr>
+	                	<td colspan="4" class="content">
+	                		<textarea type="text" class="modify hei400" name="Contents" id="Contents" style="width:100%;"><?=$Contents?></textarea>
+	                	</td>
+	                </tr>
+	            </table>
+	        </div>
+	        <div class="button_wrap pb40">
+	            <button type="button" onclick="Modify()">수정</button>
+	            <button type="button" onclick="location.href='survey.html'">목록</button>
+	        </div>
+	    </div>
+    </form>
+</div>
+<!--mypage_content-->
+</div>
+<!--wrap-->
+</body>
+<? include "../../archive/include/footer.html"; ?>
+<script>
+    $(document).ready(function(){
+        $('.survey').addClass("on");
+    });
+  	//수정
+    function Modify() {
+    	del_confirm = confirm("현재 수강후기를 수정하시겠습니까?");
+    	if(del_confirm==true) {
+    		ModifyForm.submit();
+    	}
+    }
+</script>

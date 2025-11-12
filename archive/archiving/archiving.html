@@ -1,0 +1,167 @@
+<? include "../include/header.html";?>
+<? include "../include/login_check.php"; ?>
+
+<body>
+<? include "../include/top_header.html";?>
+<!-- 페이징에 영향을 주는 form 태그 -->
+<form name="listScriptForm" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="col" value="<?=$col?>">
+<input type="hidden" name="sw" value="<?=$sw?>">
+<input type="hidden" name="pg" value="<?=$pg?>">
+<input type="hidden" name="orderby" value="<?=$orderby?>">
+<input type="hidden" name="StartDate" value="<?=$StartDate?>">
+<input type="hidden" name="EndDate" value="<?=$EndDate?>">
+<input type="hidden" name="FaqCate" value="<?=$FaqCate?>">
+<input type="hidden" name="Gubun" value="<?=$Gubun?>">
+<input type="hidden" name="ExamType" value="<?=$ExamType?>">
+<input type="hidden" name="ServiceType" value="<?=$ServiceType?>">
+<input type="hidden" name="str_TestType" value="<?=$str_TestType?>">
+</form>
+<?
+    $pg = Replace_Check_XSS2($pg);
+
+    ##-- 페이지 조건
+    if(!$pg) $pg = 1;
+    $page_size = 25;
+    $block_size = 10;
+
+    ##-- 검색 조건
+    $where = array();
+
+    $where[] = "ID='$LoginMemberID'";
+    $where[] = "Del='N'";
+
+    $where = implode(" AND ",$where);
+    if($where) $where = "WHERE $where";
+
+    ##-- 검색 등록수
+    $Sql = "SELECT COUNT(*) FROM Archiving $where";
+    $Result = mysqli_query($connect, $Sql);
+    $Row = mysqli_fetch_array($Result);
+    $TOT_NO = $Row[0];
+
+    ##-- 페이지 클래스 생성
+    include_once("../../include/include_page3.php");
+
+    $PAGE_CLASS = new Page($pg,$TOT_NO,$page_size,$block_size); ##-- 페이지 클래스
+    $BLOCK_LIST = $PAGE_CLASS->blockList(); ##-- 페이지 이동관련
+    $PAGE_UNCOUNT = $PAGE_CLASS->page_uncount; ##-- 게시물 번호 한개씩 감소
+?>    
+    <div class="top_section">
+        <div id="wrap">
+            <div class="text_inner">
+                <h2>아카이빙</h2>
+            </div>
+            <div class="navi"><i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습지원센터<i class="ph ph-caret-right"></i>&nbsp;아카이빙</div>
+        </div>
+    </div>
+    <div class="archiving">
+        <div id="wrap">
+            <div class="left">
+                <strong>아카이빙이란?</strong>
+                <p>HRDe 디지털 아카이브 수강에 참여한 기업이 자체 제작한 콘텐츠를 업로드 요청할 수 있는 게시판입니다. <br>
+                   기업에서 등록하고자 하는 콘텐츠의 주요 내용, 파일 형식 및 용량 등 세부 요청 사항을 기재해 주시면, HRDe 아카이브 전담팀이 내용을 검토한 후 업로드 가능 여부 및 절차를 안내해 드립니다.
+               </p>
+               <p><b>주의사항</b>
+                   교육 목적과 무관한 영상 또는 부적절한 콘텐츠를 업로드 요청할 경우, 승인되지 않거나 불이익이 발생할 수 있습니다.콘텐츠 검토 후 승인되지 않은 경우, 별도로 안내해 드립니다.
+               </p>
+               <p>HRDe 디지털 아카이브는 훈련생과 기업이 신뢰할 수 있는 교육 콘텐츠 제공을 최우선으로 합니다. 보다 원활한 서비스 이용을 위해 위 내용을 확인해 주시기 바랍니다. </p>
+           </div>
+           <div class="right">
+               <img src="../img/common/archiving.png" alt="">
+           </div>
+        </div>
+    </div>
+    <div class="support_content">
+        <div id="wrap">
+            <button onclick="Javascript:ArchivingPop()"><i class="ph ph-list-plus"></i>아카이빙 등록</button>
+            <div class="count">총 <span><?=$TOT_NO?></span>건</div>
+            <div class="tableTypeA">
+      
+                <table>
+                    <colgroup>
+                        <col width="10%">
+                        <col class="mh">
+                        <col  class="mh" width="15%">
+                        <col  class="mh" width="15%">
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>제목</th>
+                            <th class="mh">등록일</th>
+                            <th>처리상태</th>
+                        </tr>
+                    </thead>
+                    <tbody>                    
+                    <?
+                    $sql = "SELECT * FROM Archiving $where
+                    		ORDER BY RegDate desc 
+							LIMIT $PAGE_CLASS->page_start, $page_size";
+                    $query = mysqli_query($connect, $sql);
+					if($query && mysqli_num_rows($query)){
+						while($row = mysqli_fetch_array($query)){
+							extract($row);
+							$title = strcut_utf8($Title,45);
+							$contents = stripslashes($Contents);
+                    ?>
+                        <tr>
+                            <td><?=$PAGE_UNCOUNT--?></td>
+                            <td class="al"><a href="archiving_view.html?idx=<?=$idx?>"><?=$title?></a></td>
+                            <td><?=$RegDate?></td>
+                            <td class="fcred"><?=$CounselStatus_array[$Status]?></td>
+                        </tr>
+                    <?
+                    	}
+                    }else{?>
+                    	<tr>
+                    		<td colspan='5'>등록된 자료가 없습니다.</td>
+                    	</tr>
+                    <?}?>
+
+                    </tbody>
+                </table>
+            </div>
+            <!-- page -->
+            <?=$BLOCK_LIST?>
+            <!-- //page -->
+        </div>
+    </div>
+</body>
+<?php include "../include/footer.html"; ?>
+
+<!--header class-->
+<script>
+function ArchivingPop(){
+	var currentWidth = $(window).width();
+	var LocWidth = currentWidth / 2;
+	var body_width = screen.width - 20;
+	var body_height = $('html body').height() + 500;
+	var ScrollPosition = $(window).scrollTop() + 200;
+
+	$("div[id='SysBg_Black']")
+		.css({
+			width: body_width,
+			height: body_height,
+			opacity: '0.4',
+			position: 'absolute',
+			'z-index': '99',
+		})
+		.show();
+
+	$('#DataResult').load('/archive/archiving/archiving_pop.php', { t: '1' }, function () {
+		//$('html, body').animate({ scrollTop : 0 }, 300);
+		$("div[id='DataResult']")
+			.css({
+				top: ScrollPosition,
+				left: body_width / 2 - 260,
+				opacity: '1.0',
+				position: 'absolute',
+				'z-index': '1000',
+			})
+			.show();
+
+		$('html').css('overflow', 'hidden');
+	});
+}
+</script>    			

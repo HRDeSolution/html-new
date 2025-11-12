@@ -1,0 +1,89 @@
+<? include "../include/mypage_header.html"; ?>
+<? include "../include/login_check.php"; ?>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#SearchYear").change(function(){
+			$("#changeList").load(location.href+" #changeList",{SearchYear: $('#SearchYear').val()});
+		});
+			});
+</script>
+        <div class="mypage_content">
+            <div class="sb_box">
+                <h1>교육담당자</h1>
+                <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;나의학습실<i class="ph ph-caret-right"></i>&nbsp;교육담당자
+                </div>
+            </div>
+            <div class="content">
+                <h2>자사수강생 리스트</h2>
+                <ul class="studentlst">
+                    <select name="SearchYear" id="SearchYear" style="width: 150px;margin-bottom: -28px;">
+						<option value="">년도 검색</option>
+						<?
+						for($i=2018;$i<=date("Y");$i++) { 
+						?>
+						<option value="<?=$i?>"><?=$i?>년</option>
+						<?
+						}
+						?>
+					</select>
+                    <!-- List -->
+                    <li id="changeList">
+                        <ul class="classdate">
+							<li class="left">2025-01-01 ~ 2025-06-01 개강</li>
+							<li class="right"><a href="/public/mypage/manager_trainee_excel.php?LectureStart=<?=$LectureStart?>&LectureEnd=<?=$LectureEnd?>" target="_blank">개강전체 엑셀출력</a></li>
+						</ul>
+						<table width="100%" class="tbl_typeD mt15" border="0" cellspacing="0" summary="">
+							<thead>
+		                        <tr>
+		                            <th>NO</th>
+		                            <th>이름</th>
+		                            <th>아이디</th>
+		                            <th>과정명</th>
+		                            <th>상세보기</th>
+		                        </tr>
+		                    </thead>
+							<tbody>
+								<tr>
+				                	<td>1</td>
+				                	<td>윤희상</td>
+				                    <td>hrde01</td>
+				                    <td>디지털원격 아카이브</td>
+				                    <td><a href="Javascript:ManagerCourseCheck('<?=$LectureStart?>','<?=$LectureEnd?>','<?=$LectureCode?>');"><div class="mb5"><img src="img/icon_bullets.svg" width="35"></div>상세보기</td>
+				                </tr>
+				                <tr>
+				                	<td>2</td>
+				                	<td>박은미</td>
+				                    <td>hrde02</td>
+				                    <td>디지털원격 아카이브</td>
+				                    <td><a href="Javascript:ManagerCourseCheck('<?=$LectureStart?>','<?=$LectureEnd?>','<?=$LectureCode?>');"><div class="mb5"><img src="img/icon_bullets.svg" width="35"></div>상세보기</td>
+				                </tr>	
+				                <tr>
+				                	<td>3</td>
+				                	<td>이연경</td>
+				                    <td>test05</td>
+				                    <td>디지털원격 아카이브</td>
+				                    <td><a href="Javascript:ManagerCourseCheck('<?=$LectureStart?>','<?=$LectureEnd?>','<?=$LectureCode?>');"><div class="mb5"><img src="img/icon_bullets.svg" width="35"></div>상세보기</td>
+				                </tr>	
+							</tbody>
+							</table>
+                    </li>
+                    <!-- List // -->
+                                
+                </ul>
+            </div>
+            <!--content-->
+        </div>
+        <!--mypage_content-->
+    </div>
+    <!--wrap-->
+</body>
+<? include "../../archive/include/footer.html"; ?>
+<script>
+    $(document).ready(function(){
+        $('.mypage_menu .manager').addClass("on");
+        $('.mypage_menu .manager ul').css('display','block');
+        $('.mypage_menu .manager ul .trainee').addClass("on");
+        $('.mypage_menu .manager a').find('i').toggleClass("ph-caret-up ph-caret-down");
+    });
+</script>

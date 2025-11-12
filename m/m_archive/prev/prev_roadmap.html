@@ -1,0 +1,130 @@
+<? include "../include/header.html"; ?>
+<? //include "../include/login_check.php"; ?>
+<style>
+    body{background: #EAEAEA;}
+</style>
+
+<body>
+    <div id="wrap">
+        <header>
+            <div class="logo">
+             
+            </div>
+            <div class="logout">
+                <button onclick="location.href='../../m_public/member/logout.php?sitemode=flex'">로그아웃</button>
+            </div>
+        </header>
+        <div class="prev_wrap">
+            <div class="top">
+                <div class="logo">
+                    <img src="../img/common/archive_logo.png" alt="HRDe아카이브">
+                </div>
+                <div class="txt">
+					<!-- <div class="step-container">
+						<strong>사전역량진단</strong>
+						<span class="step">1</span>
+						<span class="step">2</span>
+                        <span class="step active">3</span>
+                        <span class="step">4</span>
+					</div> -->
+                    <p>학습 시작 전, <?=$LoginName?>님의 역량진단을 진행하겠습니다.</p>
+                </div>
+            </div>
+             <!--직업기초능력-->
+            <div class="test">
+                <div class="test_title">
+					<h2>로드맵</h2>
+                </div>
+                <div class="bottom mb40">
+                    <button onclick="window.open('/m_archive/contents/main.html')" style="width: 200px;">추천콘텐츠 보러가기</button>
+                </div>
+                <div class="test_table">
+                    <div class="roadmap">
+                        <img src="/m_public/mypage/img/roadmap.png" style="width: 100%;" alt="아카이브 로드맵">
+                    </div>
+                </div>
+            </div>
+            <div class="bottom mb40">
+                <!-- <button onclick="location.href='prev_test_result.html'">다음</button> -->
+                <!-- <button  onclick="Next()">다음</button> -->
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+$(document).ready(function () {
+    let selectedVal = [];
+
+    $('input[type="radio"]').on('change', function () {
+        saveSelections();
+        validateSurvey();
+    });
+
+    function saveSelections() {
+        selectedVal = []; 
+        $('tbody > tr').each(function () {
+            const selectedRadio = $(this).find('input[type="radio"]:checked');
+            if (selectedRadio.length > 0) {
+                const dataNo = selectedRadio.attr('data-no');
+                const dataValue = selectedRadio.attr('data-value');
+                selectedVal.push({ no: dataNo, value: dataValue });
+            }
+        });
+    }
+
+    function validateSurvey() {
+        let allAnswered = true;
+
+        $('tbody > tr').each(function () {
+            const checked = $(this).find('input[type="radio"]:checked').length > 0;
+            if (!checked) {
+                allAnswered = false;
+            }
+        });
+
+        if (allAnswered) {
+            $('.bottom button').prop('disabled', false);
+        } else {
+            $('.bottom button').prop('disabled', true);
+        }
+    }
+
+    validateSurvey();
+
+    $('.bottom button').on('click', function () {
+        if (!$(this).prop('disabled')) {
+            next(selectedVal);
+        }
+    });
+});
+
+
+function Next(){
+    location.href="prev_test03.html";
+}
+
+// function next(selectedVal){
+//     const datas = {
+//         step: "step03",
+//         type: "B",
+//         responses: selectedVal // responses에 선택된 문항 데이터를 추가
+//     };
+
+// 	$.post('/archive/prev/archive_ability_input.php', datas, function (data) {
+// 		if(data == 'Y') {
+// 			// location.href="/archive/main/main.html";
+//             //location.href="/public/mypage/test_result.html";
+//             location.href="prev_test04.html";
+            
+// 		}else if(data == 'NoID'){
+// 			alert("로그인후에 이용이 가능합니다.");
+// 			location.href="/public/member/login.html?sitemode=flex";
+// 		}else{
+// 			alert('항목들을 선택해주세요.');
+// 			return;
+// 		}
+// 	});
+// }
+
+</script>

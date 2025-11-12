@@ -1,0 +1,137 @@
+<? 
+include "../include/support_header.html"; ?>
+<body>
+    <div class="top_section">
+        <div id="wrap">
+            <div class="inner">
+                <h2>1:1 상담</h2>
+                <div class="search_box">
+                    <input name="" id="" type="text" title="검색어 입력" placeholder="검색어를 입력해주세요"><span class="search_btn"><i class="ph ph-magnifying-glass"></i></span>
+                </div>
+            </div>
+            <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습지원센터<i class="ph ph-caret-right"></i>&nbsp;1:1 상담
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <!--top_banner-->
+    
+    <?
+	$idx = Replace_Check($idx);
+
+	$Sql = "SELECT * FROM Counsel WHERE idx=$idx AND Del='N'";
+	$Result = mysqli_query($connect, $Sql);
+	$Row = mysqli_fetch_array($Result);
+
+	if($Row) {
+	    $Title = $Row['Title'];
+	    $Content = stripslashes($Row['Contents']);
+	    $Content2 = stripslashes($Row['Contents2']);
+	    $FileName1 = $Row['FileName1'];
+	    $RealFileName1 = $Row['RealFileName1'];
+	    $FileName2 = $Row['FileName2'];
+	    $RealFileName2 = $Row['RealFileName2'];
+	    $FileName3 = $Row['FileName3'];
+    	$RealFileName3 = $Row['RealFileName3'];
+    	$FileName4 = $Row['FileName4'];
+    	$RealFileName4 = $Row['RealFileName4'];
+    	$FileName5 = $Row['FileName5'];
+    	$RealFileName5 = $Row['RealFileName5'];
+    	$RegDate = $Row['RegDate'];	
+    	$RegDate2 = $Row['RegDate2'];	
+    	$Name2 = $Row['Name2'];	
+    	$Category = $Row['Category'];	
+		$FileName4Student = $Row['FileName4Student'];
+		$RealFileName4Student = $Row['RealFileName4Student'];
+	}else{
+	?>
+	<script type="text/javascript">
+	<!--
+	    location.href="ask.html";
+	//-->
+	</script>
+	<?
+	exit;
+	}
+	?>
+    <div class="support_content">
+        <div id="wrap">
+            <div class="tableTypeA_top">
+                <div class="title">
+                    <?=$Title?>
+                </div>
+                <div class="detail">
+                    <div class="left">
+                        <span>문의종류</span>
+                        <?=$Counsel_array[$Category]?>
+                    </div>
+                    <div class="bar"></div>
+                    <div class="right">
+                        <span>등록일</span>
+                        <?=$RegDate?>
+                    </div>
+                </div>
+            </div>
+            <div class="tableTypeA">
+                <table>
+                    <colgroup>
+                        <col width="200px">
+                        <col width="">
+                    </colgroup>
+                    <?if($FileName4Student) { ?>
+                    <tr class="file">
+                        <th>첨부파일</th>
+                        <td><?}?>
+                        	<?if($FileName4Student) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=Counsel&file=counselStudent"><img src="img/file_icon.png" alt="파일아이콘" class="download_view"><?=$RealFileName4Student?></a><?}?>
+                            <?if($FileName4Student) { ?> </td>
+                    </tr>
+                    <tr><?}?>
+                        <td colspan="2" class="content pt50 pb50">
+							<?=$Content?>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <?if($Content2){?>
+	            <div class="comment">
+	                <div class="left">
+	                    <i class="line"></i>
+	                    <span>답변</span>
+	                </div>
+	                <div class="right">
+	                    <b><?=$SiteName?> <?=$Name2?>의 답변입니다.</b>
+	                    <span>등록일 <?=$RegDate2?></span>
+	                    <p>
+	                    	<?=$Content2?>
+	                    </p>
+	                </div>
+	            </div>
+                <div class="tableTypeA comment-file">
+                    <table>
+                        <colgroup>
+                            <col width="200px">
+                            <col width="">
+                        </colgroup>
+                        <?if($FileName1) { ?>
+                        <tr class="file">
+                            <th>첨부파일</th>
+                            <td><?}?>
+                               <?if($FileName1) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=Counsel&file=1"><img src="img/file_icon.png" alt="파일아이콘" class="download_view"><?=$RealFileName1?></a><?}?>
+                            <?if($FileName2) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=Counsel&file=2"><img src="img/file_icon.png" alt="파일아이콘" class="download_view"><?=$RealFileName2?></a><?}?>
+                            <?if($FileName3) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=Counsel&file=3"><img src="img/file_icon.png" alt="파일아이콘" class="download_view"><?=$RealFileName3?></a><?}?>
+			                <?if($FileName4) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=Counsel&file=4"><img src="img/file_icon.png" alt="파일아이콘" class="download_view"><?=$RealFileName4?></a><?}?>
+			                <?if($FileName5) { ?><a href="../../include/download.php?idx=<?=$idx?>&code=Counsel&file=5"><img src="img/file_icon.png" alt="파일아이콘" class="download_view"><?=$RealFileName5?></a><?}?>
+                            <?if($FileName1) { ?> </td>
+                    </tr>
+                    <?}?>
+                    </table>
+                </div>
+	        <?}?>
+            <div class="button_wrap">
+                <button onclick="location.href='ask.html'">목록</button>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <? include "../../archive/include/footer.html"; ?>

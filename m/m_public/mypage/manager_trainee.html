@@ -1,0 +1,32 @@
+<? include "../include/mypage_header.html"; ?>
+
+<? include "../../m_archive/include/top_header.html";?>
+<? include "../../m_archive/include/mypage_header.html";?>
+
+<? include "../include/login_check.php"; ?>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#SearchYear").change(function(){
+			$("#changeList").load(location.href+" #changeList",{SearchYear: $('#SearchYear').val()});
+		});
+			});
+</script>
+        <div class="mypage_content">
+            <div class="sb_box">
+                <h1>교육담당자</h1>
+            </div>
+            <div class="content">
+               <p>- PC버전에서 확인하세요. </p>
+            </div>
+            <!--content-->
+        </div>
+        <!--mypage_content-->
+    </div>
+    <!--wrap-->
+</body>
+<? include "../../m_archive/include/footer.html"; ?>
+<script>
+    $(document).ready(function(){
+        $('.top-menu .trainee').addClass("on");
+    });
+</script>

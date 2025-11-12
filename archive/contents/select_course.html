@@ -1,0 +1,202 @@
+<? include "../include/header.html";?>
+<body>
+<? include "../include/top_header.html";?>
+<!-- 페이징에 영향을 주는 form 태그 -->
+<form name="listScriptForm" method="GET" action="<?=$_SERVER['PHP_SELF']?>">
+<input type="hidden" name="pg" value="<?=$pg?>">
+<input type="hidden" name="PCategory" value="<?=$PCategory?>">
+<input type="hidden" name="ctype" value="<?=$ctype?>">
+<input type="hidden" name="CategoryData" value="<?=$CategoryData?>">
+</form>
+<?
+$pg = Replace_Check_XSS2($pg);
+$PCategory = Replace_Check($PCategory);
+$ctype  = Replace_Check($ctype);
+
+if($PCategory == 1) $PageName = "공통역량";
+else if($PCategory == 5) $PageName = "직무역량";
+else if($PCategory == 9) $PageName = "리더십";
+else if($PCategory == 13) $PageName = "HRDe++";
+else  $PageName = "공통역량";
+
+if($ctype == "X") $PageName2 = "이러닝";
+else if($ctype == "Z") $PageName2 = "마이크로닝";
+else if($ctype == "Y") $PageName2 = "숏폼";
+else  $PageName2 = "이러닝";
+
+$ID = $_SESSION['LoginMemberID'];
+
+//get study column lecturecode, seq 
+$SqlM    = "SELECT LectureCode AS StudyLectureCode, Seq AS Study_Seq FROM Study WHERE ID = '$ID'";
+$ResultM = mysqli_query($connect, $SqlM);
+$RowM = mysqli_fetch_assoc($ResultM);
+
+//컨텐츠좋아요 list
+$Like_list = array();
+$SqlLike = "SELECT * from CourseLike WHERE ID = '$LoginMemberID'";
+$QueqryLike = mysqli_query($connect, $SqlLike);
+if($QueqryLike && mysqli_num_rows($QueqryLike)){
+	while($RowLike = mysqli_fetch_array($QueqryLike)){
+		$LikeCode = $RowLike['LectureCode'];
+    	$Like_list[$LikeCode] = $LikeCode;
+	}
+}
+
+$contentsCate = ($CategoryData == 0) ? "" : " AND Keyword2 = $CategoryData ";
+
+if($Category) $where = " WHERE Del='N' AND UseYN = 'Y' AND ServiceType = '$ctype' AND Category1 = $PCategory AND Category2 = $Category ".$contentsCate;
+else  $where = " WHERE Del='N' AND UseYN = 'Y' AND ServiceType = '$ctype' AND Category1 = $PCategory ".$contentsCate;
+
+//페이지 조건
+if(!$pg) $pg = 1;
+$page_size = 12;
+$block_size = 10;
+
+//검색 등록수
+$Sql = "SELECT COUNT(*) FROM Course $where";
+// echo $Sql;
+$Result = mysqli_query($connect, $Sql);
+$Row = mysqli_fetch_array($Result);
+$TOT_NO = $Row[0];
+
+//페이지 클래스 생성
+include_once("../../include/include_page.php");
+
+$PAGE_CLASS = new Page($pg,$TOT_NO,$page_size,$block_size); ##-- 페이지 클래스
+$BLOCK_LIST = $PAGE_CLASS->blockList(); ##-- 페이지 이동관련
+$PAGE_UNCOUNT = $PAGE_CLASS->page_uncount; ##-- 게시물 번호 한개씩 감소
+?>
+    <div id="wrap">
+        <div class="lecture_top">
+            <strong><?=$PageName?></strong>
+            <div class="select-box">
+                <select onchange="location.href=this.value">
+                    <option value="/archive/contents/contents_list.html?PCategory=1" <? if($PCategory == 1) {?> selected <? } ?> >공통역량</option>
+                    <option value="/archive/contents/contents_list.html?PCategory=5" <? if($PCategory == 5) {?> selected <? } ?>>직무역량</option>
+                    <option value="/archive/contents/contents_list.html?PCategory=9" <? if($PCategory == 9) {?> selected <? } ?>>리더십</option>
+                    <option value="/archive/contents/contents_list.html?PCategory=13" <? if($PCategory == 13) {?> selected <? } ?>>HRDe++</option>
+                </select>
+            </div>
+            <div class="select-box">
+                <select onchange="location.href=this.value">
+                    <option value="/archive/contents/contents_list.html?PCategory=<?=$PCategory?>">전체</option>
+                    <option value="/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=X&CategoryData=<?=$CategoryData?>" <? if($ctype == "X") {?> selected <? } ?>>이러닝</option>
+                    <option value="/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=Z&CategoryData=<?=$CategoryData?>" <? if($ctype == "Z") {?> selected <? } ?>>마이크로러닝</option>
+                    <option value="/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=Y&CategoryData=<?=$CategoryData?>" <? if($ctype == "Y") {?> selected <? } ?>>숏폼</option>
+                </select>
+            </div>
+            <form name="CategorySearchForm" action="<?=$_SERVER['PHP_SELF']?>" method="GET">
+                <input type="hidden" name="PCategory" id="PCategory" value="<?=$PCategory?>">
+                <input type="hidden" name="ctype" id="ctype" value="<?=$ctype?>">
+                <input type="hidden" name="CategoryData" id="CategoryData" value="<?=$CategoryData?>">
+                <ul class="category1">
+                    <!-- <li><a name="CategoryChk" id="CategoryChk1" href="JavaScript:CategorySearch('1')" value="1" class="on">카테고리1</a></li>
+                    <li><a name="CategoryChk" id="CategoryChk2" href="JavaScript:CategorySearch('2')" value="2">카테고리2</a></li>
+                    <li><a name="CategoryChk" id="CategoryChk3" href="JavaScript:CategorySearch('3')" value="3">카테고리3</a></li>
+                    <li><a name="CategoryChk" id="CategoryChk4" href="JavaScript:CategorySearch('4')" value="4">카테고리4</a></li> -->
+                    <li><a name="catChk" id="catChk0" href="Javascript:CategorySearch(<?=$PCategory?>, 0, '<?=$ctype?>');" <?if($CategoryData == "0" || $CategoryData == ""){?>class="on"<?}?> value="">전체</a></li>
+                    <?
+                    $k = 1;
+                    $SqlS = "SELECT * FROM ContentsKeyword WHERE Category=2 AND jobCate = $PCategory ORDER BY Category ASC, OrderByNum ASC";
+                    $QueryS = mysqli_query($connect, $SqlS);
+                    if($QueryS && mysqli_num_rows($QueryS)){
+                        while($RowS = mysqli_fetch_array($QueryS)){
+                            $idx         = $RowS['idx'];
+                            $KeywordName = $RowS['Keyword'];
+                    ?>
+                    <li><a name="CategoryChk" id="CategoryChk<?=$idx?>" href="Javascript:CategorySearch(<?=$PCategory?>, <?=$idx?>, '<?=$ctype?>');" <?if($CategoryData == $idx){?>class="on"<?}?> value="<?=$idx?>"><?=$KeywordName?></a>
+                    <?
+                            $k++;
+                        }
+                    }?>
+                </ul>
+            </form>
+        </div>
+        
+        <div class="lecture">
+            <h5><b><?=$PageName2?></b></h5>
+            <div class="grid-wrapper">
+				<?
+				$i = 0;
+				$SQL = "SELECT * FROM Course $where ORDER BY idx LIMIT $PAGE_CLASS->page_start, $page_size";
+				//echo $SQL;
+				$QUERY = mysqli_query($connect, $SQL);
+				if($QUERY && mysqli_num_rows($QUERY)){
+					while($ROW = mysqli_fetch_array($QUERY)){
+						extract($ROW);
+						$Keyword = str_replace(' ', '', $Keyword3);
+						$Keyword_array = explode('#',$Keyword);
+						$Keyword_arrayA = array_slice($Keyword_array, 1, 3);
+						$ImgUrl = "/upload/Course/".$PreviewImage;
+						
+						$CourseCnt	  = $ROW['cnt'];
+						$ContentsStart = substr($ContentsStart,0,10);
+						$UploadDate = substr($UploadDate,0,10);
+						
+						$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseLike WHERE LectureCode ='$LectureCode'";
+						$ResultCNT = mysqli_query($connect, $SqlCNT);
+						$RowCNT = mysqli_fetch_array($ResultCNT);
+						$CNT = $RowCNT[0];
+				?>
+                <div class="grid-slide">
+                    <?if($Chapter == "0"){?>
+					<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+					<?}else{?>
+					<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1', '<?=$RowM['Study_Seq']?>', '<?=$RowM['StudyLectureCode']?>');">
+					<?}?>
+                        <li class="img" style="background-image: url(<?=$ImgUrl?>);"></li>
+                        <li class="title">
+                            <span class="tag">
+                            <?
+                            $keyword3Arr = explode(',', $Keyword3);
+                            $SQLKey3     = " SELECT aValue, idx AS keywordIdx FROM ArchiveQuestion WHERE aType = 'B' AND aDepth = 'step01' AND aGroup = 'A' AND aBind = 'col3' ORDER BY aOrder ASC ";
+                            $QUERYKey3   = mysqli_query($connect, $SQLKey3);
+                            if( $QUERYKey3 && mysqli_num_rows($QUERYKey3) ) {
+                                while( $ROWKey3 = mysqli_fetch_array($QUERYKey3) ) {
+                                    extract($ROWKey3);
+                                    if ( in_array($keywordIdx, $keyword3Arr) ) echo "<b>#</b>".$aValue." ";
+                                }
+                            }
+                            ?>
+                            </span>
+                            <strong><?=$ContentsName?></strong>
+                            <span class="lecture_save">
+                                <?if($Like_list[$LectureCode] == $LectureCode){?>
+								<i class="ph-fill ph-heart" style="color:red;" onclick="CourseLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+								<?}else{?>
+								<i class="ph-light ph-heart" onclick="CourseLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+								<?}?>
+                            </span>
+                            <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                            <span class="lecture_time">조회수 : <?=$CourseCnt?></span>
+                            <span class="lecture_time">제작연도 : <?=$ContentsStart?></span>
+                    		<span class="lecture_time">업로드일 : <?=$UploadDate?></span>
+                        </li>
+                    </ul>
+                </div>
+				<?
+						$i++;
+					}
+				}
+				?>
+            </div>
+            
+ 			<!-- page -->
+ 			<?=$BLOCK_LIST?>       
+            <!-- //page -->
+        </div>
+    </div>
+</body>
+
+<script>
+    //카테고리
+    function CategorySearch(PCategory, idx, ctype) {
+        var data = $("#CategoryChk"+idx).attr('value');
+        $("#PCategory").val(PCategory);
+        $("#CategoryData").val(idx);
+        $("#ctype").val(ctype);
+        CategorySearchForm.submit();
+    }
+</script>
+
+<?php include "../include/footer.html"; ?>

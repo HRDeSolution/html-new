@@ -1,0 +1,90 @@
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . "/include/include_function.php"; //DB연결 및 각종 함수 정의
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?=$SiteName2?></title>
+    <script type="text/javascript" src="../../common/js/jquery-2.1.4.js"></script>
+    <link rel="stylesheet" href="../../common/css/base.css?ver=240419">
+    <link rel="stylesheet" href="../../common/css/common.css?ver=240419">
+    <link rel="stylesheet" href="css/support.css?ver=240419">
+    <script src="https://kit.fontawesome.com/ebace215db.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
+    <script type="text/javascript" src="/include/function.js?t=<?=date('YmdHis')?>"></script>
+</head>
+<header>
+    <div class="top_header">
+        <!--wrap-->
+        <div id="wrap">
+            <div class="logo" >
+            <?if($_SESSION["MainCode"] == "B"){?>
+            	<a href="/cyber/main/main.html">
+            <?}else{?>
+            	<a href="/hrdedu/main/main.html">
+            <?}?>
+	           		<img src="/common/img/logo.png" alt="HRD평생교육원">
+	           	</a>
+            </div> 
+            <div class="btn">
+            	<? if(empty($_SESSION['LoginMemberID'])) { ?>
+                <a href="/public/member/login.html">로그인</a>
+                <a href="/public/member/join.html">회원가입</a>
+                <?}else{?>
+                <p style="display: inline-block; margin-left: 15px; padding: 10px 0; font-weight: 500;"><strong style="color:#2c5db4;"><?=$_SESSION['LoginName']?></strong> 훈련생님 반갑습니다.</p>
+                <a href="/public/member/logout.php">로그아웃</a>
+                <?}?>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <div class="middle_header">
+        <!--wrap-->
+        <div id="wrap">
+            <div class="left">
+                <h1>학습지원센터</h1>
+                <a class="menuicon">
+                    <i class="fa-solid fa-bars"></i>
+                </a>
+            </div>
+            <div class="right">
+                <a href="notice.html" class="notice">공지사항</a>
+                <a href="faq.html" class="faq">자주 묻는 질문</a>
+                <a href="ask.html" class="ask">1:1 상담</a>
+                <a href="edudata.html?EduCate=A" class="edudata">학습자료실</a>
+                <!-- 사용하지않아서 제외처리 24.05.22.YEON [요청차:김지혜주임] -->
+                <!-- <a href="event.html" class="event">이벤트</a>  -->
+                <a href="remote.html" class="remote">PC 원격지원</a>
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+</header>
+
+<script>
+    $(document).ready(function() {
+        var op = false;  //네비가 열려있으면(true) , 닫혀있으면(false)
+            
+        $(".menuicon").click(function(e) { //메뉴버튼 클릭시
+            e.preventDefault();
+            var documentHeight =  $(document).height(); //전체페이지의 높이
+            $(".middle_header .right").css('height',documentHeight); 
+
+            if(op==false){ //메뉴가 닫혀있는 상태에서 클릭하면
+                $(".middle_header .right").animate({right:0,opacity:1}, 'fast');
+                op=true;
+            }else{ //메뉴가 열려있는 상태에서 클릭하면
+                $(".middle_header .right").animate({right:'-100%',opacity:0}, 'fast');
+                op=false;
+            }
+
+        });
+    });
+</script>

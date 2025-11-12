@@ -1,0 +1,647 @@
+<? include "../include/header.html";?>
+
+<? include "../include/guest_session.php"; ?>
+<? include "../include/login_check.php"; ?>
+<?
+$ID = $_SESSION['LoginMemberID'];
+
+//컨텐츠좋아요 list
+$Like_list = array();
+$SqlLike = "SELECT * from CourseFlexLike WHERE ID = '$LoginMemberID'";
+$QueqryLike = mysqli_query($connect, $SqlLike);
+if($QueqryLike && mysqli_num_rows($QueqryLike)){
+	while($RowLike = mysqli_fetch_array($QueqryLike)){
+		$LikeCode = $RowLike['LectureCode'];
+    	$Like_list[$LikeCode] = $LikeCode;
+	}
+}
+?>
+<body>
+    <? include "../include/top_header.html";?>
+    <div class="top_banner"><p>직업교육, 일반사무직, IT·4차산업, 병원직무 등 다양한 HRDe의 교육을 <br>지금 <span class="hrdeflex">HRDeFLEX</span>를 통해 수강하세요</p></div>
+
+    <div id="wrap">
+   
+    <div class="lecture">
+        <h5><span class="fc_purple_gradient">HRDe's PICK</span>추천 컨텐츠</h5>
+        <div class="circle_btn">
+            <div class="circleprev circleprev1"><i class="ph-bold ph-caret-left"></i></div>
+            <div class="circlenext circlenext1"><i class="ph-bold ph-caret-right"></i></div>
+        </div>
+        <div class="swiper mySwiper1">
+            <div class="swiper-wrapper">
+            	<?
+				$i = 0;
+				$SQL = "SELECT a.*, b.ServiceType, b.ContentsName, b.ctype, b.Del, b.UseYN , b.Keyword1 , b.PreviewImage, b.ContentsTime , b.Chapter , b.idx
+                        FROM FlexContentsList AS a 
+						LEFT OUTER JOIN CourseFlex AS b ON a.LectureCode=b.LectureCode 
+						WHERE b.Del='N' AND a.gubun='1'
+						ORDER BY a.OrderByNum ASC, a.idx ASC";
+				$QUERY = mysqli_query($connect, $SQL);
+				if($QUERY && mysqli_num_rows($QUERY)){
+					while($ROW = mysqli_fetch_array($QUERY)){
+						$LectureCode  = $ROW['LectureCode'];
+						$Keyword1     = $ROW['Keyword1'];
+						$PreviewImage = $ROW['PreviewImage'];
+						$ContentsName = $ROW['ContentsName'];
+						$ContentsTime = $ROW['ContentsTime'];
+						$Chapter      = $ROW['Chapter'];
+						$idx	      = $ROW['idx'];
+
+						$Keyword = str_replace(' ', '', $Keyword1);
+						$Keyword_array = explode('#',$Keyword);
+						$Keyword_arrayA = array_slice($Keyword_array, 1, 2);
+						$ImgUrl = "/upload/Course/".$PreviewImage;
+
+						$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseFlexLike WHERE LectureCode ='$LectureCode'";
+						$ResultCNT = mysqli_query($connect, $SqlCNT);
+						$RowCNT = mysqli_fetch_array($ResultCNT);
+						$CNT = $RowCNT[0];
+				?>
+                <div class="swiper-slide">
+                    <?if($Chapter == "0"){?>
+					<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+					<?}else{?>
+					<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1');">
+					<?}?>
+                        <li class="img" style="background-image: url(<?=$ImgUrl?>);"></li>
+                        <li class="title">
+                            <?while (list($key,$value)=each($Keyword_arrayA)){?>
+						 	<span class="tag">#<?=$value?></span>
+							<?}?>
+                            <strong><?=$ContentsName?></strong>
+                            <span class="lecture_save" >
+                				<?if($Like_list[$LectureCode] == $LectureCode){?>
+								<i class="ph-fill ph-heart" style="color:red;" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+								<?}else{?>
+								<i class="ph-light ph-heart" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+								<?}?>
+							</span>
+                            <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                        </li>
+                    </ul>
+                </div>
+				<?
+						$i++;
+					}
+				}
+				?>
+            </div>
+        </div>
+    </div>
+    <div class="lecture">
+        <h5><span class="fc_purple">오늘의 TOP10</span>인기 컨텐츠</h5>
+        <div class="circle_btn">
+            <div class="circleprev circleprev2"><i class="ph-bold ph-caret-left"></i></div>
+            <div class="circlenext circlenext2"><i class="ph-bold ph-caret-right"></i></div>
+        </div>
+        <div class="swiper mySwiper2 hot">
+            <div class="swiper-wrapper">
+            	<?
+				$i = 0;
+				$SQL = "SELECT a.*, b.ServiceType, b.ContentsName, b.ctype, b.Del, b.UseYN , b.Keyword1 , b.PreviewImage, b.ContentsTime, b.Chapter
+                        FROM FlexContentsList AS a 
+						LEFT OUTER JOIN CourseFlex AS b ON a.LectureCode=b.LectureCode 
+						WHERE b.Del='N' AND a.gubun='2'
+						ORDER BY a.OrderByNum ASC, a.idx ASC";
+				$QUERY = mysqli_query($connect, $SQL);
+				if($QUERY && mysqli_num_rows($QUERY)){
+					while($ROW = mysqli_fetch_array($QUERY)){
+						$LectureCode = $ROW['LectureCode'];
+						$Keyword1 = $ROW['Keyword1'];
+						$PreviewImage = $ROW['PreviewImage'];
+						$ContentsName = $ROW['ContentsName'];
+						$ContentsTime = $ROW['ContentsTime'];
+						$Chapter      = $ROW['Chapter'];
+						$idx	      = $ROW['idx'];
+
+						$Keyword = str_replace(' ', '', $Keyword1);
+						$Keyword_array = explode('#',$Keyword);
+						$Keyword_arrayA = array_slice($Keyword_array, 1, 2);
+						$ImgUrl = "/upload/Course/".$PreviewImage;
+
+						$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseFlexLike WHERE LectureCode ='$LectureCode'";
+						$ResultCNT = mysqli_query($connect, $SqlCNT);
+						$RowCNT = mysqli_fetch_array($ResultCNT);
+						$CNT = $RowCNT[0];
+				?>
+                <div class="swiper-slide">
+                    <?if($Chapter == "0"){?>
+					<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+					<?}else{?>
+					<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1');">
+					<?}?>
+                        <li class="img" style="background-image: url(<?=$ImgUrl?>);"></li>
+                        <li class="title">
+                            <?while (list($key,$value)=each($Keyword_arrayA)){?>
+						 	<span class="tag">#<?=$value?></span>
+							<?}?>
+                            <strong><?=$ContentsName?></strong>
+                            <span class="lecture_save" >
+                				<?if($Like_list[$LectureCode] == $LectureCode){?>
+								<i class="ph-fill ph-heart" style="color:red;" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+								<?}else{?>
+								<i class="ph-light ph-heart" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+								<?}?>
+							</span>
+                            <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                        </li>
+                    </ul>
+                </div>
+				<?
+						$i++;
+					}
+				}
+				?>
+            </div>
+        </div>
+    </div>
+    <div class="lecture">
+        <h5><span class="fc_purple">NEW</span>신규 컨텐츠</h5>
+        <div class="circle_btn">
+            <div class="circleprev circleprev3"><i class="ph-bold ph-caret-left"></i></div>
+            <div class="circlenext circlenext3"><i class="ph-bold ph-caret-right"></i></div>
+        </div>
+        <!--swiper-->
+        <div class="swiper mySwiper3">
+            <div class="swiper-wrapper">
+            	<?
+				$i = 0;
+				$SQL = "SELECT a.*, b.ServiceType, b.ContentsName, b.ctype, b.Del, b.UseYN , b.Keyword1 , b.PreviewImage, b.ContentsTime, b.Chapter
+                        FROM FlexContentsList AS a 
+						LEFT OUTER JOIN CourseFlex AS b ON a.LectureCode=b.LectureCode 
+						WHERE b.Del='N' AND a.gubun='3'
+						ORDER BY a.OrderByNum ASC, a.idx ASC";
+				$QUERY = mysqli_query($connect, $SQL);
+				if($QUERY && mysqli_num_rows($QUERY)){
+					while($ROW = mysqli_fetch_array($QUERY)){
+						$LectureCode = $ROW['LectureCode'];
+						$Keyword1 = $ROW['Keyword1'];
+						$PreviewImage = $ROW['PreviewImage'];
+						$ContentsName = $ROW['ContentsName'];
+						$ContentsTime = $ROW['ContentsTime'];
+						$Chapter      = $ROW['Chapter'];
+						$idx	      = $ROW['idx'];
+
+						$Keyword = str_replace(' ', '', $Keyword1);
+						$Keyword_array = explode('#',$Keyword);
+						$Keyword_arrayA = array_slice($Keyword_array, 1, 2);
+						$ImgUrl = "/upload/Course/".$PreviewImage;
+
+						$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseFlexLike WHERE LectureCode ='$LectureCode'";
+						$ResultCNT = mysqli_query($connect, $SqlCNT);
+						$RowCNT = mysqli_fetch_array($ResultCNT);
+						$CNT = $RowCNT[0];
+				?>
+                <div class="swiper-slide">
+                    <?if($Chapter == "0"){?>
+					<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+					<?}else{?>
+					<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1');">
+					<?}?>
+                        <li class="img" style="background-image: url(<?=$ImgUrl?>);"></li>
+                        <li class="title">
+                            <?while (list($key,$value)=each($Keyword_arrayA)){?>
+						 	<span class="tag">#<?=$value?></span>
+							<?}?>
+                            <strong><?=$ContentsName?></strong>
+                            <span class="lecture_save" >
+                				<?if($Like_list[$LectureCode] == $LectureCode){?>
+								<i class="ph-fill ph-heart" style="color:red;" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+								<?}else{?>
+								<i class="ph-light ph-heart" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+								<?}?>
+							</span>
+                            <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                        </li>
+                    </ul>
+                </div>
+				<?
+						$i++;
+					}
+				}
+				?>
+            </div>
+        </div>
+        <!--swiper-->
+    </div>
+    
+    <div class="lecture">
+        <h5><span>전체 컨텐츠</span></h5>
+        <div class="content_header">
+        	<form name="CategorySearchForm" action="<?=$_SERVER['PHP_SELF']?>" method="GET">
+            	<input type="hidden" name="CategoryData" id="CategoryData" value="<?=$CategoryData?>">
+		        <ul>
+		        	<li><a name="catChk" id="catChk0" href="Javascript:CategorySearch('0');" <?if($CategoryData == ""){?>class="on"<?}?> value="">전체</a></li>
+		        	<?
+		        	$k = 1;
+            		$SqlS = "SELECT * FROM CourseFlexCategory WHERE Deep = 1 ORDER BY CategoryName";
+					//echo $SqlS;
+					$QueryS = mysqli_query($connect, $SqlS);
+					if($QueryS && mysqli_num_rows($QueryS)){
+            			while($RowS = mysqli_fetch_array($QueryS)){
+                			$idx = $RowS['idx'];
+                			$CategoryName = $RowS['CategoryName'];
+					?>
+					<li><a name="catChk" id="catChk<?=$idx?>" href="Javascript:CategorySearch(<?=$idx?>);" <?if($CategoryData == $idx){?>class="on"<?}?> value="<?=$idx?>"><?=$CategoryName?></a>
+	            	<?
+		            		$k++;
+						}
+					}
+					?>
+		        </ul>
+		    </form>
+        	<form name="BoardSearchForm" action="<?=$_SERVER['PHP_SELF']?>" method="GET">
+                <div class="search_box">
+		            <input type="text" name="sw" id="sw" <?if($sw){?>value="<?=$sw?>"<?}?> placeholder="콘텐츠 검색">
+		            <i class="ph-bold ph-magnifying-glass"  onclick="Javascript:BoardSearch();"></i>
+		        </div>
+			</form>
+	    </div>
+        <!--swiper-->
+        <div class="lecture_wrap">
+        	<?
+        	if($_SESSION['LoginMemberID']){
+        		$where4SqlA = "WHERE ID = '$ID'";
+        	}else{
+        		$where4SqlA = "";				
+			}
+        	$SqlA = "SELECT REPLACE(Category1, '|', ',') AS Category1, REPLACE(Category2, '|', ',') AS Category2,
+							REPLACE(Keyword1, '|', ',') AS Keyword1, Keyword2, Keyword3
+					 FROM MemberContents $where4SqlA";
+			$ResultA = mysqli_query($connect, $SqlA);
+			$RowA = mysqli_fetch_array($ResultA);
+			$Category1 = $RowA['Category1'];
+			$Category2 = $RowA['Category2'];
+			$Keyword1  = $RowA['Keyword1'];
+			$Keyword2  = $RowA['Keyword2'];
+			$Keyword3  = $RowA['Keyword3'];
+
+        	$SqlB = "SELECT GROUP_CONCAT(Keyword SEPARATOR '|') AS Keyword FROM ContentsFlexKeyword WHERE Category=1 AND idx in ($Keyword1)";
+			$ResultB = mysqli_query($connect, $SqlB);
+			$RowB = mysqli_fetch_array($ResultB);
+			$KeywordB = $RowB[0];
+
+			$SqlE = "SELECT Keyword FROM ContentsFlexKeyword WHERE Category=3 AND idx in ($Keyword3)";
+			$ResultE = mysqli_query($connect, $SqlE);
+			$RowE = mysqli_fetch_array($ResultE);
+			$KeywordE = $RowE[0];
+
+			if($sw){
+        		$where = " AND ContentsName LIKE '%$sw%' OR Keyword1 like '%$sw%'";
+				$where2 = "";
+			}else{
+				$where = "";
+				$where2 = " AND Category1 IN ($Category1) AND Category2 IN ($Category2) OR Keyword1 REGEXP('$KeywordB') AND Keyword2 = '$Keyword2' AND Keyword3 like '$KeywordE'";
+			}
+
+			if($CategoryData){
+				$whereC = " AND Category1=$CategoryData";
+				$where2 = "";
+			}
+
+        	$Sql = "SELECT COUNT(*) FROM CourseFlex WHERE Del='N' AND UseYN='Y' $where $whereC";
+			//echo $Sql;
+			$Result = mysqli_query($connect, $Sql);
+			$Row = mysqli_fetch_array($Result);
+			$TOT_NO = $Row[0];
+			//echo $TOT_NO;
+
+			$k = 1;
+            $SqlC = "SELECT * FROM CourseFlex WHERE Del='N' AND UseYN='Y' $where  $where2 $whereC ORDER BY RAND() LIMIT 12";
+			//echo $SqlC;
+			$QueryC = mysqli_query($connect, $SqlC);
+			$TotalRowC = mysqli_num_rows($QueryC);
+			$idxData;
+            if($QueryC && mysqli_num_rows($QueryC)){
+            	while($RowC = mysqli_fetch_array($QueryC)){
+                	$idx = $RowC['idx'];
+                	$PreviewImage = $RowC['PreviewImage'];
+					$LectureCode  = $RowC['LectureCode'];
+					$Keyword1     = $RowC['Keyword1'];
+					$ContentsName = $RowC['ContentsName'];
+					$ContentsTime = $RowC['ContentsTime'];
+					$Chapter      = $RowC['Chapter'];
+
+					$PreviewImageView = "/upload/Course/".$PreviewImage;
+
+					$Keyword1 = str_replace(' ', '', $Keyword1);
+					$Keyword1_array = explode('#',$Keyword1);
+					$Keyword1_arrayA = array_slice($Keyword1_array, 1, 2);
+
+					if($idxData == ""){
+						$idxData = $idx;
+					}else{
+						$idxData = $idxData.",".$idx;
+					}
+
+					$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseFlexLike WHERE LectureCode ='$LectureCode'";
+					$ResultCNT = mysqli_query($connect, $SqlCNT);
+					$RowCNT = mysqli_fetch_array($ResultCNT);
+					$CNT = $RowCNT[0];
+			?>
+			<?if($Chapter == "0"){?>
+			<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+			<?}else{?>
+			<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>', '1');">
+			<?}?>
+                <li class="img" style="background-image: url(<?=$PreviewImageView?>);"></li>
+                <li class="title">
+                	<? while (list($key,$value)=each($Keyword1_arrayA)){?>
+					<span class="tag">#<?=$value?></span>
+					<?}?>
+                    <strong><?=$ContentsName?></strong>
+                    <span class="lecture_save" >
+                    	<?if($Like_list[$LectureCode] == $LectureCode){?>
+						<i class="ph-fill ph-heart" style="color:red;" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+						<?}else{?>
+						<i class="ph-light ph-heart" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+						<?}?>
+					</span>
+                    <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                </li>
+            </ul>
+            <?
+            	$k++;
+				}
+			}
+			if(!$sw && !$CategoryData && $TotalRowC < 12){
+				$LimitRows = 12-$TotalRowC;
+
+				if($sw){
+					$where3 = " AND ContentsName LIKE '%$sw%' OR Keyword1 like '%$sw%'";
+					$where4 = "";
+				}else{
+					$where3 = "";
+					$where4 = " AND Category1 NOT IN ($Category1) OR Category2 NOT IN ($Category2) OR Keyword1 REGEXP('$KeywordB') AND Keyword2 = '$Keyword2' AND Keyword3 like '$KeywordE'";
+				}
+
+				if($CategoryData){
+					$whereC = " AND Category1=$CategoryData";
+					$where4 = "";
+				}
+				
+				$SqlD = "SELECT * FROM CourseFlex WHERE Del='N' AND UseYN='Y' $where3 $where4 $whereC  ORDER BY RAND() LIMIT $LimitRows";
+				//echo $SqlD."<br>";
+				$QueryD = mysqli_query($connect, $SqlD);
+				$TotalRowD = mysqli_num_rows($QueryD);
+				if($QueryD && mysqli_num_rows($QueryD)){
+            		while($RowD = mysqli_fetch_array($QueryD)){
+                		$idx = $RowD['idx'];
+                		$PreviewImage = $RowD['PreviewImage'];
+						$LectureCode = $RowD['LectureCode'];
+						$Keyword1 = $RowD['Keyword1'];
+						$ContentsName = $RowD['ContentsName'];
+						$ContentsTime = $RowD['ContentsTime'];
+						$Chapter      = $RowD['Chapter'];
+
+						$PreviewImageView = "/upload/Course/".$PreviewImage;
+
+						$Keyword1 = str_replace(' ', '', $Keyword1);
+						$Keyword1_array = explode('#',$Keyword1);
+						$Keyword1_arrayA = array_slice($Keyword1_array, 1, 2);
+
+						if($idxData == ""){
+							$idxData = $idx;
+						}else{
+							$idxData = $idxData.",".$idx;
+						}
+
+						$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseFlexLike WHERE LectureCode ='$LectureCode'";
+						$ResultCNT = mysqli_query($connect, $SqlCNT);
+						$RowCNT = mysqli_fetch_array($ResultCNT);
+						$CNT = $RowCNT[0];
+			?>
+			<?if($Chapter == "0"){?>
+			<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+			<?}else{?>
+			<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1');">
+			<?}?>
+                <li class="img" style="background-image: url(<?=$PreviewImageView?>);"></li>
+                <li class="title">
+                	<? while (list($key,$value)=each($Keyword1_arrayA)){?>
+					<span class="tag">#<?=$value?></span>
+					<?}?>
+                    <strong><?=$ContentsName?></strong>
+                    <span class="lecture_save" >
+                    	<?if($Like_list[$LectureCode] == $LectureCode){?>
+						<i class="ph-fill ph-heart" style="color:red;" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+						<?}else{?>
+						<i class="ph-light ph-heart" onclick="CourseFlexLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+						<?}?>
+					</span>
+                    <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                </li>
+            </ul>
+			<?
+					}
+				}
+			}else{
+				$TotalRowD = 0;
+			}
+
+			$TotalRows = $TotalRowC + $TotalRowD;
+            ?>
+        </div>
+        <div id="load">
+			<button>+ 과정 더보기 </button>
+    	</div>
+    </div>
+</div>
+<!--more load-->
+<script>
+$(function(){
+	var clickNum = 1; //버튼을 클릭한 수
+	
+	$("#load").click(function(e){		
+		var totNo = <?=$TOT_NO?>; //컨텐츠 총개수
+	   	var showNo = $(".lecture_wrap ul").length; //현재 보여지는 컨텐츠 개수
+	   	var hiddenNo = totNo - showNo; //아직 보여지지 않은 컨텐츠 개수
+	   	var idxData = "<?=$idxData?>"; //이미조회가된컨텐츠의 idx
+	   	var pageStart = clickNum * 12;
+	   	
+	   	if(clickNum > 1){
+	   		var num = clickNum-1;
+	   		var textData = "idxData"+num;
+	   		idxData = $('input[id='+textData+']').val();
+	   	}
+	   	
+		CourseFlexAdd(totNo, showNo, hiddenNo, pageStart, idxData, clickNum); //과정더보기		
+		clickNum ++;
+		
+		//컨텐츠가 없으면 버튼도 숨김처리
+		if(hiddenNo < 1){
+			$(".lecture_wrap span").show();
+			$('#load').fadeOut(100);
+	   	}
+    });
+})
+
+function CourseFlexAdd(totNo, showNo, hiddenNo, pageStart, idxData, clickNum) {
+	var sw = $("#sw").val();
+	var CategoryData = $("#CategoryData").val();
+	var Category1 = "<?=$Category1?>";
+	var Category2 = "<?=$Category2?>";
+	var Keyword2  = "<?=$Keyword2?>";
+	var KeywordB  = "<?=$$KeywordB?>";
+	var KeywordE  = "<?=$$KeywordE?>";
+	
+	$.post('/hrdflex/contents/course_list.php',
+		{
+		  sw: sw,
+		  CategoryData: CategoryData,
+		  pageStart: pageStart,
+		  Category1: Category1,
+		  Category2: Category2,
+		  Keyword2: Keyword2,
+		  KeywordB: KeywordB,
+		  KeywordE: KeywordE,
+		  idxData: idxData,
+		  clickNum: clickNum},
+		function(data, stauts){
+			//컨텐츠가 없을 때는 append 하지 않음
+			if(hiddenNo > 0){
+				$(".lecture_wrap").append(data);
+			}			
+		}
+	);
+}
+</script>
+</body>
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+	var swiper = new Swiper(".mySwiper1", {
+        speed: 1000,
+            autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
+        loop: true,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        navigation: {
+            nextEl: ".circlenext1",
+            prevEl: ".circleprev1",
+        },
+        slidesPerView: 4,
+        spaceBetween: 30,
+        breakpoints: {
+            1400: {
+                slidesPerView: 4,
+                spaceBetween: 30
+            },
+            1070: {
+                slidesPerView: 3,
+                spaceBetween: 20
+            },
+            720: {
+                slidesPerView: 2,
+                spaceBetween: 10
+            },
+            320: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+            ,
+            120: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+        }
+    });
+    var swiper = new Swiper(".mySwiper2", {
+        speed: 1000,
+        autoplay: {
+        	delay: 2500,
+        	disableOnInteraction: false,
+        },
+        loop: true,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        navigation: {
+            nextEl: ".circlenext2",
+            prevEl: ".circleprev2",
+        },
+        slidesPerView: 4,
+        spaceBetween: 30,
+        breakpoints: {
+            1400: {
+                slidesPerView: 4,
+                spaceBetween: 30
+            },
+            1070: {
+                slidesPerView: 3,
+                spaceBetween: 20
+            },
+            720: {
+                slidesPerView: 2,
+                spaceBetween: 10
+            },
+            320: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+            ,
+            120: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+        }
+    });
+    var swiper = new Swiper(".mySwiper3", {
+        speed: 1000,
+            autoplay: {
+            delay: 2500,
+            disableOnInteraction: false,
+        },
+        loop: true,
+        pagination: {
+            el: ".swiper-pagination",
+            clickable: true,
+        },
+        navigation: {
+            nextEl: ".circlenext3",
+            prevEl: ".circleprev3",
+        },
+        slidesPerView: 4,
+        spaceBetween: 30,
+        breakpoints: {
+            1400: {
+                slidesPerView: 4,
+                spaceBetween: 30
+            },
+            1070: {
+                slidesPerView: 3,
+                spaceBetween: 20
+            },
+            720: {
+                slidesPerView: 2,
+                spaceBetween: 10
+            },
+            320: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+            ,
+            120: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+        }
+    });
+</script>
+<!--2row swiper-->
+<?php include "../include/footer.html"; ?>
+
+<script>
+//카테고리 검색
+function CategorySearch(idx) {
+    var data = $("#catChk"+idx).attr('value');
+    $("#CategoryData").val(data);
+    CategorySearchForm.submit();
+}
+</script>

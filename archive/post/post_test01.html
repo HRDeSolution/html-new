@@ -1,0 +1,296 @@
+
+<? include "../include/header.html"; ?>
+<? include "../include/login_check.php"; ?>
+<style>
+    body{background: #EAEAEA;}
+</style>
+
+<body>
+    <div id="wrap">
+        <header>
+            <div class="logo">
+             
+            </div>
+            <div class="logout">
+                <?
+                $SQLM1   = "SELECT AbilityAfterYN FROM `Member` WHERE ID = '$LoginMemberID' LIMIT 1";
+                $QUERYM1 = mysqli_query($connect, $SQLM1);
+                $ROWM1   = mysqli_fetch_assoc($QUERYM1);
+                if ($ROWM1 && $ROWM1['AbilityAfterYN'] === 'Y') {
+                ?>
+                <button onclick="location.href='../../public/member/logout.php?sitemode=flex'">로그아웃</button>
+                <?
+                } else {
+                ?>
+                <button disabled title="사후역량진단 완료 후 로그아웃 가능합니다.">로그아웃</button>
+                <? } ?>
+            </div>
+        </header>
+        <div class="prev_wrap">
+            <div class="top">
+                <div class="logo">
+                    <img src="../img/common/archive_logo.png" alt="HRDe아카이브">
+                </div>
+                <div class="txt">
+					<div class="step-container">
+						<strong>사후역량진단</strong>
+						<span class="step active">1</span>
+						<span class="step">2</span>
+                        <span class="step">3</span>
+					</div>
+                    <p>HRDe아카이브를 통해 역량이 얼마나 향상되었는지 평가해주세요. </p>
+                </div>
+            </div>
+            <div class="survey" style="border-bottom: none;">
+                <div class="test_title">
+                    <h2>공통역량</h2>
+                </div>
+                <? 
+                $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='A' AND aDepth = 'step02' AND aGroup = 'C' ORDER BY aOrder ASC ";
+                $QUERYA = mysqli_query($connect, $SQLA);
+                if ($QUERYA) {
+                    $questionNo = 1;
+                    while ($ROWA = mysqli_fetch_array($QUERYA)) {
+                        extract($ROWA);
+
+                        $SQLB = " SELECT ar.question_idx, ar.aValue 
+                                    FROM ArchiveAbilityResult2 ar
+                                    LEFT JOIN ArchiveQuestion aq ON ar.question_idx = aq.idx
+                                    WHERE ar.ID = '$LoginMemberID'
+                                    AND aq.aDepth IN ('step02')
+                                    AND aq.aGroup IN ('C') 
+                                    AND aType IN ('A') ";
+                        $QUERYB = mysqli_query($connect, $SQLB);
+
+                        $aValueB = null;
+                        if ($QUERYB) {
+                            while ($ROWB = mysqli_fetch_assoc($QUERYB)) {
+                                if ($ROWB['question_idx'] == $idx) { 
+                                    $aValueB = $ROWB['aValue'];
+                                    break; 
+                                }
+                            }
+                        }
+
+                        echo '<div class="question">';
+                            echo '<p data-no="'.$idx.'"><b>'.$aOrder.'. ' . $aValue . '</b> <br><em class="expl">: ' . $aValueDetail . '</em></p>';
+                            echo '<div class="stars_wrap">';
+                                echo '<p>비향상</p>';
+                                echo '<div class="stars">';
+                                for ($i = 1; $i <= 5; $i++) {
+                                    $checked = ($aValueB == $i) ? "checked" : "";
+                                    // echo "<br/>";
+                                    // echo $i;
+                                    echo '<input  type="radio" id="q'.$aOrder . '-' . $i . '" name="q'.$aOrder. '" data-value="' . $i . '" '.$checked.'>';
+                                    echo '<label for="q' . $aOrder . '-' . $i . '">★</label>';
+                                }
+                                echo '</div>';
+                                echo '<p>향상</p>';
+                            echo '</div>';
+                        echo '</div>';
+
+                        $questionNo++;
+                    }
+                }
+                ?>
+            </div>
+            <!--공통역량-->
+            <!--리더십역량-->
+            <div class="survey" style="border-top: none;">
+                <div class="test_title">
+                    <h2>리더십 역량</h2>
+                </div>
+                <? 
+                $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='A' AND aDepth = 'step02' AND aGroup = 'L' ORDER BY aOrder ASC ";
+                $QUERYA = mysqli_query($connect, $SQLA);
+                if ($QUERYA) {
+                    $questionNo = 1;
+                    while ($ROWA = mysqli_fetch_array($QUERYA)) {
+                        extract($ROWA);
+
+                        $SQLB = " SELECT ar.question_idx, ar.aValue 
+                                    FROM ArchiveAbilityResult2 ar
+                                    LEFT JOIN ArchiveQuestion aq ON ar.question_idx = aq.idx
+                                    WHERE ar.ID = '$LoginMemberID'
+                                    AND aq.aDepth IN ('step02')
+                                    AND aq.aGroup IN ('L') 
+                                    AND aType IN ('A') ";
+                        $QUERYB = mysqli_query($connect, $SQLB);
+
+                        $aValueB = null;
+                        if ($QUERYB) {
+                            while ($ROWB = mysqli_fetch_assoc($QUERYB)) {
+                                if ($ROWB['question_idx'] == $idx) { 
+                                    $aValueB = $ROWB['aValue'];
+                                    break; 
+                                }
+                            }
+                        }
+
+                        $aOrder = $aOrder+5;
+                        echo '<div class="question">';
+                            echo '<p data-no="'.$idx.'"><b>'.$aOrder.'. ' . $aValue . '</b> <br><em class="expl">: ' . $aValueDetail . '</em></p>';
+                            echo '<div class="stars_wrap">';
+                                echo '<p>비향상</p>';
+                                echo '<div class="stars">';
+                                for ($i = 1; $i <= 5; $i++) {
+                                    $checked = ($aValueB == $i) ? "checked" : "";
+                                    // echo "<br/>";
+                                    // echo $i;
+                                    echo '<input  type="radio" id="q'.$aOrder . '-' . $i . '" name="q'.$aOrder. '" data-value="' . $i . '" '.$checked.'>';
+                                    echo '<label for="q' . $aOrder . '-' . $i . '">★</label>';
+                                }
+                                echo '</div>';
+                                echo '<p>향상</p>';
+                            echo '</div>';
+                        echo '</div>';
+
+                        $questionNo++;
+                    }
+                }
+                ?>
+            </div>
+            <div class="bottom">
+				<button>다음</button>
+            </div>
+        </div>
+    </div>
+</body>
+
+
+<script>
+$(document).ready(function () {
+    let selectedVal = [];
+
+   // 별점 라벨에 active 클래스 적용 (초기 로딩 시)
+   $('.question').each(function () {
+        const inputs = $(this).find('.stars input');
+        const labels = $(this).find('.stars label');
+
+        // ⭐ 초기 checked된 별점 반영
+        inputs.each(function (index) {
+            if ($(this).is(':checked')) {
+                labels.each(function (i) {
+                    $(this).toggleClass('active', i <= index);
+                });
+            }
+        });
+
+        // ⭐ 이후 별 클릭 시 반영
+        inputs.on('change', function () {
+            const idx = inputs.index(this);
+            labels.each(function (i) {
+                $(this).toggleClass('active', i <= idx);
+            });
+        });
+    });
+
+    // 별 선택하면 저장 및 유효성 검사
+    $('.stars input').on('change', function () {
+        saveSelections();
+        validateSurvey();
+    });
+
+
+    function saveSelections() {
+        selectedVal = []; 
+
+        $('.question').each(function () {
+            const selectedRadio = $(this).find('input[type="radio"]:checked');
+
+            if (selectedRadio.length > 0) {
+                const dataNo = $(this).find('p').attr('data-no');
+                const dataValue = selectedRadio.attr('data-value');
+                selectedVal.push({ no: dataNo, value: dataValue });
+            }
+        });
+        // console.log(selectedVal);
+    }
+
+    function validateSurvey() {
+        let allAnswered = true;
+
+        $('.question').each(function () {
+            const checked = $(this).find('input[type="radio"]:checked').length > 0;
+            if (!checked) {
+                allAnswered = false;
+            }
+        });
+
+        if (allAnswered) {
+            $('.bottom button').prop('disabled', false);
+        } else {
+            $('.bottom button').prop('disabled', true);
+        }
+    }
+    saveSelections();
+    validateSurvey();
+
+    $('.bottom button').on('click', function () {
+        if (!$(this).prop('disabled')) {
+            next(selectedVal);
+        }
+    });
+
+    function next(selectedVal){
+        const datas = {
+            step: "step01",
+            type: "A",
+            responses: selectedVal
+        };
+
+        $.post('/archive/post/archive_ability_b_input.php', datas, function (data) {
+            if(data == 'Y') {
+                location.href="post_test02.html";
+            }else if(data == 'NoID'){
+                alert("로그인후에 이용이 가능합니다.");
+                location.href="/public/member/login.html?sitemode=flex";
+            }else{
+                alert('항목들을 선택해주세요.');
+                return;
+            }
+        });
+    }
+});
+    
+document.querySelectorAll(".question").forEach((question) => {
+    const stars = question.querySelectorAll(".stars input");
+    const labels = question.querySelectorAll(".stars label");
+
+    stars.forEach((star, index) => {
+      star.addEventListener("change", () => {
+        labels.forEach((label, i) => {
+          label.classList.toggle("active", i <= index);
+        });
+      });
+    });
+  });
+
+</script>
+
+<?
+$SQLM_GUARD1   = "SELECT AbilityAfterYN FROM `Member` WHERE ID = '$LoginMemberID' LIMIT 1";
+$QUERYM_GUARD1 = mysqli_query($connect, $SQLM_GUARD1);
+$ROWM_GUARD1   = mysqli_fetch_assoc($QUERYM_GUARD1);
+if (!$ROWM_GUARD1 || $ROWM_GUARD1['AbilityAfterYN'] !== 'Y') {
+?>
+<script>
+// Guard leaving (close/refresh) and back navigation until post-evaluation completion
+(function(){
+    function beforeUnload(e){
+        e.preventDefault();
+        e.returnValue = '';
+    }
+    window.addEventListener('beforeunload', beforeUnload);
+
+    try {
+        history.pushState(null, document.title, location.href);
+        window.addEventListener('popstate', function(){
+            // Re-push first so every back press stays on this page, then notify
+            history.pushState(null, document.title, location.href);
+            alert('사후역량진단을 완료해 주세요.');
+        });
+    } catch (e) {}
+})();
+</script>
+<? } ?>

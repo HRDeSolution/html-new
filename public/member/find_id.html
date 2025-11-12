@@ -1,0 +1,152 @@
+<? include "../include/member_header.html"; ?>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+<body>
+    <div id="member_wrap">
+        <div class="title">
+            <span>아이디 찾기</span>
+            <h1>FIND ID</h1>
+        </div>
+        <div class="content">
+            <div class="top_txt">
+                아이디를 잊으셨나요? <br>
+                회원가입 시 등록하셨던 이름, 휴대폰번호를 입력하시면 <b>등록된 휴대폰번호로 아이디를 전송</b>해 드립니다.
+            </div>
+            <table>
+                <colgroup>
+                    <col width="135px">
+                    <col>
+                </colgroup>
+                <tr>
+                    <th>이름</th>
+                    <td><input type="text" name="" id="Name"></td>
+                </tr>
+                <tr>
+                    <th>휴대폰 번호로 찾기</th>
+                    <td>
+                        <div class="phonenumber_input">
+                            <input type="text" name="" id="Mobile01" maxlength="3" > - <input type="text" name="" id="Mobile02" maxlength="4"> - <input type="text" name="" id="Mobile03" maxlength="4" > 
+                        </div>
+                    </td>
+                </tr>
+            </table>
+            <button class="btn_black mt40" onclick="ID_Find()" id="openModalBtn">OK</button> 
+            <div class="mt15 sa_box">
+                <a href="find_pw.html" class="">비밀번호 찾기</a>
+                <div class="bar"></div>
+                <a href="login.html">로그인</a>
+            </div>
+        </div>
+        <!--content-->
+    </div>
+    <!--wrap-->
+</body>
+
+<? include "../../archive/include/footer.html";  ?>
+
+<!-- jQuery로 데이터 처리를 위한 영역 -->
+<div id="SysBg_White" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #FFFFFF;display:none;"></div>
+<div id="SysBg_Black" style="position:absolute; left:0; top:0; z-index:10; width: 100%; height: 100%; background-color: #000000;display:none;"></div>
+<div id="Roading" style="display:none;z-index:100"><BR /><BR /><BR /><BR /><img src="../../common/img/loader.gif" alt="로딩중" /></div>
+<div id="DataResult" style="display:none;z-index:10000"></div>
+<iframe name="ScriptFrame" border="0" frameborder="0" width="0" height="0" title="데이터 처리를 위한 프레임" style="display:none"></iframe>
+<!-- jQuery로 데이터 처리를 위한 영역 -->
+
+<!--모달팝업-->
+<style> 
+    .modal-bg {display:none;width:100%;height:100%;position:fixed;top:0;left:0;right:0;background: rgba(0, 0, 0, 0.8);z-index:999;}
+    .modal-wrap {position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#fff;z-index:1000;}
+    .close-btn{position: absolute;right: 30px;top: 22px; cursor: pointer;}
+    .close-btn i{font-size: 30px;}
+</style>
+<script>
+function ID_Find() {
+	if ($('#Name').val() == '') {
+		alert('이름을 입력하세요.');
+		$('#Name').focus();
+		return;
+	}
+
+	if ($('#Mobile01').val() == '') {
+		alert('휴대전화번호를 입력하세요.');
+		$('#Mobile01').focus();
+		return;
+	}
+
+	if ($('#Mobile02').val() == '') {
+		alert('휴대전화번호를 입력하세요.');
+		$('#Mobile02').focus();
+		return;
+	}
+
+	if ($('#Mobile03').val() == '') {
+		alert('휴대전화번호를 입력하세요.');
+		$('#Mobile03').focus();
+		return;
+	}
+
+	if (IsNumber($('#Mobile01').val()) == false) {
+		alert('휴대전화번호는 숫자만 입력하세요.');
+		$('#Mobile01').focus();
+		return;
+	}
+
+	if (IsNumber($('#Mobile02').val()) == false) {
+		alert('휴대전화번호는 숫자만 입력하세요.');
+		$('#Mobile02').focus();
+		return;
+	}
+
+	if (IsNumber($('#Mobile03').val()) == false) {
+		alert('휴대전화번호는 숫자만 입력하세요.');
+		$('#Mobile03').focus();
+		return;
+	}
+
+	var currentWidth = $(window).width();
+	var LocWidth = currentWidth / 2;
+	var body_width = screen.width - 20;
+	var body_height = $('html body').height() + 500;
+
+	$("div[id='SysBg_Black']")
+		.css({
+			width: '100%',
+			height: body_height,
+			opacity: '0.4',
+			position: 'absolute',
+			'z-index': '99',
+		})
+		.show();
+
+	$("div[id='Roading']")
+		.css({
+			top: '350px',
+			left: LocWidth,
+			opacity: '0.6',
+			position: 'absolute',
+			'z-index': '200',
+		})
+		.show();
+
+	$('#DataResult').load(
+		'/public/member/search_id_result.php',
+		{ Name: $('#Name').val(), Mobile01: $('#Mobile01').val(), Mobile02: $('#Mobile02').val(), Mobile03: $('#Mobile03').val() },
+		function () {
+			$("div[id='Roading']").hide();
+
+			$('html, body').animate({ scrollTop: 0 }, 500);
+			$("div[id='DataResult']")
+				.css({
+					top: '300px',
+					left: body_width / 2 - 250,
+					opacity: '1.0',
+					position: 'absolute',
+					'z-index': '1000',
+				})
+				.show();
+
+			$('html').css('overflow', 'hidden');
+		}
+	);
+}	
+</script>

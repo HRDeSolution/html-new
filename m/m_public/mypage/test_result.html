@@ -1,0 +1,537 @@
+
+<? include "../include/mypage_header.html"; ?>
+<? include "../../m_archive/include/top_header.html";?>
+<? include "../../m_archive/include/mypage_header.html";?>
+<? include "../../m_include/login_check.php"; ?>
+<? include "../../m_include/include_ability_data.php"; ?>
+
+        <div class="mypage_content">
+            <div class="sb_box" style="border-bottom: 2px solid;">
+                <h1>역량진단</h1>
+                <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;역량진단
+                </div>
+            </div>
+            <div class="content">
+                <h3>역량진단결과 요약</h3>
+                <!--진단결과 그래프-->
+                <!--종합점수-->
+                <div class="chart-wrapper">
+                    <div>
+                        <div class="chart-container left-container">
+                            <div class="bar left-bar" id="score1_1"></div>
+                        </div>
+                        <div class="label">사전진단 점수</div>
+                    </div>
+                    <div>
+                        <div class="chart-container right-container">
+                            <div class="bar right-bar" id="score1_2"></div>
+                        </div>
+                        <div class="label">사후진단 점수</div>
+                    </div>
+                </div>
+                <!--공통/직무/리더십역량-->
+                <div class="test-btn">
+                <?
+                // $nowDate = date('Y-m-d');
+                // $beforeDete = date('Y-m-d', strtotime($ROWS['LectureEnd'] . ' -30 days'));
+                // if ( $beforeDete < $nowDate ) { //수강기간 한달전부터 사후진단 버튼 활성화
+                if ( $PassOK == "Y" ) { // 250515 원래 30일이었다가 수료 시점으로 변경됨
+                ?> 
+                    <button onclick="location.href='/m_archive/post/post_test01.html'" >사후역량진단 하러가기<i class="ph ph-caret-right"></i></button>
+                <?} ?>
+                </div> 
+                <div class="grid-box">
+                    <!--공통역량-->
+                    <div class="chart2-container">
+                        <div class="chart-title">공통역량</div>
+                        <div class="chart">
+                            <div class="ticks">
+                                <div>100</div>
+                                <div>80</div>
+                                <div>60</div>
+                                <div>40</div>
+                                <div>20</div>
+                                <div>0</div>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar bar-1" id="score2_1"></div>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar bar-2" id="score2_2"></div>
+                            </div>
+                       
+                        </div>
+                        <div class="labels">
+                            <div class="label">사전진단 점수</div>
+                            <div class="label">사후진단 점수</div>
+                        </div>
+                    </div>
+                    <!--리더십역량-->
+                    <div class="chart2-container">
+                        <div class="chart-title">리더십역량</div>
+                        <div class="chart">
+                            <div class="ticks">
+                                <div>100</div>
+                                <div>80</div>
+                                <div>60</div>
+                                <div>40</div>
+                                <div>20</div>
+                                <div>0</div>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar bar-1" id="score4_1"></div>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar bar-2" id="score4_2"></div>
+                            </div>
+                        
+                        </div>
+                        <div class="labels">
+                            <div class="label">사전진단 점수</div>
+                            <div class="label">사후진단 점수</div>
+                        </div>
+                    </div>
+                    <!--직무역량-->
+                    <div class="chart2-container">
+                        <div class="chart-title">직무역량</div>
+                        <div class="chart">
+                            <div class="ticks">
+                                <div>100</div>
+                                <div>80</div>
+                                <div>60</div>
+                                <div>40</div>
+                                <div>20</div>
+                                <div>0</div>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar bar-1" id="score3_1"></div>
+                            </div>
+                            <div class="bar-container">
+                                <div class="bar bar-2" id="score3_2"></div>
+                            </div>
+                        
+                        </div>
+                        <div class="labels">
+                            <div class="label">사전진단 점수</div>
+                            <div class="label">사후진단 점수</div>
+                        </div>
+                    </div>
+               
+                </div>
+             
+                <!--진단결과 테이블-->
+                <div class="result-table pt30">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>역량진단 </th>
+                                <th>역량 진단일</th>
+                                <th>역량 진단 점수</th>
+                                <th>공통 역량 점수</th>
+                                <th>리더십 역량 점수</th>
+                                <th>직무 역량 점수</th>
+                      
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>사전 역량 진단</th>
+                                <td><?=(is_null($ROWM['AbilityDate'])) ? "-" : (new DateTime($ROWM['AbilityDate']))->format('Y.m.d');?></td>
+                                <td id="average_b0"><b></b></td>
+                                <td id="average_bC"><b></b></td>
+                                <td id="average_bL"><b></b></td>
+                                <td id="average_bJ"><b></b></td>
+                             
+                            </tr>
+                            <tr>
+                                <th>사후 역량 진단</th>
+                                <td><?=(is_null($ROWM['AbilityAfterDate'])) ? "-" : (new DateTime($ROWM['AbilityAfterDate']))->format('Y.m.d');?></td>
+                                <td id="average_a0"><b></b></td>
+                                <td id="average_aC"><b></b></td>
+                                <td id="average_aL"><b></b></td>
+                                <td id="average_aJ"><b></b></td>
+                          
+                            </tr>
+                            <tr>
+                                <th>사전 대비 점수변화</th>
+                                <td>-</td>
+                                <td id="average_tot0"><b></b></td>
+                                <td id="average_totC"><b></b></td>
+                                <td id="average_totL"><b></b></td>
+                                <td id="average_totJ"><b></b></td>
+                          
+                            </tr>
+                        </tbody>
+                 
+                    </table>
+                </div>
+                <!--상세 테이블-->
+                <!--공통역량-->
+                <h3 class="point_ttl" >공통 역량 진단 상세 보기</h3>
+                <div class="result-table">
+                    <table class="table1">
+                        <colgroup>
+                            <col width="*px">
+                            <col width="130px">
+                            <col width="130px">
+                            <col width="130px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>역량</th>
+                                <th>사전 진단 점수</th>
+                                <th>사후 진단 점수</th>
+                                <th>사전 대비 점수 변화</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?
+                            $totalC1 = 0;
+                            $countC1 = 0;
+                            $totalC2 = 0;
+                            $countC2 = 0;
+                            $index = 0; // 현재 행 인덱스
+                            while ($ROWC = mysqli_fetch_array($QUERYC)) {
+                                extract($ROWC);
+                                $hiddenClass = ($index >= 2) ? "hidden-row" : ""; // 2개까지만 보이고 나머지는 숨김 처리
+                            ?>
+                                <tr class="<?= $hiddenClass ?>">
+                                    <td class="tl"><strong><?=$aQuestion?></strong> <br> <?=$aQuestionDetail?></td>
+                                    <td><b><?=(intval($aTotalA) == 0) ? "-" : round($aTotalA)."점";?></b></td>
+                                    <td><b><?=(intval($aTotalB) == 0) ? "-" : round($aTotalB)."점";?></b></td>
+                                    <td><b><?=($aTotalB == 0 ) ? "-" : sprintf("%+d", round($aTotalB-$aTotalA)) ?></b></td>
+                                </tr>
+                            <?
+                                $totalC1 += $aTotalA; // 사전 평균점수 산정
+                                $countC1++;
+
+                                $totalC2 += $aTotalB; // 사후 평균점수 산정
+                                $countC2++;
+
+                                $index++; // 인덱스 증가
+                            } 
+                            $AVERAGEC1 = ($countC1 > 0) ? $totalC1 / $countC1 : 0;
+                            $AVERAGEC2 = ($countC2 > 0) ? $totalC2 / $countC2 : 0;
+                            ?>
+                            <tr id="toggleRow">
+                                <td colspan="4" style="text-align:center;">
+                                    <button id="toggleTable">더 보기 <i class="ph ph-caret-down"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="average">
+                                <td class="tl">평균 점수</td>
+                                <td><b><?=round($AVERAGEC1)."점";?></b></td>
+                                <td><b><?=($AVERAGEC2 == 0) ? "-" : round($AVERAGEC2)."점";?></b></td>
+                                <td><b><?=($AVERAGEC2 == 0) ? "-" : sprintf("%+d", round($AVERAGEC2-$AVERAGEC1)) ?></b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--리더십 역량-->
+                <h3 class="point_ttl" >리더십 역량 진단 상세 보기</h3>
+                <div class="result-table">
+                    <table class="table2">
+                        <colgroup>
+                            <col width="*px">
+                            <col width="130px">
+                            <col width="130px">
+                            <col width="130px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>역량</th>
+                                <th>사전 진단 점수</th>
+                                <th>사후 진단 점수</th>
+                                <th>사전 대비 점수 변화</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <?
+                            $totalL1 = 0;
+                            $countL1 = 0;
+                            $totalL2 = 0;
+                            $countL2 = 0;
+                            $index = 0; // 현재 행 인덱스
+                            while ($ROWL = mysqli_fetch_array($QUERYL)) {
+                                extract($ROWL);
+                                $hiddenClass = ($index >= 2) ? "hidden-row1" : ""; // 2개까지만 보이고 나머지는 숨김 처리
+                            ?>
+                                <tr class="<?= $hiddenClass ?>">
+                                    <td class="tl"><strong><?=$aQuestion?></strong> <br> <?=$aQuestionDetail?></td>
+                                    <td><b><?=(intval($aTotalA) == 0) ? "-" : round($aTotalA)."점";?></b></td>
+                                    <td><b><?=(intval($aTotalB) == 0) ? "-" : round($aTotalB)."점";?></b></td>
+                                    <td><b><?=($aTotalB == 0 ) ? "-" : sprintf("%+d", round($aTotalB-$aTotalA)) ?></b></td>
+                                </tr>
+                            <?
+                                $totalL1 += $aTotalA; // 사전 평균점수 산정
+                                $countL1++;
+
+                                $totalL2 += $aTotalB; // 사후 평균점수 산정
+                                $countL2++;
+
+                                $index++; // 인덱스 증가
+                            } 
+                            $AVERAGEL1 = ($countL1 > 0) ? $totalL1 / $countL1 : 0;
+                            $AVERAGEL2 = ($countL2 > 0) ? $totalL2 / $countL2 : 0;
+                            ?>
+                            <tr id="toggleRow1">
+                                <td colspan="4" style="text-align:center;">
+                                    <button id="toggleTable1">더 보기 <i class="ph ph-caret-down"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="average">
+                                <td class="tl">평균 점수</td>
+                                <td><b><?=round($AVERAGEL1)."점";?></b></td>
+                                <td><b><?=($AVERAGEL2 == 0) ? "-" : round($AVERAGEL2)."점";?></b></td>
+                                <td><b><?=($AVERAGEL2 == 0) ? "-" : sprintf("%+d", round($AVERAGEL2-$AVERAGEL1)) ?></b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <!--직무 상세 테이블-->
+                <h3 class="point_ttl" >직무 역량 진단 상세 보기 [<?=(($ROWGROUP['col1'] == "M") ? "관리자" : "실무자")?> 직무역량]</h3>
+                <div class="result-table">
+                    <table class="table3">
+                        <colgroup>
+                        <col width="*px">
+                            <col width="130px">
+                            <col width="130px">
+                            <col width="130px">
+                        </colgroup>
+                        <thead>
+                            <tr>
+                                <th>역량</th>
+                                <th>사전 진단 점수</th>
+                                <th>사후 진단 점수</th>
+                                <th>사전 대비 점수 변화</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?
+                            $totalJ1 = 0;
+                            $countJ1 = 0;
+                            $totalJ2 = 0;
+                            $countJ2 = 0;
+                            $index2 = 0; // 현재 행 인덱스
+                            while ($ROWJ = mysqli_fetch_array($QUERYJ)) {
+                                extract($ROWJ); 
+                                $hiddenClass = ($index2 >= 2) ? "hidden-row2" : ""; // 2개까지만 보이고 나머지는 숨김 처리
+                                ?>
+                                    <tr class="<?= $hiddenClass ?>">
+                                    <td class="tl"><strong><?=$aQuestion?></strong> <br> <?=$aQuestionDetail?></td>
+                                    <td><b><?=(intval($aTotalA) == 0) ? "-" : round($aTotalA)."점";?></b></td>
+                                    <td><b><?=(intval($aTotalB) == 0) ? "-" : round($aTotalB)."점";?></b></td>
+                                    <td><b><?=($aTotalB == 0 ) ? "-" : sprintf("%+d", round($aTotalB-$aTotalA)) ?></b></td>
+
+                                </tr>
+                            <? 
+                                $totalJ1 += $aTotalA; // 사전 평균점수 산정
+                                $countJ1++;
+
+                                $totalJ2 += $aTotalB; // 사후 평균점수 산정
+                                $countJ2++;
+
+                                $index2++; // 인덱스 증가
+                            } 
+                            $AVERAGEJ1 = ($countJ1 > 0) ? $totalJ1 / $countJ1 : 0;
+                            $AVERAGEJ2 = ($countJ2 > 0) ? $totalJ2 / $countJ2 : 0;
+                            ?>
+                            <tr id="toggleRow2">
+                                <td colspan="4" style="text-align:center;">
+                                    <button id="toggleTable2">더 보기 <i class="ph ph-caret-down"></i></button>
+                                </td>
+                            </tr>
+                            <tr class="average">
+                                <td class="tl">평균 점수</td>
+                                <td><b><?=round($AVERAGEJ1)."점";?></b></td>
+                                <td><b><?=($AVERAGEJ2 == 0 ) ? "-" : round($AVERAGEJ2)."점";?></b></td>
+                                <td><b><?=($AVERAGEJ2 == 0 ) ? "-" : sprintf("%+d", round($AVERAGEJ2-$AVERAGEJ1)) ?></b></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            
+            </div>
+            <!--content-->
+        </div>
+        <!--mypage_content-->
+    </div>
+    <!--wrap-->
+</body>
+
+<script>
+    $(document).ready(function(){
+        $('.mypage_menu .test_result').addClass("on");
+
+    //가로 막대 그래프
+    function setBarWidth(selector, score) {
+        $(selector).css('--target-width', score + '%');
+        $(selector).css('animation', 'expand-left 1s forwards');
+    }
+
+
+    //세로 막대 그래프
+    function setBarHeight(selector, score) {
+        $(selector).css('--target-height', score + '%');
+        $(selector).css('animation', 'expand-top 1s forwards');
+    }
+
+
+    ////////////////////////////////////////////////////////////////////////
+    // 역량진단 (사전)
+    setBarWidth('#score1_1', "<?=round(($AVERAGEC1+$AVERAGEJ1)/2);?>"); // 역량 사전 점수(그래프)
+    $("#score1_1").text("<?=round(($AVERAGEC1+$AVERAGEJ1)/2)."점"; ?>"); // 역량 사전 점수(그래프 텍스트)
+    $("#average_b0").find('b').text("<?=is_null($AVERAGEC1+$AVERAGEJ1) ? "-" : round(($AVERAGEC1+$AVERAGEJ1)/2)."점"; ?>"); //사전 역량 표
+    
+
+    // 역량진단 (사후)
+    $("#average_a0").find('b').text("<?=($AVERAGEJ2 == 0) ? "-" : round(($AVERAGEC2+$AVERAGEJ2)/2)."점"; ?>"); //사후 역량 표
+    setBarWidth('#score1_2', "<?=round(($AVERAGEC2+$AVERAGEJ2)/2);?>");  // 사후진단 점수(그래프)
+    $("#score1_2").text("<?=round(($AVERAGEC2+$AVERAGEJ2)/2)."점"; ?>"); // 역량 사후 점수(그래프 텍스트)
+    <?if ( round(($AVERAGEC2+$AVERAGEJ2)/2) == 0 ){;?>
+        $("#score1_2").addClass("before"); //사후 진단 데이터 없으면 before class 추가 
+    <?}?>
+
+    //역량 진단 토탈
+    $("#average_tot0").find('b').text("<?=($AVERAGEJ2 == 0) ? "-" : sprintf("%+d", round((($AVERAGEC2+$AVERAGEJ2)/2)-(($AVERAGEC1+$AVERAGEJ1)/2)))?>");
+
+
+    ////////////////////////////////////////////////////////////////////////공통
+    // 공통진단 (사전)
+    setBarHeight('#score2_1', "<?=$AVERAGEC1?>");  // 공통 사전 점수(그래프)
+    $("#score2_1").text("<?=$AVERAGEC1."점"; ?>"); //공통 사전 점수(그래프 텍스트)
+    $("#average_bC").find('b').text("<?=is_null($AVERAGEC1) ? "-" : round($AVERAGEC1)."점"; ?>"); //사전 공통
+
+    // 공통진단 (사후)
+    $("#average_aC").find('b').text("<?=($AVERAGEC2 == 0) ? "-" : round($AVERAGEC2)."점"; ?>"); //사후 공통
+    setBarHeight('#score2_2', "<?=round($AVERAGEC2)?>");  // 사후진단 점수(그래프)
+    $("#score2_2").text("<?=$AVERAGEC2."점"; ?>"); //공통 사전 점수(그래프 텍스트)
+    <?if ( ($AVERAGEC2 == 0) ){;?>
+        $("#score2_2").addClass("before"); //사후 진단 데이터 없으면 before class 추가 
+    <?}?>
+
+    //공통 진단 토탈 
+    $("#average_totC").find('b').text("<?=($AVERAGEC2 == 0) ? "-" : sprintf("%+d", (round($AVERAGEC2-$AVERAGEC1)))?>");
+
+    
+
+    ////////////////////////////////////////////////////////////////////////리더십
+    // 리더십진단 (사전)
+    setBarHeight('#score4_1', "<?=$AVERAGEL1?>");  // 리더십 사전 점수(그래프)
+    $("#score4_1").text("<?=$AVERAGEL1."점"; ?>"); //리더십 사전 점수(그래프 텍스트)
+    $("#average_bL").find('b').text("<?=is_null($AVERAGEL1) ? "-" : round($AVERAGEL1)."점"; ?>"); //사전 리더십
+
+    // 리더십 진단 (사후)
+    $("#average_aL").find('b').text("<?=($AVERAGEL2 == 0) ? "-" : round($AVERAGEL2)."점"; ?>"); //사후 리더십
+    setBarHeight('#score4_2', "<?=round($AVERAGEL2)?>");  // 사후진단 점수(그래프)
+    $("#score4_2").text("<?=$AVERAGEL2."점"; ?>"); //리더십 사전 점수(그래프 텍스트)
+    <?if ( ($AVERAGEL2 == 0) ){;?>
+        $("#score4_2").addClass("before"); //사후 진단 데이터 없으면 before class 추가 
+    <?}?>
+
+    //리더십 진단 토탈 
+    $("#average_totL").find('b').text("<?=($AVERAGEL2 == 0) ? "-" : sprintf("%+d", (round($AVERAGEL2-$AVERAGEL1)))?>");
+
+    
+
+    
+    ////////////////////////////////////////////////////////////////////////직무
+    // 직무 진단 (사전)
+    setBarHeight('#score3_1', "<?=$AVERAGEJ1?>");  // 직무 사전 점수(그래프)
+    $("#score3_1").text("<?=$AVERAGEJ1."점"; ?>"); // 직무 사전 점수(그래프 텍스트)
+    $("#average_bJ").find('b').text("<?=is_null($AVERAGEJ1) ? "-" : round($AVERAGEJ1)."점"; ?>"); //사전 직무
+
+    // 직무 진단 (사후)
+    $("#average_aJ").find('b').text("<?=($AVERAGEJ2 == 0) ? "-" : round($AVERAGEJ2)."점"; ?>"); //사후 직무 
+    setBarHeight('#score3_2', "<?=round($AVERAGEJ2)?>");  // 사후진단 점수(그래프)
+    $("#score3_2").text("<?=$AVERAGEJ2."점"; ?>");
+    <?if ( ($AVERAGEJ2 == 0) ){;?>
+        $("#score3_2").addClass("before"); //사후 진단 데이터 없으면 before class 추가 
+    <?}?>
+
+    //직무 진단 토탈
+    $("#average_totJ").find('b').text("<?=($AVERAGEJ2 == 0) ? "-" : sprintf("%+d", (round($AVERAGEJ2-$AVERAGEJ1)))?>");
+    // $("#average_totC").find('b').text("<?=($AVERAGEJ2 == 0) ? "-" : sprintf("%+d", (round($AVERAGEJ2-$AVERAGEJ1)))?>");
+    
+
+});
+</script>
+
+
+<? include "../../m_archive/include/footer.html"; ?>
+
+
+<style>
+    .hidden-row, .hidden-row1, .hidden-row2 {
+        display: none;
+    }
+</style>
+
+<script>
+    
+    $(document).ready(function(){
+        $('.top-menu .result').addClass("on");
+    });
+    
+//공통
+document.getElementById("toggleTable").addEventListener("click", function() {
+    let hiddenRows = document.querySelectorAll(".hidden-row");
+    let toggleRow = document.getElementById("toggleRow");
+    let isExpanded = this.textContent === "접기";
+
+    hiddenRows.forEach(row => {
+        row.style.display = isExpanded ? "none" : "table-row";
+    });
+
+    if (isExpanded) {
+        this.textContent = "더 보기";
+        toggleRow.parentNode.insertBefore(toggleRow, document.querySelector("tr:last-child"));
+    } else {
+        this.textContent = "접기";
+        toggleRow.style.borderBottom = "none"
+        document.querySelector(".table1 tbody").appendChild(toggleRow);
+    }
+});
+
+
+//리더십
+document.getElementById("toggleTable1").addEventListener("click", function() {
+    let hiddenRows = document.querySelectorAll(".hidden-row1");
+    let toggleRow = document.getElementById("toggleRow1");
+    let isExpanded = this.textContent === "접기";
+
+    hiddenRows.forEach(row => {
+        row.style.display = isExpanded ? "none" : "table-row";
+    });
+
+    if (isExpanded) {
+        this.textContent = "더 보기";
+        toggleRow.parentNode.insertBefore(toggleRow, document.querySelector("tr:last-child"));
+    } else {
+        this.textContent = "접기";
+        toggleRow.style.borderBottom = "none"
+         document.querySelector(".table2 tbody").appendChild(toggleRow);
+    }
+});
+
+//직무
+document.getElementById("toggleTable2").addEventListener("click", function() {
+    let hiddenRows = document.querySelectorAll(".hidden-row2");
+    let toggleRow = document.getElementById("toggleRow2");
+    let isExpanded = this.textContent === "접기";
+
+    hiddenRows.forEach(row => {
+        row.style.display = isExpanded ? "none" : "table-row";
+    });
+
+    if (isExpanded) {
+        this.textContent = "더 보기";
+        toggleRow.parentNode.insertBefore(toggleRow, document.querySelector("tr:last-child"));
+    } else {
+        this.textContent = "접기";
+        toggleRow.style.borderBottom = "none"
+        document.querySelector(".table3 tbody").appendChild(toggleRow);
+    }
+});
+</script>

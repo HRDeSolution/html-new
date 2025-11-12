@@ -1,0 +1,64 @@
+<?
+include $_SERVER['DOCUMENT_ROOT'] . "/include/include_function.php"; //DB연결 및 각종 함수 정의
+?>
+<? include $_SERVER['DOCUMENT_ROOT'] . "/popup/include_popup.php"; ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?=$SiteName2?></title>
+    <script type="text/javascript" src="../../common/js/jquery-2.1.4.js"></script>
+    <link rel="stylesheet" href="../../common/css/base.css?ver=240418">
+    <link rel="stylesheet" href="../../common/css/common.css?ver=240418">
+    <link rel="stylesheet" href="css/member.css?ver=250414">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script type="text/javascript" src="/include/function.js?t=<?=date('YmdHis')?>"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link
+    rel="stylesheet"
+    type="text/css"
+    href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.1/src/regular/style.css"
+  />
+</head>
+<header>
+    <div class="top_header">
+        <!--wrap-->
+        <div id="wrap">
+            <div class="home_btn">
+                <a href="/archive/main/main.html"><i class="ph ph-house"></i></a>
+            </div>
+            <div class="logo" >
+                <a href="/archive/contents/main.html">
+	           		<img src="/archive/img/common/archive_logo.png" alt="HRDe아카이브">
+	           	</a>              
+            </div> 
+        </div>
+        <!--wrap-->
+    </div>
+</header>
+<script>
+document.addEventListener('keydown', function(e) {
+    // F12
+    if (e.key === 'F12') {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+Shift+I / Ctrl+Shift+J / Ctrl+U
+    if (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J')) {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+
+    // Ctrl+U
+    if (e.ctrlKey && e.key === 'u') {
+      e.preventDefault();
+      e.stopPropagation();
+      return false;
+    }
+});
+</script>
+<body oncontextmenu="return false;">

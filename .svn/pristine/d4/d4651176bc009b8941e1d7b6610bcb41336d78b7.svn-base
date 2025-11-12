@@ -1,0 +1,232 @@
+<? include "../include/support_header.html"; ?>
+<body>
+    <div class="top_section">
+        <div id="wrap">
+            <div class="inner">
+                <h2>이벤트</h2>
+                <div class="search_box">
+                    <input name="" id="" type="text" title="검색어 입력" placeholder="검색어를 입력해주세요"><span class="search_btn"><i class="ph ph-magnifying-glass"></i></span>
+                </div>
+            </div>
+            <div class="navi">
+                    <i class="ph-light ph-house-line"></i>&nbsp;<i class="ph ph-caret-right"></i>&nbsp;학습지원센터<i class="ph ph-caret-right"></i>&nbsp; 이벤트
+            </div>
+        </div>
+        <!--wrap-->
+    </div>
+    <!--top_banner-->
+    <div class="category">
+        <div id="wrap">
+            <ul>
+            	<li class="on" onclick="ApplyTypeChange('A')" id="ApplyType1"><a>  진행중인 이벤트</a></li>
+	            <li onclick="ApplyTypeChange('B')" id="ApplyType2"><a > 당첨자발표</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="event_con">
+        <div id="wrap">
+            <div class="content1" id="ApplyTypeResult1">
+                <h1>진행중인 이벤트</h1>
+                <div class="table">
+                    <div>
+                        <a href="event_view.html">
+                            <div class="img">
+                                <img src="img/eventimg_ex.png" alt="">
+                            </div>
+                            <div class="txt">
+                                <span class="date">
+                                    2024.03.01 ~ 2024.04.01
+                                </span>
+                                <span class="title">
+                                    HRDe Membership 신규 론칭!
+                                </span>
+                                <span class="detail">
+                                    HRDe 멤버십 회원이 되시면 아이스크림을 선물로 드립니다.
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="event_view.html">
+                            <div class="img">
+                                <img src="img/eventimg_ex.png" alt="">
+                            </div>
+                            <div class="txt">
+                                <span class="date">
+                                    2024.03.01 ~ 2024.04.01
+                                </span>
+                                <span class="title">
+                                    HRDe Membership 신규 론칭!
+                                </span>
+                                <span class="detail">
+                                    HRDe 멤버십 회원이 되시면 아이스크림을 선물로 드립니다.
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="event_view.html">
+                            <div class="img">
+                                <img src="img/eventimg_ex.png" alt="">
+                            </div>
+                            <div class="txt">
+                                <span class="date">
+                                    2024.03.01 ~ 2024.04.01
+                                </span>
+                                <span class="title">
+                                    HRDe Membership 신규 론칭!
+                                </span>
+                                <span class="detail">
+                                    HRDe 멤버십 회원이 되시면 아이스크림을 선물로 드립니다.
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="event_view.html">
+                            <div class="img">
+                                <img src="img/eventimg_ex.png" alt="">
+                            </div>
+                            <div class="txt">
+                                <span class="date">
+                                    2024.03.01 ~ 2024.04.01
+                                </span>
+                                <span class="title">
+                                    HRDe Membership 신규 론칭!
+                                </span>
+                                <span class="detail">
+                                    HRDe 멤버십 회원이 되시면 아이스크림을 선물로 드립니다.
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                    <div>
+                        <a href="event_view.html">
+                            <div class="img">
+                                <img src="img/eventimg_ex.png" alt="">
+                            </div>
+                            <div class="txt">
+                                <span class="date">
+                                    2024.03.01 ~ 2024.04.01
+                                </span>
+                                <span class="title">
+                                    HRDe Membership 신규 론칭!
+                                </span>
+                                <span class="detail">
+                                    HRDe 멤버십 회원이 되시면 아이스크림을 선물로 드립니다.
+                                </span>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <!--진행중인 이벤트-->
+            <!--당첨자 발표-->
+        
+            <div class="content2" id="ApplyTypeResult2" style="display: none;">
+                <h1>당첨자 발표</h1>
+                <ul>
+                    <li>
+                        <div class="q" id="ContentView">[당첨자발표] 휴넷공인중개사 15분 단기합격전략설명회 본방사수 경품 당첨자 안내<i class="ph-bold ph-caret-up"></i></div>
+                        <div class="a" id="ContentElement" style="display: none;">      
+                            안녕하세요? 휴넷 공인중개사 담당자입니다 :) <br>
+                            5월 친구추천 이벤트에 참여해주셔서 감사합니다. <br>
+                            <br>
+                            경품은 개인정보에 등록된 휴대폰 번호로 발송되며, <br>
+                            유효기간 경과 등 본인 과실로 재발송 되지 않으니 <br>
+                            유의해주시기 바랍니다. 감사합니다 :) <br>
+                            <br>
+                            <br>
+                            * 아래 경품 지급일 : 6/2(금) <br>
+                            <br>
+                            <br>
+                            [신세계상품권 2만원] <br>
+                            ly***                    이*성 <br>
+                            we*****             연*정 <br>
+                            abc******         신*경 <br>
+                            en******            김*현 <br>
+                            kw******           김*미 <br>
+                            cc******            양*라 <br>
+                            oh***                  오*영 <br></div>
+                    </li>
+                    <li>
+                        <div class="q" id="ContentView">[당첨자발표] 휴넷공인중개사 15분 단기합격전략설명회 본방사수 경품 당첨자 안내<i class="ph-bold ph-caret-up"></i></div>
+                        <div class="a" id="ContentElement" style="display: none;">      
+                            안녕하세요? 휴넷 공인중개사 담당자입니다 :) <br>
+                            5월 친구추천 이벤트에 참여해주셔서 감사합니다. <br>
+                            <br>
+                            경품은 개인정보에 등록된 휴대폰 번호로 발송되며, <br>
+                            유효기간 경과 등 본인 과실로 재발송 되지 않으니 <br>
+                            유의해주시기 바랍니다. 감사합니다 :) <br>
+                            <br>
+                            <br>
+                            * 아래 경품 지급일 : 6/2(금) <br>
+                            <br>
+                            <br>
+                            [신세계상품권 2만원] <br>
+                            ly***                    이*성 <br>
+                            we*****             연*정 <br>
+                            abc******         신*경 <br>
+                            en******            김*현 <br>
+                            kw******           김*미 <br>
+                            cc******            양*라 <br>
+                            oh***                  오*영 <br></div>
+                    </li>
+                </ul>
+                
+            </div>
+            <!--당첨자 발표-->
+        </div>
+        <!--wrap-->
+    </div>
+
+    
+    
+</body>
+<? include "../../common/include/footer.html"; ?>
+
+<!--header class-->
+<script>
+    $(document).ready(function(){
+        $('.middle_header .event').addClass("on");
+    });
+</script>
+
+
+<script>
+    
+    function ApplyTypeChange(str) {
+
+	if (str == 'A') {
+        $('#ApplyType1').addClass('on');
+        $('#ApplyType2').removeClass('on');
+
+		$('#ApplyTypeResult1').show();
+		$('#ApplyTypeResult2').hide();
+	}
+	if (str == 'B') {
+        $('#ApplyType1').removeClass('on');
+        $('#ApplyType2').addClass('on');
+
+		$('#ApplyTypeResult1').hide();
+		$('#ApplyTypeResult2').show();
+	}
+}
+</script>
+
+<!--답변여닫기-->
+<script>
+    $(document).ready(function(){
+        $('ul li #ContentView').click(function(){
+            if($(this).next($('#ContentElement')).is(":visible")){
+                $(this).find('i').toggleClass("ph-caret-up ph-caret-down");
+                $(this).next($('#ContentElement')).slideUp();
+            }else{
+
+                $(this).find('i').toggleClass("ph-caret-down ph-caret-up");
+                $(this).next($('#ContentElement')).slideDown();
+            }
+        });
+    });
+
+</script>

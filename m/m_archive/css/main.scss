@@ -1,0 +1,149 @@
+.carousel-container {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  touch-action: pan-y;
+  background-color: whitesmoke;
+  .carousel-track {
+    display: flex;
+    transition: transform 0.3s ease;
+
+    .carousel-slide {
+      min-width: 100%;
+      box-sizing: border-box;
+      padding: 10px;
+      img {
+        width: 100%;
+        display: block;
+        border-radius: 18px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+      }
+    }
+  }
+}
+
+.carousel-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0;
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ccc;
+    transition: background-color 0.3s;
+
+    &.active {
+      background-color: #6e00e2;
+    }
+  }
+}
+
+.lecture.main {
+  .more {
+    position: absolute;
+    top: 2px;
+    right: 10px;
+  }
+  .swiper-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    .edu_contents {
+      width: auto;
+      .img {
+        width: auto;
+        height: 100px;
+      }
+    }
+  }
+}
+
+.main_con2 {
+  margin: 15px 0;
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 30px;
+    margin-bottom: 10px;
+  }
+  .content {
+    overflow-y: scroll;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 15px 10px;
+    ul {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 34px;
+      li {
+        position: relative;
+        width: 120px;
+        height: 120px;
+        border: 3px solid #d8d2e7;
+        background-color: #f5f0ff;
+        border-radius: 50%;
+        text-align: center;
+        font-size: 14px;
+        line-height: 18px;
+        font-weight: 600;
+        color: #5c3e8b;
+        padding: 15px 0;
+        box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.1);
+        i {
+          font-size: 40px;
+          color: #8c68c8;
+        }
+      }
+      li::after {
+        position: absolute;
+        right: -36px;
+        top: 47px;
+        background-image: url(../img/main/arrow.png);
+        width: 30px;
+        height: 30px;
+        background-size: contain;
+        content: "";
+      }
+      li:nth-of-type(4)::after {
+        display: none;
+      }
+    }
+  }
+}
+
+.main_con3 {
+  margin: 15px 0;
+  padding-top: 13px;
+  border-top: 5px solid whitesmoke;
+  .more {
+    position: absolute;
+    top: 7px;
+    right: 10px;
+  }
+  .title {
+    font-size: 20px;
+    font-weight: bold;
+    line-height: 30px;
+    margin-bottom: 10px;
+  }
+  .content {
+    a {
+      em {
+        color: #d71709;
+        font-weight: 500;
+        margin-right: 6px;
+      }
+      color: #555;
+      font-size: 14px;
+      line-height: 24px;
+      display: inline-block;
+      width: 100%; 
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}

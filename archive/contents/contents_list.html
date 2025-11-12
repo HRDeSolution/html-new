@@ -1,0 +1,500 @@
+<? include "../include/header.html";?>
+<body>
+<? include "../include/top_header.html";?>
+<?
+$PCategory = Replace_Check($PCategory); //상위카테고리
+$Category  = Replace_Check($Category);	//하위카테고리
+
+if($PCategory == 1) $PageName = "공통역량";
+else if($PCategory == 5) $PageName = "직무역량";
+else if($PCategory == 9) $PageName = "리더십";
+else if($PCategory == 13) $PageName = "HRDe++";
+else  $PageName = "공통역량";
+
+$ID = $_SESSION['LoginMemberID'];
+
+//get study column lecturecode, seq 
+$SqlM    = "SELECT LectureCode AS StudyLectureCode, Seq AS Study_Seq FROM Study WHERE ID = '$ID'";
+$ResultM = mysqli_query($connect, $SqlM);
+$RowM = mysqli_fetch_assoc($ResultM);
+
+$contentsCate = ($CategoryData == 0) ? "" : " AND Keyword2 = $CategoryData ";
+
+//컨텐츠좋아요 list
+$Like_list = array();
+$SqlLike = "SELECT * from CourseLike WHERE ID = '$LoginMemberID'";
+$QueqryLike = mysqli_query($connect, $SqlLike);
+if($QueqryLike && mysqli_num_rows($QueqryLike)){
+	while($RowLike = mysqli_fetch_array($QueqryLike)){
+		$LikeCode = $RowLike['LectureCode'];
+    	$Like_list[$LikeCode] = $LikeCode;
+	}
+}
+?>
+    <div id="wrap">
+        <div class="lecture_top">
+            <strong><?=$PageName?></strong> 
+            <div class="select-box">
+                <select onchange="location.href=this.value">
+                    <option value="/archive/contents/contents_list.html?PCategory=1" <? if($PCategory == 1) {?> selected <? } ?> >공통역량</option>
+                    <option value="/archive/contents/contents_list.html?PCategory=5" <? if($PCategory == 5) {?> selected <? } ?>>직무역량</option>
+                    <option value="/archive/contents/contents_list.html?PCategory=9" <? if($PCategory == 9) {?> selected <? } ?>>리더십</option>
+                    <option value="/archive/contents/contents_list.html?PCategory=13" <? if($PCategory == 13) {?> selected <? } ?>>HRDe++</option>
+                </select>
+            </div>
+            <div class="select-box">
+                <select onchange="location.href=this.value">
+                    <option value="/archive/contents/contents_list.html?PCategory=<?=$PCategory?>">전체</option>
+                    <option value="/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=X&CategoryData=<?=$CategoryData?>" <? if($ctype == "X") {?> selected <? } ?>>이러닝</option>
+                    <option value="/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=Z&CategoryData=<?=$CategoryData?>" <? if($ctype == "Z") {?> selected <? } ?>>마이크로러닝</option>
+                    <option value="/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=Y&CategoryData=<?=$CategoryData?>" <? if($ctype == "Y") {?> selected <? } ?>>숏폼</option>
+                </select>
+            </div>
+            <form name="CategorySearchForm" action="<?=$_SERVER['PHP_SELF']?>" method="GET">
+                <input type="hidden" name="CategoryData" id="CategoryData" value="<?=$CategoryData?>">
+                <input type="hidden" name="PCategory" id="PCategory" value="<?=$PCategory?>">
+                <ul class="category1">
+                    <li><a name="catChk" id="catChk0" href="Javascript:CategorySearch(<?=$PCategory?>);" <?if($CategoryData == ""){?>class="on"<?}?> value="">전체</a></li>
+                    <?
+                    $k = 1;
+                    $SqlS = "SELECT * FROM ContentsKeyword WHERE Category=2 AND jobCate = $PCategory ORDER BY Category ASC, OrderByNum ASC";
+                    $QueryS = mysqli_query($connect, $SqlS);
+                    if($QueryS && mysqli_num_rows($QueryS)){
+                        while($RowS = mysqli_fetch_array($QueryS)){
+                            $idx         = $RowS['idx'];
+                            $KeywordName = $RowS['Keyword'];
+                    ?>
+                    <li><a name="CategoryChk" id="CategoryChk<?=$idx?>" href="Javascript:CategorySearch(<?=$PCategory?>, <?=$idx?>);" <?if($CategoryData == $idx){?>class="on"<?}?> value="<?=$idx?>"><?=$KeywordName?></a>
+                    <?
+                            $k++;
+                        }
+                    }
+                    ?>
+                </ul>
+            </form>
+        </div>
+        
+        <!--이러닝-->
+        <div class="lecture">
+            <h5><b>이러닝</b></h5>
+            <div class="swiper-nav">
+                <div class="circleprev circleprev1"><i class="ph-bold ph-caret-left"></i></div>
+                <div class="swiper-pagination swiper-pagination1"> </div>
+                <div class="circlenext circlenext1"><i class="ph-bold ph-caret-right"></i></div>
+            </div>         
+            <div class="swiper mySwiper1">
+                <div class="swiper-wrapper">
+					<?
+                    
+
+					if($Category) $where = " WHERE Del='N' AND UseYN = 'Y' AND ServiceType = 'X' AND Category1 = $PCategory AND Category2 = $Category ".$contentsCate;
+					else  $where = " WHERE Del='N' AND UseYN = 'Y' AND ServiceType = 'X' AND Category1 = $PCategory ".$contentsCate;
+					
+					$i = 0;
+					$SQL = "SELECT * FROM Course $where  LIMIT 40";
+					// echo $SQL;
+					$QUERY = mysqli_query($connect, $SQL);
+					if($QUERY && mysqli_num_rows($QUERY)){
+						while($ROW = mysqli_fetch_array($QUERY)){
+							extract($ROW);
+							$Keyword = str_replace(' ', '', $Keyword3);
+							$Keyword_array = explode('#',$Keyword);
+							$Keyword_arrayA = array_slice($Keyword_array, 1, 3);
+							$ImgUrl = "/upload/Course/".$PreviewImage;
+							
+							$CourseCnt	  = $ROW['cnt'];
+							$ContentsStart = substr($ContentsStart,0,10);
+							$UploadDate = substr($UploadDate,0,10);
+							
+							$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseLike WHERE LectureCode ='$LectureCode'";
+							$ResultCNT = mysqli_query($connect, $SqlCNT);
+							$RowCNT = mysqli_fetch_array($ResultCNT);
+							$CNT = $RowCNT[0];
+					?>
+					<div class="swiper-slide" >
+						<?if($Chapter == "0"){?>
+						<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+						<?}else{?>
+						<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1', '<?=$RowM['Study_Seq']?>', '<?=$RowM['StudyLectureCode']?>');">
+						<?}?>
+                            <li class="img" style="background-image: url(<?=$ImgUrl?>);"></li>
+                            <li class="title">
+                                <span class="tag">
+                                <?
+                                $keyword3Arr = explode(',', $Keyword3);
+                                $SQLKey3     = " SELECT aValue, idx AS keywordIdx FROM ArchiveQuestion WHERE aType = 'B' AND aDepth = 'step01' AND aGroup = 'A' AND aBind = 'col3' ORDER BY aOrder ASC ";
+                                $QUERYKey3   = mysqli_query($connect, $SQLKey3);
+                                if( $QUERYKey3 && mysqli_num_rows($QUERYKey3) ) {
+                                    while( $ROWKey3 = mysqli_fetch_array($QUERYKey3) ) {
+                                        extract($ROWKey3);
+                                        if ( in_array($keywordIdx, $keyword3Arr) ) echo "<b>#</b>".$aValue." ";
+                                    }
+                                }
+                                ?>
+                                </span>
+                                <strong><?=$ContentsName?></strong>
+                                <span class="lecture_save">
+                                    <?if($Like_list[$LectureCode] == $LectureCode){?>
+									<i class="ph-fill ph-heart" style="color:red;" onclick="CourseLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+									<?}else{?>
+									<i class="ph-light ph-heart" onclick="CourseLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+									<?}?>
+                                </span>
+                                <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                                <span class="lecture_time">조회수 : <?=$CourseCnt?></span>
+                                <span class="lecture_time">제작연도 : <?=$ContentsStart?></span>
+	                    		<span class="lecture_time">업로드일 : <?=$UploadDate?></span>
+                            </li>
+                        </ul>
+                    </div>
+					<?
+							$i++;
+						}
+					}
+					?>
+                    <div class="swiper-slide">
+                        <div class="more" onclick="window.open('/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=X')">
+                            <button><i class="ph-bold ph-arrow-right"></i></button>
+                            <div class="txt"><span>이러닝 컨텐츠</span> <br>전체보기</div>
+						</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--//이러닝-->
+        
+        <!--마이크로러닝-->
+        <div class="lecture">
+            <h5><b>마이크로러닝</b></h5>
+            <div class="swiper-nav">
+                <div class="circleprev circleprev2"><i class="ph-bold ph-caret-left"></i></div>
+                <div class="swiper-pagination swiper-pagination2"> </div>
+                <div class="circlenext circlenext2"><i class="ph-bold ph-caret-right"></i></div>
+            </div>         
+            <div class="swiper mySwiper2">
+                <div class="swiper-wrapper">
+					<?
+					if($Category) $where = " WHERE Del='N' AND UseYN = 'Y' AND ServiceType = 'Y' AND Category1 = $PCategory AND Category2 = $Category ".$contentsCate;
+					else  $where = " WHERE Del='N' AND UseYN = 'Y' AND ServiceType = 'Z' AND Category1 = $PCategory ".$contentsCate;
+					
+					$i = 0;
+					$SQL = "SELECT * FROM Course $where  LIMIT 39";
+					//echo $SQL;
+					$QUERY = mysqli_query($connect, $SQL);
+					if($QUERY && mysqli_num_rows($QUERY)){
+						while($ROW = mysqli_fetch_array($QUERY)){
+							extract($ROW);
+							$Keyword = str_replace(' ', '', $Keyword3);
+							$Keyword_array = explode('#',$Keyword);
+							$Keyword_arrayA = array_slice($Keyword_array, 1, 3);
+							$ImgUrl = "/upload/Course/".$PreviewImage;
+							
+							$CourseCnt	  = $ROW['cnt'];
+							$ContentsStart = substr($ContentsStart,0,10);
+							$UploadDate = substr($UploadDate,0,10);
+							
+							$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseLike WHERE LectureCode ='$LectureCode'";
+							$ResultCNT = mysqli_query($connect, $SqlCNT);
+							$RowCNT = mysqli_fetch_array($ResultCNT);
+							$CNT = $RowCNT[0];
+					?>
+                    <div class="swiper-slide" >
+						<?if($Chapter == "0"){?>
+						<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+						<?}else{?>
+						<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1', '<?=$RowM['Study_Seq']?>', '<?=$RowM['StudyLectureCode']?>');">
+						<?}?>
+                            <li class="img" style="background-image: url(<?=$ImgUrl?>);"></li>
+                            <li class="title">
+                                <span class="tag">
+                                <?
+                                $keyword3Arr = explode(',', $Keyword3);
+                                $SQLKey3     = " SELECT aValue, idx AS keywordIdx FROM ArchiveQuestion WHERE aType = 'B' AND aDepth = 'step01' AND aGroup = 'A' AND aBind = 'col3' ORDER BY aOrder ASC ";
+                                $QUERYKey3   = mysqli_query($connect, $SQLKey3);
+                                if( $QUERYKey3 && mysqli_num_rows($QUERYKey3) ) {
+                                    while( $ROWKey3 = mysqli_fetch_array($QUERYKey3) ) {
+                                        extract($ROWKey3);
+                                        if ( in_array($keywordIdx, $keyword3Arr) ) echo "<b>#</b>".$aValue." ";
+                                    }
+                                }
+                                ?>
+                                </span>
+                                <strong><?=$ContentsName?></strong>
+                                <span class="lecture_save">
+                                    <?if($Like_list[$LectureCode] == $LectureCode){?>
+									<i class="ph-fill ph-heart" style="color:red;" onclick="CourseLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+									<?}else{?>
+									<i class="ph-light ph-heart" onclick="CourseLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+									<?}?>
+                                </span>
+                                <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                                <span class="lecture_time">조회수 : <?=$CourseCnt?></span>
+                                <span class="lecture_time">제작연도 : <?=$ContentsStart?></span>
+	                    		<span class="lecture_time">업로드일 : <?=$UploadDate?></span>
+                            </li>
+                        </ul>
+                    </div>                    
+					<?
+							$i++;
+						}
+					}
+					?> 
+                    <div class="swiper-slide">
+                        <div class="more" onclick="window.open('/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=Z')">
+                            <button><i class="ph-bold ph-arrow-right"></i></button>
+                            <div class="txt"><span>마이크로러닝 컨텐츠</span> <br>전체보기</div>
+						</div>
+                    </div>          
+                </div>            
+            </div>
+        </div>
+        <!--//마이크로러닝-->
+        
+        <!--숏폼-->
+        <div class="lecture" style="margin-bottom: 100px;">
+            <h5><b>숏폼</b></h5>
+            <div class="swiper-nav">
+                <div class="circleprev circleprev3"><i class="ph-bold ph-caret-left"></i></div>
+                <div class="swiper-pagination swiper-pagination3"> </div>
+                <div class="circlenext circlenext3"><i class="ph-bold ph-caret-right"></i></div>
+            </div>         
+            <div class="swiper mySwiper3">
+                <div class="swiper-wrapper">
+					<?
+					if($Category) $where = " WHERE Del='N' AND UseYN = 'Y' AND ServiceType = 'Z' AND Category1 = $PCategory AND Category2 = $Category ".$contentsCate;
+					else  $where = " WHERE Del='N' AND UseYN = 'Y' AND ServiceType = 'Y' AND Category1 = $PCategory ".$contentsCate;
+					
+					$i = 0;
+					$SQL = "SELECT * FROM Course $where ORDER BY idx  LIMIT 80";
+					//echo $SQL;
+					$QUERY = mysqli_query($connect, $SQL);
+					if($QUERY && mysqli_num_rows($QUERY)){
+						while($ROW = mysqli_fetch_array($QUERY)){
+							extract($ROW);
+							$Keyword = str_replace(' ', '', $Keyword3);
+							$Keyword_array = explode('#',$Keyword);
+							$Keyword_arrayA = array_slice($Keyword_array, 1, 3);
+							$ImgUrl = "/upload/Course/".$PreviewImage;
+							
+							$CourseCnt	  = $ROW['cnt'];
+							$ContentsStart = substr($ContentsStart,0,10);
+							$UploadDate = substr($UploadDate,0,10);
+							
+							$SqlCNT = "SELECT COUNT(LectureCode) AS CNT  FROM CourseLike WHERE LectureCode ='$LectureCode'";
+							$ResultCNT = mysqli_query($connect, $SqlCNT);
+							$RowCNT = mysqli_fetch_array($ResultCNT);
+							$CNT = $RowCNT[0];
+					?>
+                    <div class="swiper-slide" >
+                        <?if($Chapter == "0"){?>
+						<ul class="edu_contents" onclick="Javascript:ContentsPlayer('<?=$LectureCode?>');">
+						<?}else{?>
+						<ul class="edu_contents" onclick="Javascript:ContentsPlayer2('<?=$LectureCode?>','1', '<?=$RowM['Study_Seq']?>', '<?=$RowM['StudyLectureCode']?>');">
+						<?}?>
+                            <li class="img" style="background-image: url(<?=$ImgUrl?>);"></li>
+                            <li class="title">
+                                <span class="tag">
+                                <?
+                                $keyword3Arr = explode(',', $Keyword3);
+                                $SQLKey3     = " SELECT aValue, idx AS keywordIdx FROM ArchiveQuestion WHERE aType = 'B' AND aDepth = 'step01' AND aGroup = 'A' AND aBind = 'col3' ORDER BY aOrder ASC ";
+                                $QUERYKey3   = mysqli_query($connect, $SQLKey3);
+                                if( $QUERYKey3 && mysqli_num_rows($QUERYKey3) ) {
+                                    while( $ROWKey3 = mysqli_fetch_array($QUERYKey3) ) {
+                                        extract($ROWKey3);
+                                        if ( in_array($keywordIdx, $keyword3Arr) ) echo "<b>#</b>".$aValue." ";
+                                    }
+                                }
+                                ?>
+                                </span>
+                                <strong><?=$ContentsName?></strong>
+                                <span class="lecture_save">
+                                    <?if($Like_list[$LectureCode] == $LectureCode){?>
+									<i class="ph-fill ph-heart" style="color:red;" onclick="CourseLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+									<?}else{?>
+									<i class="ph-light ph-heart" onclick="CourseLike(this,'<?=$LectureCode?>', '<?=$LoginMemberID?>')" name="courseLike" id="like_<?=$idx?>"></i><?=$CNT?>
+									<?}?>
+                                </span>
+                                <span class="lecture_time"><i class="ph-light ph-clock"></i><?=$ContentsTime?>분</span>
+                                <span class="lecture_time">조회수 : <?=$CourseCnt?></span>
+	                            <span class="lecture_time">제작연도 : <?=$ContentsStart?></span>
+	                    		<span class="lecture_time">업로드일 : <?=$UploadDate?></span>
+                            </li>
+                        </ul>
+                    </div>
+					<?
+							$i++;
+						}
+					}
+					?>
+                    <div class="swiper-slide">
+                        <div class="more" onclick="window.open('/archive/contents/select_course.html?PCategory=<?=$PCategory?>&ctype=Y')">
+                            <button><i class="ph-bold ph-arrow-right"></i></button>
+                            <div class="txt"><span>숏폼 컨텐츠</span> <br>전체보기</div>
+						</div>
+                    </div>   
+                </div>
+            </div>
+        </div>
+        <!--//숏폼-->        
+    </div>
+</body>
+<?php include "../include/footer.html"; ?>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
+<script>
+    //카테고리
+    function CategorySearch(PCategory, idx) {
+        var data = $("#CategoryChk"+idx).attr('value');
+        $("#PCategory").val(PCategory);
+        $("#CategoryData").val(idx);
+        CategorySearchForm.submit();
+    }
+
+    //이러닝
+	var swiper = new Swiper(".mySwiper1", {
+        pagination: {
+            el: ".swiper-pagination1",
+            clickable: true,
+            renderBullet: function (index, className) {
+                return '<span class="' + className + '">' + (index + 1) + '</span>';
+            }
+        },
+        navigation: {
+            nextEl: ".circlenext1",
+            prevEl: ".circleprev1",
+        },
+        slidesPerView: 4,
+        slidesPerGroup: 4, 
+        spaceBetween: 30,
+        breakpoints: {
+            1400: {
+                slidesPerView: 4,
+                spaceBetween: 30
+            },
+            1070: {
+                slidesPerView: 3,
+                spaceBetween: 20
+            },
+            720: {
+                slidesPerView: 2,
+                spaceBetween: 10
+            },
+            320: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+            ,
+            120: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+        }
+    });
+
+    //마이크로러닝
+    var swiper = new Swiper(".mySwiper2", {
+        pagination: {
+            el: ".swiper-pagination2",
+            clickable: true,
+            renderBullet: function (index, className) {
+                return '<span class="' + className + '">' + (index + 1) + '</span>';
+            }
+        },
+        navigation: {
+            nextEl: ".circlenext2",
+            prevEl: ".circleprev2",
+        },
+        slidesPerView: 4,
+        slidesPerGroup: 4, 
+        spaceBetween: 30,
+        breakpoints: {
+            1400: {
+                slidesPerView: 4,
+                slidesPerGroup: 4, 
+                spaceBetween: 30
+            },
+            1070: {
+                slidesPerView: 3,
+                slidesPerGroup: 3, 
+                spaceBetween: 20
+            },
+            720: {
+                slidesPerView: 2,
+                slidesPerGroup: 2, 
+                spaceBetween: 10
+            },
+            320: {
+                slidesPerView: 1,
+                spaceBetween: 10
+            }
+            ,
+            120: {
+                slidesPerView: 1,
+                slidesPerGroup: 1, 
+                spaceBetween: 10
+            }
+        }
+    });
+
+    //숏폼
+    var swiper = new Swiper(".mySwiper3", {
+        pagination: {
+            el: ".swiper-pagination3",
+            clickable: true,
+            renderBullet: function (index, className) {
+                return '<span class="' + className + '">' + (index + 1) + '</span>';
+            }
+        },
+        navigation: {
+            nextEl: ".circlenext3",
+            prevEl: ".circleprev3",
+        },
+        slidesPerView: 4,
+        slidesPerGroup: 8, 
+        spaceBetween: 30,
+        grid: {
+            rows: 2, 
+            fill: 'row', 
+        },
+        breakpoints: {
+            1400: {
+                slidesPerView: 4,
+                slidesPerGroup: 8, 
+                spaceBetween: 30,
+                grid: {
+                    rows: 2,
+                    fill: 'row',
+                },
+            },
+            1070: {
+                slidesPerView: 3,
+                slidesPerGroup: 6, 
+                spaceBetween: 20,
+                grid: {
+                    rows: 2,
+                    fill: 'row',
+                },
+            },
+            720: {
+                slidesPerView: 2,
+                slidesPerGroup: 4, 
+                spaceBetween: 10,
+                grid: {
+                    rows: 2,
+                    fill: 'row',
+                },
+            },
+            320: {
+                slidesPerView: 1,
+                slidesPerGroup: 1, 
+                spaceBetween: 10,
+                grid: {
+                    rows: 2,
+                    fill: 'row',
+                },
+            },
+        }
+
+    });
+</script>

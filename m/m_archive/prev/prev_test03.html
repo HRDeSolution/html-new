@@ -1,0 +1,257 @@
+<? include "../include/header.html"; ?>
+<? include "../include/login_check.php"; ?>
+
+<style>
+    body{background: #fff;}
+</style>
+
+<body>
+    <div id="wrap">
+        <div class="prev_wrap">
+            <div class="top">
+                <div class="txt">
+					<div class="step-container">
+						<strong>사전역량진단</strong>
+						<span class="step">1</span>
+						<span class="step">2</span>
+                        <span class="step active">3</span>
+					</div>                                                
+                    <p>학습 시작 전, <?=$LoginName?>님의 역량진단을 진행하겠습니다.</p>
+                    <p style="color: red;font-size: 12px;line-height: 20px;">* 앞서 선택한 직급이 적용됩니다. 직급을 잘못 선택한 경우 교육원으로 문의 바랍니다. </p>
+                </div>
+            </div>
+            <div class="selection">
+				<div class="sec sec1">
+                    <div class="title">Q0. 귀하의 현재 직급은 무엇인가요?</div>
+                    <ul>
+                        <?
+                        $SQL = " SELECT col1, col2, col3, col4 FROM ArchiveAbilityResult1 WHERE ID = '$LoginMemberID' LIMIT 1 ";
+                        $QUERY = mysqli_query($connect, $SQL);
+                        $ROW = mysqli_fetch_assoc($QUERY);
+                        ?>
+						<li><a class="<?if ($ROW['col1']=="W") echo "on";?>">팀원 [실무자]</a></li>
+						<li><a class="<?if ($ROW['col1']=="M") echo "on";?>">팀장 이상 [관리자]</a></li>
+                    </ul>
+                </div>
+                
+				<div class="sec sec2">
+                    <div class="title">Q1. 귀하의 현재 직무는 무엇인가요?</div>
+                    <ul class="long">
+                    <?
+                        $strHtml = "";
+                        $i = 0;
+                        // $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='B' AND aDepth = 'step01' AND aGroup = 'A' ORDER BY aOrder ASC ";
+                        $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='B' AND aDepth = 'step01' AND aGroup = 'A' AND aBind = 'col2' ORDER BY aOrder  ASC ";
+                        $QUERYA = mysqli_query($connect, $SQLA);
+                        if($QUERYA && mysqli_num_rows($QUERYA)){
+                            while($ROWA = mysqli_fetch_array($QUERYA)){
+                                extract($ROWA);
+
+                                $strHtml .= ' <li><a class="" onclick="change_btn2(event, \''. $idx .'\')"></a><b>'. $aValue .'</b> '. $aValueDetail .' </li> ';
+                                $i++;
+                            }
+                        }
+                        echo $strHtml;
+                    ?>
+						<!-- <li><a class="<?if ($ROW['col2']=="1") echo "on";?>" onclick="change_btn2(event, '1')"></a><b>기획·마케팅</b> 전략 & 비즈니스 기획, 마케팅 & 브랜딩 </li>
+                        <li><a class="<?if ($ROW['col2']=="2") echo "on";?>" onclick="change_btn2(event, '2')"></a><b>재무·법무·금융</b> 재무 & 법무, 금융·보험 </li>
+                        <li><a class="<?if ($ROW['col2']=="3") echo "on";?>" onclick="change_btn2(event, '3')"></a><b>인사·조직문화 </b>인사 관리, 노무, 조직개발, 사내 교육·학습조직 운영 등</li>
+                        <li><a class="<?if ($ROW['col2']=="4") echo "on";?>" onclick="change_btn2(event, '4')"></a><b>영업·고객관리</b>B2B/B2C 영업, 고객 데이터 분석, 고객경험 관리, 파트너십 개발 등</li>
+                        <li><a class="<?if ($ROW['col2']=="5") echo "on";?>" onclick="change_btn2(event, '5')"></a><b>IT·데이터 </b>소프트웨어 개발, 데이터 분석, AI·클라우드, 네트워크·보안 등</li>
+                        <li><a class="<?if ($ROW['col2']=="6") echo "on";?>" onclick="change_btn2(event, '6')"></a><b>디자인·크리에이티브 </b>그래픽·UI/UX 디자인, 영상·멀티미디어, 예술·콘텐츠 기획 등</li>
+                        <li><a class="<?if ($ROW['col2']=="7") echo "on";?>" onclick="change_btn2(event, '7')"></a><b>R&D·엔지니어링</b>연구개발(R&D), 제품·기술개발, 프로토타이핑, 테스트·검증 등</li>
+                        <li><a class="<?if ($ROW['col2']=="8") echo "on";?>" onclick="change_btn2(event, '8')"></a><b>생산·운영·제조</b>운영 & 생산관리, 제조·생산기술, 품질관리, 현장 운영, 안전·환경관리 등</li>
+                        <li><a class="<?if ($ROW['col2']=="9") echo "on";?>" onclick="change_btn2(event, '9')"></a><b>의료·보건</b>의사·간호·간호조무, 임상병리·약무, 요양·보호, 보건행정 등</li>
+                        <li><a class="<?if ($ROW['col2']=="10") echo "on";?>" onclick="change_btn2(event, '10')"></a><b>운수·운송·물류</b>운전·운송, 항공·해운·철도, 물류 기획·관리, 배송·택배 등</li>
+                        <li><a class="<?if ($ROW['col2']=="11") echo "on";?>" onclick="change_btn2(event, '11')"></a><b>건설·부동산·환경</b>건설·부동산 & 시설관리, 에너지·환경 & 자원</li>
+                        <li><a class="<?if ($ROW['col2']=="12") echo "on";?>" onclick="change_btn2(event, '12')"></a><b>교육·문화·예술·관광·공공</b>교육 & 공공서비스, 문화·예술 & 엔터테인먼트, 호텔·외식 & 관광</li> -->
+                    </ul>
+                </div>
+                <div class="sec sec3">
+                    <input type="hidden" id="Keyword2" name="Keyword2">
+                    <input type="hidden" id="Keyword3" name="Keyword3">
+                    <input type="hidden" id="Keyword4" name="Keyword4">
+                    <div class="title">Q2. 귀하의 관심분야는 무엇인가요? (최대 3개 선택 가능) </div>
+                    <?
+                    $col3 = explode(",", $ROW['col3']);
+                    ?>
+                    <ul class="long">
+
+                    <?
+                        $strHtml = "";
+                        $i = 0;
+                        $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='B' AND aDepth = 'step01' AND aGroup = 'A' AND aBind = 'col3' ORDER BY aOrder  ASC ";
+                        $QUERYA = mysqli_query($connect, $SQLA);
+                        if($QUERYA && mysqli_num_rows($QUERYA)){
+                            while($ROWA = mysqli_fetch_array($QUERYA)){
+                                extract($ROWA);
+
+                                $strHtml .= "<li><a class='' data-value='{$idx}'></a><b>{$aValue}</b>{$aValueDetail}</li>";
+                                $i++;
+                            }
+                        }
+                        echo $strHtml;
+                    ?>
+                    </ul>
+                </div>
+            
+                <div class="sec sec4">
+                    <div class="title">Q3. 귀하가 필요로하는 역량개발은 무엇인가요? (최대 3개 선택 가능)</div>
+                    <ul class="long">
+                    <?
+                        $strHtml = "";
+                        $i = 0;
+                        $SQLA = " SELECT * FROM ArchiveQuestion WHERE aType='B' AND aDepth = 'step01' AND aGroup = 'A' AND aBind = 'col4' ORDER BY aOrder  ASC ";
+                        $QUERYA = mysqli_query($connect, $SQLA);
+                        if($QUERYA && mysqli_num_rows($QUERYA)){
+                            while($ROWA = mysqli_fetch_array($QUERYA)){
+                                extract($ROWA);
+
+                                $strHtml .= "<li><a class='' data-value='{$idx}'></a><b>{$aValue}</b>{$aValueDetail}</li>";
+                                $i++;
+                            }
+                        }
+                        echo $strHtml;
+                    ?>
+
+                    </ul>
+                </div>
+            </div>
+            <div class="bottom">
+				<button  onclick="Next()">다음</button>
+                <!-- <button onclick="location.href='prev_test_result.html'">완료</button>-->
+            </div>
+        </div>
+    </div>
+</body>
+<script>
+
+    //직급
+    // function change_btn1(e, idx) {
+    //     var btns = document.querySelectorAll(".sec1 ul li a");
+    //     btns.forEach(function (btn, i) {
+    //         if (e.currentTarget == btn){
+    //             btn.classList.add("on");
+    //         }else{
+    //             btn.classList.remove("on");
+    //         }
+    //         // $("#Keyword1").val(idx);
+    //         document.getElementById("Keyword1").value = idx;
+    //     });
+    //     updateNextButtonState();
+    // }
+
+    //직무
+    function change_btn2(e, idx) {
+        var btns = document.querySelectorAll(".sec2 ul li a");
+        btns.forEach(function (btn, i) {
+            if (e.currentTarget == btn){
+                btn.classList.add("on");
+            }else{
+                btn.classList.remove("on");
+            }
+            document.getElementById("Keyword2").value = idx;
+        });
+        updateNextButtonState();
+    }
+
+    //관심분야
+    var interestBtns = document.querySelectorAll(".sec3 ul li a");
+    var selectedVal1 = [];
+    interestBtns.forEach(($toggle) => {
+        $toggle.onclick = () => {
+            let selected = document.querySelectorAll('.sec3 ul li a.on');
+            
+            if (selected.length >= 3 && !$toggle.classList.contains('on')) {
+                alert("최대 3개까지 선택 가능합니다.");
+                return; 
+            }
+        
+            $toggle.classList.toggle('on');
+
+            let dataValue = $toggle.getAttribute('data-value');
+
+            if ($toggle.classList.contains('on')) {
+                selectedVal1.push(dataValue);
+            } else {
+                selectedVal1 = selectedVal1.filter(value => value !== dataValue);
+            }
+
+            $("#Keyword3").val(selectedVal1);
+            updateNextButtonState();
+        }
+    });
+
+    //향상 역량
+    var skillBtns = document.querySelectorAll(".sec4 ul li a");
+    var selectedVal2 = [];
+    skillBtns.forEach(($toggle) => {
+        $toggle.onclick = () => {
+            let selected = document.querySelectorAll('.sec4 ul li a.on');
+            
+            if (selected.length >= 3 && !$toggle.classList.contains('on')) {
+                alert("최대 3개까지 선택 가능합니다.");
+                return; 
+            }
+            
+            $toggle.classList.toggle('on');
+
+            let dataValue = $toggle.getAttribute('data-value');
+
+            if ($toggle.classList.contains('on')) {
+                selectedVal2.push(dataValue);
+            } else {
+                selectedVal2 = selectedVal2.filter(value => value !== dataValue);
+            }
+
+            $("#Keyword4").val(selectedVal2);
+            updateNextButtonState();
+        }
+    });
+
+    function updateNextButtonState() {
+        // let selectedRank = document.querySelector('.sec1 a.on');
+        let selectedJob = document.querySelector('.sec2 a.on');
+        let selectedInterests = document.querySelectorAll('.sec3 a.on');
+        let selectedSkills = document.querySelectorAll('.sec4 a.on');
+        
+        let nextButton = document.querySelector('.bottom button');
+        
+        // if (selectedRank && selectedJob && selectedInterests.length > 0 && selectedSkills.length > 0) {
+        if ( selectedJob && selectedInterests.length > 0 && selectedSkills.length > 0) {
+            nextButton.disabled = false;
+        } else {
+            nextButton.disabled = true;
+        }
+    }
+
+    function Next(){
+        var Keyword1 = $("#Keyword1").val();
+        var Keyword2 = $("#Keyword2").val();
+        var Keyword3 = $("#Keyword3").val();
+        var Keyword4 = $("#Keyword4").val();
+
+        // console.log(Keyword1, Keyword2, Keyword3, Keyword4);
+        // return false;
+        
+        $.post('/m_archive/prev/archive_ability_input.php', { step:"step03", type:"B", col2: Keyword2, col3: Keyword3, col4:Keyword4 }, function (data) {
+            if(data == 'Y') {
+                // location.href="/archive/contents/main.html?from=prev_test01";
+                // location.href="/public/mypage/test_result.html";
+                // location.href="prev_test_result.html";
+                location.href="/m_archive/prev/prev_roadmap.html"; //로드맵
+                
+            }else if(data == 'NoID'){
+                alert("로그인후에 이용이 가능합니다.");
+                location.href="/m_public/member/login.html?sitemode=flex";
+            }else{
+                alert('항목들을 선택해주세요.');
+                return;
+            }
+        });
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        updateNextButtonState(); // 초기 버튼 상태 설정
+    });
+</script>

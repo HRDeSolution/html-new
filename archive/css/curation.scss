@@ -1,0 +1,132 @@
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    .logo {
+        width: 250px;
+        img {
+            width: 100%;
+        }
+    }
+    .logout {
+        button {
+            padding: 7px 20px;
+            background-color: transparent;
+            border: 1px solid #fff;
+            color: #fff;
+            border-radius: 40px;
+        }
+    }
+}
+
+.curation {
+    .top {
+        margin: 20px 0 40px 0;
+        .logo {
+            width: 300px;
+            img {
+                width: 100%;
+            }
+        }
+        .txt {
+            color: #fff;
+            strong {
+                font-size: 18px;
+                margin: 30px 0 10px 0;
+                display: block;
+                letter-spacing: 0.5px;
+            }
+            p {
+                font-size: 16px;
+                font-weight: 300;
+            }
+        }
+    }
+    .grid {
+        ul {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr;
+            gap: 30px;
+            li {
+                cursor: pointer;
+                position: relative;
+                img {
+                    width: 100%;
+                }
+            }
+            input[type="checkbox"] {
+                display: none;
+            }
+            input[type="checkbox"] + label {
+                position: relative;
+                display: block;
+            }
+            input[type="checkbox"]:checked + label {
+                border: 2px solid #2269f3;
+            }
+            input[type="checkbox"]:checked + label::after {
+                content: url(../img/common/bi_check.png);
+                width: 40px;
+                height: 40px;
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                margin-top: -20px;
+                margin-left: -20px;
+            }
+        }
+    }
+    .selection {
+        border-top: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+        .sec {
+            border-bottom: 1px solid #575757;
+            padding: 40px 0;
+            .title {
+                font-size: 20px;
+                font-weight: 600;
+                color: #fff;
+            }
+            ul {
+                display: flex;
+                flex-wrap: wrap;
+                li {
+                    a {
+                        border: 1px solid #909090;
+                        color: #fff;
+                        padding: 10px 25px;
+                        margin-top: 20px;
+                        margin-right: 20px;
+                        display: block;
+                        border-radius: 30px;
+                        cursor: pointer;
+                    }
+                    a.on {
+                        border: 1px solid #2269f3;
+                        color: #2269f3;
+                    }
+                    a.on2 {
+                        border: 1px solid #2269f3;
+                        color: #2269f3;
+                    }
+                    a.off{
+                        border: 1px solid #909090;
+                        color: #fff;
+                    }
+                }
+            }
+        }
+    }
+    .bottom {
+        text-align: center;
+        margin: 20px 0;
+        button {
+            width: 112px;
+            padding: 10px;
+            border-radius: 8px;
+            background-color: #2269f3;
+            color: #fff;
+        }
+    }
+}

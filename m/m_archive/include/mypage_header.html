@@ -1,0 +1,37 @@
+<ul class="top-menu">
+    <li>
+        <a href="/m_public/mypage/lecture_status.html" class="lecture">학습현황</a>
+    </li>
+    <li>
+        <a href="/m_public/mypage/survey.html" class="survey">수강후기</a>
+    </li>
+    <li>
+        <a href="/m_public/mypage/test_result.html" class="result">역량진단</a>
+    </li>
+    <!-- <li>
+        <a href="/m_public/mypage/lecture_event.html" class="event">출석체크</a>
+    </li> -->
+    <li>
+        <a href="/m_public/mypage/memberinfo.html" class="member">회원관리</a>
+    </li>
+</ul>
+<div class="top_status">
+    <div id="wrap">
+        <div class="left">
+            <div class="txt">
+                <b>
+                    <?=$LoginName?>
+                </b>님 &nbsp; 오늘
+                <?=$TodayStudyTime?> 학습하셨어요｜완료율 <b>
+                    <?=$StudyTimePercent?>%
+                </b>
+                <br>
+                수료기준: <b>15시간</b>｜ 훈련기간: <b class="mr10">
+                    <?=$LectureStart?> ~
+                    <?=$LectureEnd?>
+                </b>
+            </div>
+        </div>
+    </div>
+</div>
+<!--top_status-->

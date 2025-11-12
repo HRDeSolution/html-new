@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HRD 아카이브 보고서</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            background-color: #eee;
+        }
+        .wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 40px;
+            background: #fff;
+        }
+        h1{
+            color: #0056b3;
+            display: flex ;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        h2{
+            color: #0056b3;
+            padding-left: 20px;
+            position: relative;
+        }
+        h2::before{
+            width:5px;
+            height: 50%;
+            position: absolute;
+            content: '';
+            background-color: #0056b3;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        h3{
+            margin: 30px 0 0 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .feedback {
+            margin: 20px 0;
+            padding: 10px;
+            padding-left: 20px;
+            background-color: #f4f9fd;
+            font-weight: 500;
+        }
+        .title{
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            .right{
+                b{
+                    margin-right: 10px;
+                    color: #0056b3;
+                }
+            }
+        }
+        .content{
+            margin-bottom: 50px;
+        }
+        .box{
+            box-shadow: 0px 0px 20px -5px rgba(0, 0, 0, 0.2);
+            padding: 10px 30px;
+            .big{
+                font-size: 19px;
+            }
+            .point{
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="wrap">
+        <div class="title">
+            <div class="left">
+                <h1> <img src="/archive/img/common/archive_logo.png" alt="" width="200px">
+                    REPORT
+                </h1>
+            </div>
+            <div class="right">
+                <p><b>기업명</b> HRDe솔류션</p>
+                <p><b>과정명</b>미래로 가는 버스, 메타버스를 모르면 바보가 된다</p>
+                <p><b>훈련 기간</b> 2025.01.01 ~ 2025.07.31</p>
+                <p><b>참여 인원 </b>30명</p>
+            </div>
+        </div>
+       
+        <div class="content">
+            <h2>정량적 평가</h2>
+            <div class="box">
+                <h3>실시 인원 및 수료 인원</h3>
+                <p>총 실시 인원: <b>30</b>명</p>
+                <p>총 수료 인원: <b>15</b>명</p>
+                <p>수료율: <b>50</b>%</p>
+                
+                <h3>인당 수료 시간</h3>
+                <p>총 학습 시간: <b>15</b>시간</p>
+                <p>인당 평균 수료 시간: <b>15</b>시간</p>
+                
+                <h3>진도율</h3>
+                <p>전체 과정 진도율 평균: <b>50</b>%</p>
+                
+                <h3>과정별 수강 이력 및 진도율 분석</h3>
+                <table>
+                    <tr>
+                        <th>과정</th>
+                        <th>수료 인원</th>
+                        <th>평균 진도율</th>
+                    </tr>
+                    <tr>
+                        <td>미래로 가는 버스, 메타버스를 모르면 바보가 된다</td>
+                        <td>15</td>
+                        <td>50%</td>
+                    </tr>
+                    <tr>
+                        <td>빅데이터는 나의 친구</td>
+                        <td>15</td>
+                        <td>50%</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="content">
+            <h2>정성적 평가</h2>
+    
+            <div class="box">
+                <h3>사전-사후 역량진단 결과</h3>
+                <p>사전 역량진단 점수: <b>50</b>점</p>
+                <p>사후 역량진단 점수: <b>80</b>점</p>
+                <p>역량 향상도: <b>80</b>점</p>
+                
+                <h3>만족도 조사 결과</h3>
+                <p>과정에 대한 전반적 만족도: <b class="big">5</b>/5</p>
+                <p>강사 만족도: <b class="big">5</b>/5</p>
+                <p>교육 내용 만족도: <b class="big">5</b>/5</p>
+                
+                <h3>교육 후기 및 개선 의견</h3>
+                <div class="feedback">
+                    <p>"강의 내용이 실무에 큰 도움이 되었습니다."</p>
+                    <p>"진도율 관리 기능이 유용했습니다."</p>
+                    <p>"교육 시간 배분에 대한 개선이 필요합니다."</p>
+                </div>
+            </div>
+        </div>
+        <div class="content">
+            <h2>종합 분석 및 제언</h2>
+            <div class="box">
+
+                <p><b class="point">HRDe솔류션</b>기업의 총 <b class="point">30</b>명의 훈련생의 HRD 아카이브 훈련 분석 결과, <b class="point">15</b>명의 훈련생이 수료하였습니다.</p>
+        
+                <h3>성과 분석</h3>
+                <p>사전 역량진단 점수: <b>50</b>점</p>
+                <p>사후 역량진단 점수: <b>80</b>점</p>
+                <p>역량 향상도: <b>+30</b>점</p>
+                
+                <h3>역량 강화 필요 영역</h3>
+                <div class="feedback">
+                    <p>향상된 점수를 바탕으로 한층 더 개선할 수 있는 부분은 <b style="color: #0056b3;">직무 전문성 및 자격 강화 노력</b>입니다. 이 영역에 대한 심화 학습을 진행하는 것을 통해 더 큰 성과를 기대할 수 있습니다.</p>
+                    
+                    <p>이 결과를 바탕으로 체계적인 학습 계획을 수립하고, 지속적인 피드백과 자기 주도 학습을 병행한다면 더 큰 성과를 얻을 수 있을 것입니다.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

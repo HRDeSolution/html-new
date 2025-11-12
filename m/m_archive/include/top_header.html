@@ -1,0 +1,163 @@
+<div class="top_header white">
+    <div id="wrap">
+        
+        
+        <!--모바일 메뉴-->
+        <div class="mobile-header">
+            <div class="menu-list">
+                <i class="fa-solid fa-bars"></i>
+            </div>
+            <? if(empty($_SESSION['LoginMemberID'])) { ?>
+                <a href="/m_archive/main/main.html"> 
+                    <img class="logo" src="/m_archive/img/common/archive_logo.png" alt="HRDe아카이브">
+                </a>
+            <?}else{?>
+                <a href="/m_archive/contents/main.html"> 
+                    <img class="logo" src="/m_archive/img/common/archive_logo.png" alt="HRDe아카이브">
+                </a>
+            <?}?>
+
+        </div>
+    
+        <nav class="mobile-menu">
+            <div class="menu-header">
+                <button class="close-btn">×</button>
+            </div>
+            <div class="mypage">
+                <? if(empty($_SESSION['LoginMemberID'])) { ?>
+                <a href="/m_public/member/login.html">로그인<i class="ph ph-sign-in"></i></a>
+                <?}else{?>
+                    <a href="/m_public/member/logout.php">로그아웃<i class="ph ph-sign-out"></i></a>
+                <?}?>
+            </div>
+            <div class="menu-title">콘텐츠</div>
+            <div class="menu-grid">
+                <a href="/m_archive/contents/main.html"><i class="fa-regular fa-folder"></i>추천 콘텐츠</a>
+                <a href="/m_archive/contents/main.html"><i class="fa-regular fa-heart"></i>인기 콘텐츠</a>
+            </div>
+            <div class="menu-title">콘텐츠 커리큘럼</div>
+            <ul>
+				<li class="depth01">
+                    <a href="#" class="plus">공통역량<i class="fa-solid fa-plus"></i></a>
+                    <ul class="depth02">
+                        <li><a href="/m_archive/contents/contents_list.html?PCategory=1">전체</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=1&ctype=X" >이러닝</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=1&ctype=Z" >마이크로러닝</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=1&ctype=Y" >숏폼</a></li>
+                    </ul>
+                </li>
+                <li class="depth01">
+                    <a href="#" class="plus">직무역량<i class="fa-solid fa-plus"></i></a>
+                    <ul class="depth02">
+                        <li><a href="/m_archive/contents/contents_list.html?PCategory=5">전체</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=5&ctype=X" >이러닝</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=5&ctype=Z" >마이크로러닝</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=5&ctype=Y" >숏폼</a></li>
+                    </ul>
+                </li>
+                <li class="depth01">
+                    <a href="#" class="plus">리더십<i class="fa-solid fa-plus"></i></a>
+                    <ul class="depth02">
+                        <li><a href="/m_archive/contents/contents_list.html?PCategory=9">전체</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=9&ctype=X" >이러닝</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=9&ctype=Z" >마이크로러닝</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=9&ctype=Y" >숏폼</a></li>
+                    </ul>
+                </li>
+                <li class="depth01">
+                    <a href="#" class="plus">HRDe++<i class="fa-solid fa-plus"></i></a>
+                    <ul class="depth02">
+                        <li><a href="/m_archive/contents/contents_list.html?PCategory=13">전체</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=13&ctype=X" >이러닝</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=13&ctype=Z" >마이크로러닝</a></li>
+                        <li><a href="/m_archive/contents/select_course.html?PCategory=13&ctype=Y" >숏폼</a></li>
+                    </ul>
+                </li>
+                
+                </li>
+                <li class="depth01"><a href="/m_public/mypage/lecture_status.html">나의 학습실</a></li>          
+            </ul>
+            <div class="menu-title">고객지원</div>
+            <ul>
+                <li class="depth01"><a href="/m_public/support/notice.html">공지사항</a></li>
+                <li class="depth01"><a href="/m_public/support/ask.html">1:1 문의</a></li>
+            </ul>
+        </nav>
+        <!--모바일 메뉴-->
+    </div>
+    <!--wrap-->
+</div>
+<?
+$SqlB = "SELECT SUM(StudyTime) FROM Progress WHERE ID = '$LoginMemberID'";
+//echo $SqlB;
+$ResultB = mysqli_query($connect, $SqlB);
+$RowB = mysqli_fetch_array($ResultB);
+$TotalStudyTime = gmdate("H시간 i분", $RowB[0]);
+$StudyTimePercent = floor($RowB[0]/54000*100);
+if($StudyTimePercent == "0") $StudyTimePercent = "1";
+if($StudyTimePercent > 100) $StudyTimePercent = "100";
+if($RowB[0] == NULL) $StudyTimePercent = "0";
+?>
+<?
+//오늘 학습시간 조회
+$StudyTimeSum = 0;
+$today = date("Y-m-d");
+//[1]오늘수강한 LectureCode와 Chapter_Seq값 구하기
+$SqlD1 = "SELECT LectureCode , Chapter_Seq , ID , RegDate FROM Progress WHERE ID = '$LoginMemberID' AND RegDate LIKE '%$today%'";
+$QueryD1 = mysqli_query($connect, $SqlD1);
+if($QueryD1 && mysqli_num_rows($QueryD1)){
+	while($RowD1 = mysqli_fetch_array($QueryD1)){
+		$LectureCodeD = $RowD1['LectureCode'];
+		$ChapterSeqD = $RowD1['Chapter_Seq'];
+
+		//[2]각 차시의 수강시간구하기
+		$SqlD2 = "SELECT MAX(StudyTime) - MIN(StudyTime) FROM ProgressLog
+				  WHERE ID = '$LoginMemberID' AND RegDate LIKE '%$today%' AND LectureCode = '$LectureCodeD' AND Chapter_Seq  = $ChapterSeqD";
+		$ResultD2 = mysqli_query($connect, $SqlD2);
+		$RowD2 = mysqli_fetch_array($ResultD2);
+		$StudyTime = $RowD2[0];
+		$StudyTimeSum = $StudyTimeSum + $StudyTime;
+	}
+}
+$TodayStudyTime = gmdate('H시간 i분', $StudyTimeSum);
+?>
+
+<?
+$SqlC = "SELECT LectureStart , LectureEnd FROM Study WHERE ID = '$LoginMemberID'";
+//echo $SqlC;
+$ResultC = mysqli_query($connect, $SqlC);
+$RowC = mysqli_fetch_array($ResultC);
+$LectureStart = $RowC['LectureStart'];
+$LectureEnd = $RowC['LectureEnd'];
+?>
+<script>
+    //모바일 메뉴
+    $(document).ready(function () {
+    $('.menu-list').on('click', function () {
+        const menu = $('.mobile-menu');
+        if (menu.css('left') === '-100%') {
+        menu.css('left', '-100%');
+        } else {
+        menu.css('left', '0');
+        }
+    });
+     $('.close-btn').on('click', function () {
+        $('.mobile-menu').css('left', '-100%');
+    });
+
+    $(".depth01 > a.plus").click(function (e) {
+        e.preventDefault(); // 기본 이벤트 방지
+
+        let $depth02 = $(this).siblings(".depth02");
+        let $icon = $(this).find("i");
+
+        if ($depth02.is(":visible")) {
+            $depth02.slideUp();
+            $icon.removeClass("fa-minus").addClass("fa-plus");
+        } else {
+            $depth02.slideDown();
+            $icon.removeClass("fa-plus").addClass("fa-minus");
+        }
+    });
+});
+</script>

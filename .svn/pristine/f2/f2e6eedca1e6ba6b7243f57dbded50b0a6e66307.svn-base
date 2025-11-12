@@ -1,0 +1,249 @@
+<? include "../include/header.html";?>
+<?
+$ID = $_SESSION['LoginMemberID'];
+
+if($ID){
+	$Sql = "SELECT * FROM MemberContents WHERE ID='$ID'";
+	$Result = mysqli_query($connect, $Sql);
+	$Row = mysqli_fetch_array($Result);
+	if($Row){
+		$Category1 = $Row['Category1'];
+		$Category2 = $Row['Category2'];
+		$Keyword1  = $Row['Keyword1'];
+		$Keyword2  = $Row['Keyword2'];
+		$Keyword3  = $Row['Keyword3'];
+	}
+}
+?>
+<script>
+//학습하기
+function ContentsNext(){
+	var chkID = "<?=$ID?>";
+	var Category1 = "<?=$Category1?>";
+	var Category2 = "<?=$Category2?>";
+	var Keyword1  = "<?=$Keyword1?>";
+	var Keyword2  = "<?=$Keyword2?>";
+	var Keyword3  = "<?=$Keyword3?>";
+	
+	if(chkID){
+		if(Category1 == "" || Category2 == ""){
+			location.href = "../curation/step01.html";
+		}else if(Keyword1 == "" || Keyword2 == "" || Keyword3 == ""){
+			location.href = "../curation/step03.html";
+		}else{
+			location.href = "../contents/main.html";
+		}
+	}else{
+		location.href="/public/member/login.html?sitemode=flex2";
+	}	
+}
+
+//비회원 접근
+function guestAccessHandler(){
+	location.href = "/hrdflex/contents/main.html?m=g";
+	
+}
+</script>
+<body>
+    <div class="main_banner">
+        <div class="bg"></div>
+        <div class="top_header">
+            <div id="wrap" style="justify-content: flex-end; padding: 10px 0;">
+                <div class="btn">
+                    <? if(empty($_SESSION['LoginMemberID'])) { ?>
+                    <a href="../../public/member/login.html?sitemode=flex">로그인</a>
+                    <a href="/public/member/join.html">회원가입</a>
+                    <?}else{?>
+                    <a href="../../public/member/logout.php?sitemode=flex">로그아웃</a>
+                    <?}?>
+                    <div class="button">
+                        <a href="/public/mypage/flex_history.html" class="point"><i class="ph ph-sign-out"></i>나의 학습실</a>
+                    </div>
+                </div>
+            </div>
+            <!--wrap-->
+        </div>
+        <div id="wrap">
+            <div class="txt_wrap">
+                <span class="top" data-aos="fade-down" data-aos-delay="400">기업교육 컨텐츠 무제한 무료</span>
+                <div class="logo" data-aos="fade-down" data-aos-delay="400"><img src="../img/common/logo.png" alt="HRDeFLEX"></div>
+                <span class="bottom" data-aos="fade-down" data-aos-delay="400">약 0,000개의 CONTENTS</span>
+                <div class="txt" data-aos="fade-down" data-aos-delay="700"><p>다양하게!</p><p>유연하게!</p><p>자체적으로!</p></div>
+                <div class="button" data-aos="fade-down" data-aos-delay="1000">
+                    <button onclick="Inquiry()" class="modal-btn">수강신청</button>
+                    <button class="content" onclick="ContentsNext()" >학습하기</button>
+                    <?if(empty($_SESSION['LoginMemberID'])){?>
+                    	<!-- <button class="content" onclick="guestAccessHandler()" >비회원학습하기</button> -->
+                    <?}?>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="main_con con1">
+        <div id="wrap">
+            <div class="title" data-aos="fade-down">
+                <h1><span>HRD FLEX</span>란?</h1>
+                <p>사업주직업능력개발 훈련에 넷플릭스와 같은 구독서비스 개념을 접목하여, 기업교육을 접하는 학습자에게 더 많은  선택과 기회를 제공하는 <br>원격훈련제도로 학습자가 원하는 교육과정을 자유롭게 학습할 수 있는 제도입니다.</p>
+            </div>
+            <!--title-->
+            <div class="content">
+                <ul>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <strong>근로자 중심 직업훈련사업</strong>
+                            <img src="../img/main/con1_1.png" alt="아이콘">
+                            <p>근로자가 원하는 실제 직무 교육을 선택해<br>자유롭게 수강</p>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <strong>직장인 특화 구독형 이러닝</strong>
+                            <img src="../img/main/con1_2.png" alt="아이콘">
+                            <p>공통역량, 직무역량, 리더십 등 <br>직장인 특화 이러닝 무제한 수강</p>
+                        </div>
+                    </li>
+                    <li data-aos="zoom-in" data-aos-delay="400">
+                        <div class="card">
+                            <strong>시간·장소 제약 없는 학습</strong>
+                            <img src="../img/main/con1_3.png" alt="아이콘">
+                            <p>언제 어디서나 근로자가 보유한 <br>디바이스를 활용하여 효율적으로 수강 가능</p>
+                        </div>
+                    </li>
+                </ul>
+                <div class="bottom" data-aos="zoom-in" data-aos-delay="400">요양, 병원, OA, 4차산업혁명, 리더십, 총무 등 NCS 직무역량과정 탑재!</div>
+            </div>
+            <!--content-->
+        </div>
+        <!--wrap-->
+    </div>
+    <!--con2-->
+    <div class="main_con con2">
+        <div id="wrap">
+            <div class="title" data-aos="fade-down" data-aos-offset="400">
+                <h1>HRDeFLEX를 선택해야하는 이유</h1>
+            </div>
+            <!--title-->
+            <div class="content">
+                <ul>
+                    <li data-aos="fade-left" data-aos-delay="400" data-aos-offset="300">
+                        <div class="left">
+                            <span>01</span>
+                            <strong>0,000개의 수요높은 콘텐츠</strong>
+                            <p>000개의 기업 수요조사 결과를 통해 공통역량 / 리더십 / 직무역량 분야의 콘텐츠 선별! <br>신규 콘텐츠 매달 무상 업데이트!</p>
+                        </div>
+                        <div class="right"><img src="../img/main/con2_1.png" alt="아이콘"></div>
+                    </li>
+                    <li data-aos="fade-right" data-aos-delay="400" data-aos-offset="300">
+                        <div class="left">
+                            <span>02</span>
+                            <strong>1:1 개인 맞춤형 AI 큐레이션</strong>
+                            <p>큐레이션을 통해 훈련생의 수요에 맞춤 검색 가능!</p>
+                        </div>
+                        <div class="right"><img src="../img/main/con2_2.png" alt="아이콘"></div>
+                    </li>
+                    <li data-aos="fade-left" data-aos-delay="400" data-aos-offset="300">
+                        <div class="left">
+                            <span>03</span>
+                            <strong>모바일 지원, 품질 좋은 숏폼 콘텐츠</strong>
+                            <p>모바일로 수강이 가능해 언제 어디서나 손쉽게 수강 가능! <br>품질 좋은 숏폼 콘텐츠를 통해서 직무역량 상승!</p>
+                        </div>
+                        <div class="right" data-aos-offset="300"><img src="../img/main/con2_3.png" alt="아이콘"></div>
+                    </li>
+                </ul>
+            </div>
+            <!--content-->
+        </div>
+        <!--wrap-->
+    </div>
+    <!--con2-->
+    <div class="main_con con3">
+        <div id="wrap">
+            <div class="title" data-aos="fade-down" data-aos-offset="400"><h1>HRDeFLEX 운영 프로세스</h1></div>
+            <!--title-->
+            <div class="content">
+                <ol data-aos="flip-up" data-aos-delay="400" data-aos-offset="300">
+                    <li><span>STEP 01</span><strong>교육상담</strong></li>
+                    <li><span>STEP 02</span><strong>계약체결</strong></li>
+                    <li><span>STEP 03</span><strong>기업전용 LMS 개설</strong></li>
+                    <li><span>STEP 04</span><strong>훈련 실시</strong></li>
+                </ol>
+            </div>
+            <!--content-->
+        </div>
+        <!--wrap-->
+    </div>
+    <!--con3-->
+    <div class="main_con con4">
+        <div id="wrap">
+            <div class="title" class="title" data-aos="fade-down" data-aos-offset="400"><h1>HRDeFLEX 보유과정</h1></div>
+            <!--title-->
+            <div class="content">
+                <!-- 첫번째 슬라이드 -->
+                <div class="swiper" dir="ltr">
+                    <div class="banner">공통역량</div>
+                    <div class="swiper-wrapper">
+                    	<?for($i=1; $i<9; $i++){?>
+                    	<div class="swiper-slide"><div class="img" style="background-image: url(../img/lecture/lectureA<?=$i?>.png);"></div></div>
+                    	<?}?>
+                    </div>
+                </div>
+                 <!-- 두번째 슬라이드 -->
+                <div class="swiper" dir="rtl">
+                    <div class="banner">직무역량</div>
+                    <div class="swiper-wrapper">    
+                    	<?for($i=1; $i<9; $i++){?>
+                    	<div class="swiper-slide"><div class="img" style="background-image: url(../img/lecture/lectureB<?=$i?>.png);"></div></div>
+                    	<?}?>     
+                    </div>
+                </div>
+            </div>
+            <!--content-->
+        </div>
+        <!--wrap--> 
+    </div>
+    <!--con4-->
+    <div class="bottom_banner">
+        <div id="wrap">
+            <div class="logo"><img src="../img/common/logo.png" alt="HRDeFLEX"></div>
+            <span>교육도 넷플릭스처럼! 기업과 재직자들의 직무역량 강화</span>
+            <div class="button">
+                <button class="ask modal-btn" onclick="Inquiry()">수강신청<i class="ph ph-arrow-right"></i></button>
+                <button class="call">문의전화: 1811-9530</button>
+            </div>
+        </div>
+    </div>
+</body>
+<?php include "../include/footer.html"; ?>
+</html>
+
+<!--swiper-->
+<script>
+    $('.swiper').each(function(index) {  
+        let t = $(this);  
+        t.addClass('swiper-' + index);   
+        let swiper = new Swiper( t, {    
+            autoplay: {      
+                delay: 0, //add      
+                disableOnInteraction: false,    
+            },    
+            speed: 7000,    
+            loop: true,    
+            loopAdditionalSlides: 1,    
+            slidesPerView: 4, 
+            spaceBetween: 30 
+        });
+    });
+</script>
+
+<!--slideani-->
+<script> 
+	AOS.init({
+		offset: 60,
+		delay: 0,
+		duration: 400,
+		easing: 'ease',
+		once: false,
+		mirror: false,
+		anchorPlacement: 'top-bottom'
+	});    
+</script>

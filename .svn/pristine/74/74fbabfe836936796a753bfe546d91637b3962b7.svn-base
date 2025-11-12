@@ -1,0 +1,26 @@
+<?php
+include $_SERVER['DOCUMENT_ROOT'] . "/include/include_function.php"; //DB연결 및 각종 함수 정의
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="<?=$SiteName?>" />
+    <title><?=$SiteName2?></title>
+    <link rel="stylesheet" href="../css/common.css?ver=240716">
+    <link rel="stylesheet" href="../css/main.css?ver=240924">
+    <link rel="stylesheet" href="../css/content.css?ver=240517">
+    <link rel="stylesheet" href="../css/prev.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <script src="/include/jquery-3.5.1.min.js"></script>
+    <script type="text/javascript" src="/include/function.js?t=<?=date('YmdHis')?>"></script>
+    <script type="text/javascript" src="/include/jquery-ui.js"></script>
+    <script src="https://kit.fontawesome.com/ebace215db.js" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../../lib/swiper-4.5.0/swiper.css">
+    <script src="../../lib/swiper-4.5.0/swiper.js"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+</head>
