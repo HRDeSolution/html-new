@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit1f4ba1d34860685e2bab1a7d2f482a3d
+class ComposerStaticInite36697b1a42d0bb465dc5b98e0db616e
 {
     public static $prefixLengthsPsr4 = array (
         'F' => 
@@ -21,7 +21,6 @@ class ComposerStaticInit1f4ba1d34860685e2bab1a7d2f482a3d
     );
 
     public static $classMap = array (
-        'Common' => __DIR__ . '/../..' . '/include/KISA_SHA256.php',
         'Composer\\InstalledVersions' => __DIR__ . '/..' . '/composer/InstalledVersions.php',
         'Firebase\\JWT\\BeforeValidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/BeforeValidException.php',
         'Firebase\\JWT\\ExpiredException' => __DIR__ . '/..' . '/firebase/php-jwt/src/ExpiredException.php',
@@ -29,18 +28,14 @@ class ComposerStaticInit1f4ba1d34860685e2bab1a7d2f482a3d
         'Firebase\\JWT\\JWT' => __DIR__ . '/..' . '/firebase/php-jwt/src/JWT.php',
         'Firebase\\JWT\\Key' => __DIR__ . '/..' . '/firebase/php-jwt/src/Key.php',
         'Firebase\\JWT\\SignatureInvalidException' => __DIR__ . '/..' . '/firebase/php-jwt/src/SignatureInvalidException.php',
-        'KISA_SEED_SHA256' => __DIR__ . '/../..' . '/include/KISA_SHA256.php',
-        'Page' => __DIR__ . '/../..' . '/include/include_page.php',
-        'SHA256_INFO' => __DIR__ . '/../..' . '/include/KISA_SHA256.php',
-        'SSOJWTGenerator' => __DIR__ . '/../..' . '/include/sso_jwt_generator.php',
     );
 
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInit1f4ba1d34860685e2bab1a7d2f482a3d::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInit1f4ba1d34860685e2bab1a7d2f482a3d::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInit1f4ba1d34860685e2bab1a7d2f482a3d::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInite36697b1a42d0bb465dc5b98e0db616e::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInite36697b1a42d0bb465dc5b98e0db616e::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInite36697b1a42d0bb465dc5b98e0db616e::$classMap;
 
         }, null, ClassLoader::class);
     }

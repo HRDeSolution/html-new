@@ -1,0 +1,16 @@
+{
+    "name": "hrde/html-updated",
+    "description": "Legacy HRDe LMS front-end helpers",
+    "require": {
+        "firebase/php-jwt": "^5.2"
+    },
+    "config": {
+        "platform": {
+            "php": "5.4.0"
+        },
+        "preferred-install": "dist",
+        "optimize-autoloader": true,
+        "sort-packages": true
+    }
+}
+
