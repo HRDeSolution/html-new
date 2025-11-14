@@ -1,9 +1,29 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/m_include/include_function.php";
-include $HomeDirectory . "/include/sso_config.php";
-include $HomeDirectory . "/include/sso_jwt_generator.php";
+$RootDirectory = rtrim(dirname($HomeDirectory), '/');
+include $RootDirectory . "/include/sso_config.php";
+include $RootDirectory . "/include/sso_jwt_generator.php";
 
 header('Content-Type: text/html; charset=utf-8');
+
+$paths = [
+    'homeDirectory'       => $HomeDirectory,
+    'rootDirectory'       => $RootDirectory,
+    'sso_config'          => $RootDirectory . "/include/sso_config.php",
+    'sso_jwt_generator'   => $RootDirectory . "/include/sso_jwt_generator.php",
+    'vendor_autoload_php' => $RootDirectory . "/vendor/autoload.php",
+];
+
+$diagnostics = [
+    'paths' => [
+        'sso_config_exists'        => file_exists($paths['sso_config']),
+        'sso_jwt_generator_exists' => file_exists($paths['sso_jwt_generator']),
+        'vendor_autoload_exists'   => file_exists($paths['vendor_autoload_php']),
+    ],
+    'classes' => [
+        'SSOJWTGenerator_loaded' => class_exists('SSOJWTGenerator', false),
+    ],
+];
 
 $sessionState = [
     'LoginMemberID' => $_SESSION['LoginMemberID'] ?? null,
@@ -18,6 +38,10 @@ $result = [
 ];
 
 try {
+    if (!$diagnostics['classes']['SSOJWTGenerator_loaded']) {
+        throw new RuntimeException('Class SSOJWTGenerator not loaded. Check include paths and vendor/autoload.php.');
+    }
+
     if (empty($sessionState['LoginMemberID']) && empty($sessionState['LoginAdminID'])) {
         throw new RuntimeException('세션에 로그인 정보가 없습니다.');
     }
@@ -53,6 +77,13 @@ try {
 </head>
 <body>
     <h1>모바일 JWT 디버그</h1>
+
+    <p>환경 경로:</p>
+    <pre><?=htmlspecialchars(print_r($paths, true), ENT_QUOTES, 'UTF-8');?></pre>
+
+    <p>진단 상태:</p>
+    <pre><?=htmlspecialchars(print_r($diagnostics, true), ENT_QUOTES, 'UTF-8');?></pre>
+
     <p>세션 상태:</p>
     <pre><?=htmlspecialchars(print_r($sessionState, true), ENT_QUOTES, 'UTF-8');?></pre>
 
