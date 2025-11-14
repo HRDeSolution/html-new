@@ -1,7 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/m_include/include_function.php";
-include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_config.php";
-include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_jwt_generator.php";
+include $HomeDirectory . "/include/sso_config.php";
+include $HomeDirectory . "/include/sso_jwt_generator.php";
 
 header('Content-Type: text/html; charset=utf-8');
 

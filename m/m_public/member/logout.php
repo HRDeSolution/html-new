@@ -1,7 +1,7 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/m_include/include_function.php"; //DB연결 및 각종 함수 정의
-include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_config.php";
-include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_jwt_generator.php";
+include $HomeDirectory . "/include/sso_config.php";
+include $HomeDirectory . "/include/sso_jwt_generator.php";
 
 // Block logout on mobile if post-evaluation not completed and study time >= 15h
 $LoginMemberID = isset($_SESSION['LoginMemberID']) ? $_SESSION['LoginMemberID'] : '';
