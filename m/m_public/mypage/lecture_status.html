@@ -88,12 +88,14 @@ $PAGE_UNCOUNT3 = $PAGE_CLASS3->page_uncount; ##-- 게시물 번호 한개씩 감
                     <li><a href="lecture_status03.html">관심 과정</a></li>
                 </ul>
             </div>
+            <? if(!empty($_SESSION["LoginMemberID"]) || !empty($_SESSION["LoginAdminID"])) { ?>
             <div class="live-access">
                 <a class="live-access__btn" href="https://live.hrdeedu.co.kr" target="_blank" rel="noopener">
                     <span class="live-access__dot"></span>
                     라이브 학습 바로가기
                 </a>
             </div>
+            <? } ?>
             <div class="top_category">
                 <?
             	//총학습시간
