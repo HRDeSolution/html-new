@@ -1,5 +1,7 @@
 <?
 include $_SERVER['DOCUMENT_ROOT'] . "/m_include/include_function.php"; //DB연결 및 각종 함수 정의
+include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_config.php";
+include $_SERVER['DOCUMENT_ROOT'] . "/include/sso_jwt_generator.php";
 
 require_once ('../../m_include/KISA_SHA256.php');
 
@@ -137,6 +139,9 @@ if($Row) {
 
 	// Brad(2021.11.27) : 수강여부 체크 세션
 	$_SESSION["IsPlaying"] = "N";
+
+	// Generate JWT cookie for mobile SSO consumers
+	SSOJWTGenerator::setJWTCookie($connect, $_SESSION, $DB_Enc_Key);
 ?>
 <script type="text/javascript">
 <!--

@@ -2,7 +2,6 @@
 // Support compatibility when composer vendor is only present in html-solution.
 $autoloadCandidates = [
     __DIR__ . '/../vendor/autoload.php',
-    dirname(__DIR__) . '/../html-solution/vendor/autoload.php',
 ];
 
 $autoloadLoaded = false;
@@ -144,6 +143,50 @@ class SSOJWTGenerator
         @file_put_contents($logFile, $logMessage, FILE_APPEND);
     }
 
+    private static function getCookieDomain()
+    {
+        if (!isset($_SERVER['HTTP_HOST'])) {
+            return '';
+        }
+
+        $host = $_SERVER['HTTP_HOST'];
+
+        // Strip port, if provided (e.g., example.com:8080)
+        if (strpos($host, ':') !== false) {
+            $host = explode(':', $host)[0];
+        }
+
+        // IP addresses and localhost should remain host-only
+        if (filter_var($host, FILTER_VALIDATE_IP) || $host === 'localhost') {
+            return '';
+        }
+
+        $parts = explode('.', $host);
+        $count = count($parts);
+
+        if ($count <= 1) {
+            return '';
+        }
+
+        if ($count === 2) {
+            return '.' . $host;
+        }
+
+        $twoLevelSuffixes = [
+            'co.kr', 'or.kr', 'go.kr', 'ac.kr', 'ne.kr', 're.kr', 'pe.kr',
+            'co.uk', 'org.uk', 'gov.uk', 'ac.uk', 'net.uk',
+            'com.au', 'net.au', 'org.au',
+            'com.br', 'net.br', 'org.br',
+        ];
+
+        $lastTwo = implode('.', array_slice($parts, -2));
+        if (in_array($lastTwo, $twoLevelSuffixes, true) && $count >= 3) {
+            return '.' . implode('.', array_slice($parts, -3));
+        }
+
+        return '.' . $lastTwo;
+    }
+
     /**
      * Set JWT cookie on login
      */
@@ -154,6 +197,7 @@ class SSOJWTGenerator
         if ($jwtResult['success']) {
             $cookieExpiration = time() + self::TOKEN_EXPIRATION;
             $isSecure         = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+            $cookieDomain     = self::getCookieDomain();
 
             $cookieSet = setcookie(
                 'jwt',
@@ -161,7 +205,7 @@ class SSOJWTGenerator
                 [
                     'expires'  => $cookieExpiration,
                     'path'     => '/',
-                    'domain'   => '',
+                    'domain'   => $cookieDomain,
                     'secure'   => $isSecure,
                     'httponly' => true,
                     'samesite' => 'Lax',
@@ -185,12 +229,13 @@ class SSOJWTGenerator
      */
     public static function clearJWTCookie()
     {
-        $secure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+        $secure       = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+        $cookieDomain = self::getCookieDomain();
 
         setcookie('jwt', '', [
             'expires'  => time() - 3600,
             'path'     => '/',
-            'domain'   => '',
+            'domain'   => $cookieDomain,
             'secure'   => $secure,
             'httponly' => true,
             'samesite' => 'Lax',
@@ -199,7 +244,7 @@ class SSOJWTGenerator
         setcookie('sso_token', '', [
             'expires'  => time() - 3600,
             'path'     => '/',
-            'domain'   => '',
+            'domain'   => $cookieDomain,
             'secure'   => $secure,
             'httponly' => true,
             'samesite' => 'Lax',
@@ -208,7 +253,7 @@ class SSOJWTGenerator
         setcookie('sso_token_accessible', '', [
             'expires'  => time() - 3600,
             'path'     => '/',
-            'domain'   => '',
+            'domain'   => $cookieDomain,
             'secure'   => $secure,
             'httponly' => false,
             'samesite' => 'Lax',

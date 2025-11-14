@@ -1,5 +1,6 @@
 <?php
 include $_SERVER['DOCUMENT_ROOT'] . "/m_include/include_function.php"; //DB연결 및 각종 함수 정의
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,4 +26,10 @@ include $_SERVER['DOCUMENT_ROOT'] . "/m_include/include_function.php"; //DB연�
     <script src="/m_lib/swiper-4.5.0/swiper.js"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script type="text/javascript" src="/include/sso_localstorage.js?t=<?=date('YmdHis')?>"></script>
+    <?php if (!empty($_SESSION['LoginMemberID']) || !empty($_SESSION['LoginAdminID'])): ?>
+    <script>
+        window.__HRDE_SSO_USER_ID = "<?=!empty($_SESSION['LoginMemberID']) ? $_SESSION['LoginMemberID'] : $_SESSION['LoginAdminID']?>";
+    </script>
+    <?php endif; ?>
 </head>

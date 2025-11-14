@@ -22,6 +22,12 @@ include $_SERVER['DOCUMENT_ROOT'] . "/m_include/include_function.php"; //DBì—°ê²
     <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
     <script type="text/javascript" src="/m_include/function.js?t=<?=date('YmdHis')?>"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script type="text/javascript" src="/include/sso_localstorage.js?t=<?=date('YmdHis')?>"></script>
+    <?php if (!empty($_SESSION['LoginMemberID']) || !empty($_SESSION['LoginAdminID'])): ?>
+    <script type="text/javascript">
+        window.__HRDE_SSO_USER_ID = "<?=!empty($_SESSION['LoginMemberID']) ? $_SESSION['LoginMemberID'] : $_SESSION['LoginAdminID']?>";
+    </script>
+    <?php endif; ?>
 </head>
 <header>
     
